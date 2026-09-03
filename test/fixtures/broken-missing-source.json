@@ -1,0 +1,26 @@
+{
+  "sources": {},
+  "facts": [
+    {
+      "id": "no-source",
+      "category": "energy",
+      "phase": "inference",
+      "model_or_object": "Testmodell",
+      "value": 1.0,
+      "unit": "Wh",
+      "functional_unit": "pro Anfrage",
+      "measurement_boundary": "Test",
+      "water_scope": "-",
+      "carbon_accounting": "-",
+      "region": "Test",
+      "year": 2026,
+      "rating": "EINZELQUELLE",
+      "confidence": 3,
+      "source_id": "S-UNBEKANNT",
+      "locator": "-",
+      "quote": "-",
+      "second_source": "-",
+      "note": "-"
+    }
+  ]
+}

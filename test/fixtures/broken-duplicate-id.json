@@ -1,0 +1,56 @@
+{
+  "sources": {
+    "X1": {
+      "title": "Testquelle",
+      "publisher": "Test",
+      "year": 2026,
+      "url": "https://example.invalid/x1",
+      "type": "Test",
+      "verified": "2026-09-03"
+    }
+  },
+  "facts": [
+    {
+      "id": "dup-id",
+      "category": "energy",
+      "phase": "inference",
+      "model_or_object": "Testmodell",
+      "value": 1.0,
+      "unit": "Wh",
+      "functional_unit": "pro Anfrage",
+      "measurement_boundary": "Test",
+      "water_scope": "-",
+      "carbon_accounting": "-",
+      "region": "Test",
+      "year": 2026,
+      "rating": "EINZELQUELLE",
+      "confidence": 3,
+      "source_id": "X1",
+      "locator": "-",
+      "quote": "-",
+      "second_source": "-",
+      "note": "-"
+    },
+    {
+      "id": "dup-id",
+      "category": "energy",
+      "phase": "inference",
+      "model_or_object": "Testmodell 2",
+      "value": 2.0,
+      "unit": "Wh",
+      "functional_unit": "pro Anfrage",
+      "measurement_boundary": "Test",
+      "water_scope": "-",
+      "carbon_accounting": "-",
+      "region": "Test",
+      "year": 2026,
+      "rating": "EINZELQUELLE",
+      "confidence": 3,
+      "source_id": "X1",
+      "locator": "-",
+      "quote": "-",
+      "second_source": "-",
+      "note": "-"
+    }
+  ]
+}
