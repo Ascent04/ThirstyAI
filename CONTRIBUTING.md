@@ -1,33 +1,33 @@
-# Mitarbeit
+# Contributing
 
-## Beweispflicht für neue Fakten
+## Proof requirements for new facts
 
-ThirstyAI lebt davon, dass jede Zahl in `data/facts.json` nachprüfbar ist.
-Ein Pull Request, der einen neuen Fakt oder eine neue Quelle hinzufügt,
-**muss** für jede Zeile folgende Felder ausfüllen:
+ThirstyAI depends on every number in `data/facts.json` being
+verifiable. A pull request that adds a new fact or a new source
+**must** fill in the following fields for every row:
 
-- **Quelle**: Titel, Herausgeber, Jahr, URL.
-- **Fundstelle**: Kapitel, Tabelle, Abschnitt oder Seitenzahl innerhalb der
-  Quelle, an der der Wert steht.
-- **Wortzitat**: der exakte Originalsatz oder -wert aus der Quelle, als
-  Zitat, nicht paraphrasiert.
-- **Systemgrenze** (`measurement_boundary`): was genau gemessen oder
-  berechnet wurde (z. B. nur GPU, Vollstack inkl. PUE, Modellrechnung aus
-  Annahmen).
-- **Einstufung** (`rating`): eine von `BESTÄTIGT` (Primärquelle plus
-  unabhängige Zweitquelle), `EINZELQUELLE` (eine seriöse Primärquelle),
-  `UMSTRITTEN` (Quellen widersprechen sich) oder `ANNAHME` (keine Quelle,
-  eigene Schätzung).
+- **Source**: title, publisher, year, URL.
+- **Locator**: chapter, table, section, or page number within the
+  source where the value appears.
+- **Quote**: the exact original sentence or value from the source, as a
+  quote, not paraphrased.
+- **System boundary** (`measurement_boundary`): exactly what was
+  measured or calculated (e.g. GPU only, fullstack including PUE, a
+  model calculation from assumptions).
+- **Rating** (`rating`): one of `BESTÄTIGT` (confirmed: primary source
+  plus an independent second source), `EINZELQUELLE` (single source: one
+  credible primary source), `UMSTRITTEN` (disputed: sources contradict
+  each other), or `ANNAHME` (assumption: no source, our own estimate).
 
-**Pull Requests ohne diese Felder werden abgelehnt.**
+**Pull requests without these fields will be rejected.**
 
-## Eigene Annahmen
+## Own assumptions
 
-Werte ohne Beleg gehören nicht in `data/facts.json`, sondern in
-`data/assumptions.json`, mit `rating: "ANNAHME"`, `confidence: 1` und
-`source_id: "A-THIRSTYAI"`.
+Values without a source do not belong in `data/facts.json`; they belong
+in `data/assumptions.json`, with `rating: "ANNAHME"`, `confidence: 1`,
+and `source_id: "A-THIRSTYAI"`.
 
 ## Tests
 
-Jede Änderung an Code oder Daten braucht einen Test. Ein Pull Request ohne
-grünen Testlauf (`npm test`) wird nicht angenommen.
+Every change to code or data needs a test. A pull request without a
+green test run (`npm test`) will not be accepted.

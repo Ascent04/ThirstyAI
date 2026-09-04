@@ -1,9 +1,20 @@
 {
   "name": "thirstyai",
   "version": "0.1.0",
-  "description": "Schätzt Wasser-, Strom- und CO2-Verbrauch einer KI-Anfrage als Bandbreite, mit Quelle und Konfidenz zu jedem Ergebnis.",
+  "description": "Estimates the water, electricity, and CO2 footprint of an AI request as a range, with a source and confidence rating for every result.",
   "type": "module",
   "license": "MIT",
+  "repository": "",
+  "author": "",
+  "keywords": [
+    "ai",
+    "llm",
+    "water-footprint",
+    "carbon-footprint",
+    "energy",
+    "sustainability",
+    "csrd"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": "./dist/index.js",

@@ -11,15 +11,15 @@ export interface ResultRange {
 }
 
 export interface Result {
-  /** Energie am Netzanschluss der Anlage, inkl. PUE-Overhead. Einheit: Wh. */
+  /** Energy at the facility's grid connection, incl. PUE overhead. Unit: Wh. */
   energyTotal: ResultRange;
-  /** Standortgebundenes Kuehlwasser (Verdunstung), bezogen auf IT-Energie. Einheit: mL. */
+  /** On-site cooling water (evaporation), based on IT energy. Unit: mL. */
   waterScope1: ResultRange;
-  /** Wasser zur Stromerzeugung, bezogen auf Gesamtenergie. Einheit: mL. */
+  /** Water for electricity generation, based on total energy. Unit: mL. */
   waterScope2: ResultRange;
   /**
-   * location-/market-based Emissionen des Stromverbrauchs; Herstellung
-   * (Scope 3) und Kühlmittel (Scope 1) nicht enthalten.
+   * Location-/market-based emissions of electricity consumption;
+   * manufacturing (Scope 3) and refrigerants (Scope 1) not included.
    */
   co2Scope2: ResultRange;
   confidence: number;

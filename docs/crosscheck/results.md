@@ -8,7 +8,7 @@ Alle zehn Modellnamen wurden von ThirstyAIs Klassifikation erkannt (confidence >
 
 Alle zehn ThirstyAI-Ergebnisse haben confidence 1: keines der Modelle trifft ThirstyAIs Vollstack-Sonderfall (nur 'gemini-apps'), daher greift ueberall der overhead-factor (ANNAHME, confidence 1) und floort die Gesamt-confidence - das ist erwartetes Verhalten, kein Fehler.
 
-Seit Schritt 8 loest ThirstyAI Modellnamen in drei Stufen auf: exakter Fakt-Name, dann deklarierter Alias (beide aus `data/models.json`), erst dann die Namensheuristik. 'mistral-large-latest' ist jetzt als Alias von params-mistral-large-2 hinterlegt und landet dadurch korrekt in 'mid' (vorher, Schritt 7: 'frontier' ueber die Namensheuristik, siehe methodology-draft.md).
+Seit Schritt 8 loest ThirstyAI Modellnamen in drei Stufen auf: exakter Fakt-Name, dann deklarierter Alias (beide aus `data/models.json`), erst dann die Namensheuristik. 'mistral-large-latest' ist jetzt als Alias von params-mistral-large-2 hinterlegt und landet dadurch korrekt in 'mid' (vorher, Schritt 7: 'frontier' ueber die Namensheuristik, siehe methodology-de.md).
 
 **Wichtigster Befund vorab:** Bei den beiden Modellen mit oeffentlich bekannter (nicht geschaetzter) Parameterzahl - Llama-3.1-70B-Instruct und seit der Alias-Korrektur auch Mistral Large 2 - liegen beide Systeme innerhalb von 25 % beieinander (siehe llama- und mistral-Zeilen unten). Bei den drei verbleibenden Familien (GPT, Claude, Gemini) muss EcoLogits die Parameterzahl selbst schaetzen (proprietaere Modelle) - das ist der groesste Einzelfaktor fuer die Abweichungen dort, nicht ein Fehler in einem der beiden Systeme.
 

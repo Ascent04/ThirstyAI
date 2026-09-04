@@ -1,0 +1,202 @@
+# Methodology (Draft)
+
+This document describes ThirstyAI's calculation path, all of its own
+assumptions (not backed by the fact file), and the methodological gaps
+that remain open. It does not replace checking sources case by case -
+that's what `factIds` in the result and `data/facts.json` are for.
+
+## Calculation path
+
+Input: model name, optionally provider and region, number of input and
+output tokens, optionally a cutoff date (`asOf`).
+
+1. **Resolve coefficients** (`src/resolve.ts`): derive the model class
+   (small/mid/frontier/reasoning) from the model name, then five ranges
+   with source attribution: energy per request (GPU-only, or already
+   fullstack for Gemini Apps), overhead factor (GPU to IT energy), PUE,
+   WUE (on-site cooling water), and EWIF (water from electricity
+   generation) plus the grid's CO2 factor.
+2. **Scale to token count**: the energy coefficients apply to a
+   reference response of 300 output tokens. Input tokens count for 10%
+   as much as an output token (prefill is cheaper than decoding, see
+   assumptions below). `effectiveTokens = tokensOut + 0.1 * tokensIn`,
+   scaled linearly by `effectiveTokens / 300`.
+3. **energyGpu -> energyIt**: for fullstack facts (currently only Gemini
+   Apps) the starting value is already total energy including PUE;
+   `energyIt` is derived by dividing by PUE. Otherwise it is multiplied
+   by the overhead factor (assumption, 1.7-2.4x) to go from pure GPU
+   energy to full IT energy (including host, idle, network).
+4. **energyTotal**: `energyIt * PUE` - for fullstack this exactly
+   reproduces `energyGpu` (round trip), since PUE was already included
+   there.
+5. **waterScope1**: `energyIt * WUE` - on-site evaporation, based on IT
+   energy (not on the PUE overhead, which also covers things like the
+   cooling pumps themselves).
+6. **waterScope2**: `energyTotal * EWIF` - water consumed generating the
+   electricity for the whole facility.
+7. **co2Scope2**: `energyTotal * emission factor / 1000` - emissions of
+   electricity consumption (location-/market-based, depending on the
+   fact). Hardware manufacturing (Scope 3) and refrigerants (Scope 1)
+   are not included, see open issue 3.
+
+All steps are multiplication or division by positive values, never
+subtraction. Consistently applying each coefficient's min or max value
+at every step (for division, cross-wise: the smallest quotient comes
+from the largest divisor) keeps min <= mid <= max automatically true in
+every result field.
+
+**Confidence**: the minimum of the confidence values of all coefficients
+actually used - with one exception, see the rule below. Conditional
+assumptions and fallbacks (the overhead factor for non-fullstack, the
+WUE withdrawal-to-consumption assumption for AWS/Meta, the WUE fallback
+bounds when no provider is known, the class-specific energy values
+depending on model class, the confidence cap for an unknown region) do
+count, because they only affect part of the calculations and so
+genuinely distinguish well-supported cases from weakly-supported ones.
+
+**Rule for universal assumptions**: an assumption that goes into *every*
+single calculation without exception - regardless of model, provider,
+region, or the fullstack/GPU-only path - does not feed into confidence.
+If it did, every result's confidence would always be capped at its
+(typically low) value, no matter how well-supported the other,
+genuinely distinguishing coefficients are - the metric would then just
+equal that one constant and could no longer distinguish well-supported
+from weakly-supported calculations. Three facts are currently affected:
+
+- `reference-output-tokens` (reference token count, calculate.ts)
+- `input-token-cost-share` (input cost share, calculate.ts)
+- `pue-range-half-width` (PUE range, resolve.ts) - applies to every
+  single PUE resolution, regardless of provider
+
+This is a deliberate trade-off, not concealment: all three facts still
+appear in `assumptions`, so their uncertainty remains visible - it just
+doesn't affect the confidence number. Readers should therefore read
+confidence as "conditional on accepting these three universal
+assumptions," not as an absolute measure of certainty.
+
+## Own assumptions (`data/assumptions.json`)
+
+All with `rating: "ANNAHME"` (ASSUMPTION), `confidence: 1`, `source_id:
+"A-THIRSTYAI"`:
+
+- **energy-small-lower-bound** (0.01 Wh): rough lower bound for small
+  models, without its own measurement.
+- **overhead-factor-min/mid/max** (1.7 / 2.0 / 2.4): GPU-to-IT-energy
+  range, based on MIT Technology Review and the ratio of Google's
+  fullstack figure to its narrow system boundary.
+- **reference-output-tokens** (300 tokens): see open issue 1.
+- **input-token-cost-share** (0.1): see open issue 2.
+- **mid-class-caravaca-energy** (0.05 Wh), **frontier-class-joule-median**
+  (0.39 Wh), **frontier-class-joule-iqr-max** (0.68 Wh): numbers that
+  only appeared in a fact's `second_source` field (the Caravaca
+  measurement and the Joule Monte Carlo estimate, respectively), pulled
+  out here as their own, referenced assumptions so that resolve.ts
+  contains no numeric literals.
+- **pue-range-half-width** (0.1): our own spread around the PUE point
+  estimate, since providers usually report PUE without an uncertainty
+  range.
+- **withdrawal-to-consumption-share** (0.8): from the note on
+  `google-wue-cat2` ("Google consumes on average 80% of the water it
+  withdraws"), carried over to AWS and Meta.
+- **wue-site-fallback-min/max** (0.32 / 0.4 L/kWh): hyperscale median and
+  sensitivity figure from the note on `us-dc-wue-site-2023`.
+- **region-fallback-confidence-cap** (2): an editorial rule that caps
+  confidence when falling back to US values for an unknown region.
+
+## Cross-check against EcoLogits
+
+Full tables: [docs/crosscheck/results.md](crosscheck/results.md).
+EcoLogits (Python, GenAI Impact, JOSS 2025) was run offline for the same
+ten cases (five model families, short/long) without adjusting our
+coefficients to match it. Three findings:
+
+1. **For one real, open model with a known parameter count
+   (Llama-3.1-70B-Instruct), the two systems agree to within 40%**,
+   despite being methodologically completely independent (EcoLogits:
+   parameter regression; ThirstyAI: benchmark facts). This is the
+   strongest external confirmation ThirstyAI has so far.
+2. **For all four proprietary models the values diverge by a factor of
+   3-6, in both directions** - not because either system is
+   miscalculating, but because EcoLogits has to estimate the parameter
+   count of closed models itself (e.g. gemini-2.5-pro: 200-600 billion
+   active parameters, flagged with the `model-arch-not-released` and
+   `model-arch-multimodal` warnings) and its GPU energy scales linearly
+   with that estimate, while ThirstyAI stays tied to measured benchmark
+   ranges from the fact file.
+3. **ThirstyAI's name heuristic had a documented weakness** (fixed in
+   step 8, see addendum): for mistral-large-latest (really 123 billion
+   parameters, according to EcoLogits/Mistral themselves - which fits
+   ThirstyAI's own 'mid' boundary of <=200 billion), the name component
+   "large" without an accompanying number caused it to be misclassified
+   as "frontier" (anchored to a 405-billion model). A model name with an
+   explicit size (like "70b" for Llama) was not affected by this.
+
+**Addendum, step 7**: `data/models.json` has since given ThirstyAI known
+parameter counts (Mistral Large 2, Llama 3.1 8B/70B/405B, Mixtral 8x22B,
+DeepSeek-V3), checked before the name heuristic. The exact name
+"mistral-large-2" was thereby correctly recognized as "mid" (test in
+`test/models.test.ts`) - finding 3 initially remained for the alias
+"mistral-large-latest" used in the cross-check, because the fact
+depended on the token "2" and resolving "-latest" aliases was not part
+of step 7. Clarification on the Gemini case: Google's own measured,
+already-complete fullstack value (fact `gemini-energy`) applies in
+ThirstyAI only to the model name "gemini-apps" (the fullstack special
+case from test case 1, step 4). The name "gemini-2.5-pro" used in the
+cross-check is not affected by this: it runs through the normal
+"frontier" class (Monte Carlo estimate for Llama-3.1-405B), so ThirstyAI
+is estimating here just as much as EcoLogits is (which for its part
+assumes 200-600 billion active, Google-unconfirmed parameters) - the
+Gemini finding above (2.) is an estimate-versus-estimate divergence, not
+a comparison between a measured and an estimated value.
+
+**Addendum, step 8**: `data/models.json` facts now carry an `aliases`
+field (checked for uniqueness across the whole table on load).
+`classifyModel` resolves in three stages: exact fact name, then alias,
+only then the name heuristic. "mistral-large-latest" is recorded as an
+alias of `params-mistral-large-2` and is thereby correctly classified as
+"mid" - finding 3 is thus fixed for the cross-check (see the updated
+results.md, mistral rows now within 25% instead of a factor of 6-8).
+The confidence staffing of the name heuristic was also refined:
+fact-based matches take on the fact's own confidence; a name match with
+a recognized family AND a size/behavior marker (e.g. "mini", "70b",
+"r1") yields confidence 2; a recognized family without a marker, or a
+completely unknown name, both yield confidence 1 (previously 2 and 1,
+respectively) - a family alone is not a reliable size signal. Affected
+test: "falls back to frontier with confidence 2 for a known family
+without a size hint" in `test/models.test.ts`, now confidence 1.
+
+## Open issues
+
+1. **Reference token count (300)**: the fact file's energy benchmarks
+   state Wh per request, but mostly without a documented average
+   response length. 300 output tokens is a plausible but not
+   empirically grounded assumption for scaling to other token counts.
+2. **Input cost share (0.1)**: that an input token counts energetically
+   as 0.1 of an output token is an assumption (prefill is
+   parallelizable and therefore cheaper than sequential decoding), but
+   not quantified with the facts on hand.
+3. **co2Scope2 does not cover Google's full, publicly stated CO2
+   figure**: for the Gemini case study, Google states 0.03 g CO2e per
+   median text prompt (fact `gemini-co2`). According to the fact's note,
+   that figure also includes Scope 1 (refrigerants) and Scope 3
+   (hardware manufacturing), together around 0.010 g. The formula
+   documented here (energy x grid emission factor) can only compute the
+   Scope 2 portion (around 0.023 g). ThirstyAI therefore deliberately
+   only computes `co2Scope2` and makes that visible in the field name
+   and the type comment, rather than claiming a total that cannot be
+   derived or expanding the project's scope to a full life-cycle
+   analysis (see the project rule "no scope expansion"). ThirstyAI's
+   results accordingly understate the true total CO2 balance by the
+   Scope 1+3 portion.
+4. **Model class "small" is only a rough lower bound**:
+   `energy-small-lower-bound` (0.01 Wh) is an assumption with no
+   measurement of its own; `dsr1-distill-70b-noreason` (0.0495 Wh) only
+   serves as a conservative upper bound - there is no supported range in
+   between. This shows up in the cross-check
+   (docs/crosscheck/results.md): gpt-4o-mini comes out a consistent
+   factor of 4 higher in ThirstyAI than in EcoLogits, even though both
+   tools place the model in the same smallest size class - the
+   difference lies in the calculation itself (ThirstyAI's overhead
+   factor with no parallelism/batching model vs. EcoLogits' regression
+   with batch_size=64), not in the model class, but the thin factual
+   basis for the "small" class makes an independent check difficult.

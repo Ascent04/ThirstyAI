@@ -160,7 +160,7 @@ def main() -> None:
         "dann die Namensheuristik. 'mistral-large-latest' ist jetzt als Alias von "
         "params-mistral-large-2 hinterlegt und landet dadurch korrekt in 'mid' "
         "(vorher, Schritt 7: 'frontier' ueber die Namensheuristik, siehe "
-        "methodology-draft.md).\n"
+        "methodology-de.md).\n"
     )
     md.append(
         "**Wichtigster Befund vorab:** Bei den beiden Modellen mit oeffentlich "

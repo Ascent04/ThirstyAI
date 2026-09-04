@@ -5,7 +5,7 @@ Vergleicht ThirstyAIs Ergebnisse mit [EcoLogits](https://ecologits.ai/)
 Faelle. Ziel ist nicht, wer "richtig" liegt, sondern zu dokumentieren, wo
 und warum die Ergebnisse auseinanderliegen. Siehe [results.md](results.md)
 fuer die Vergleichstabellen und den Absatz "Gegenprobe" in
-[../methodology-draft.md](../methodology-draft.md) fuer die Kurzfassung.
+[../methodology-de.md](../methodology-de.md) fuer die Kurzfassung.
 
 ## Schritt 1: EcoLogits installieren und pruefen
 

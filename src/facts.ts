@@ -38,9 +38,9 @@ export interface Fact {
   quote: string;
   second_source: string;
   note: string;
-  /** Bekannte alternative Namen fuer denselben Gegenstand (z.B. Modellnamen
-   * verschiedener Anbieter-Schreibweisen). Optional, muss ueber die ganze
-   * Tabelle eindeutig sein (siehe loadFacts). */
+  /** Known alternative names for the same item (e.g. model names in
+   * different provider spellings). Optional, must be unique across the
+   * whole table (see loadFacts). */
   aliases?: string[];
 }
 

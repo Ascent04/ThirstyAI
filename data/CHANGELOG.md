@@ -1,11 +1,11 @@
-# Changelog Faktendatei
+# Fact File Changelog
 
 ## v0.2 - 2026-09-03
 
-- Merge aus v0.1 + geprüftem Addendum (Claude Deep Research) + eigener
-  Verifikation.
-- +7 gemessene Inferenzwerte offener Modelle (GPU-only).
-- +16 Strommix-CO2-Faktoren (Ember verifiziert, UBA, EMA, RTE, eGRID).
-- +4 LBNL-Branchendurchschnitte.
-- Negativbefund-Register ergänzt.
-- v0.1-Zeilen unverändert.
+- Merged v0.1 + reviewed addendum (Claude Deep Research) + own
+  verification.
+- +7 measured inference values for open models (GPU-only).
+- +16 grid-mix CO2 factors (Ember-verified, UBA, EMA, RTE, eGRID).
+- +4 LBNL industry averages.
+- Added negative-finding register.
+- v0.1 rows unchanged.

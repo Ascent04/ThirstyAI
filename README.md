@@ -1,22 +1,24 @@
 # ThirstyAI
 
-**Status: in Entwicklung**
+*[Deutsch](README-de.md)*
 
-## Zweck
+**Status: in development**
 
-ThirstyAI ist eine TypeScript-Bibliothek, die aus Modellname, Token-Zahl und
-Region den Wasser-, Strom- und CO2-Verbrauch einer KI-Anfrage schätzt. Das
-Ergebnis ist bewusst eine Bandbreite (Minimum, Mittelwert, Maximum), keine
-einzelne Zahl, weil die zugrunde liegenden Messwerte aus unterschiedlichen
-Systemgrenzen, Regionen und Methoden stammen. Zu jedem Ergebnis liefert die
-Bibliothek die verwendeten Quellen und eine Konfidenzeinstufung (1-5) mit,
-damit sichtbar bleibt, wie belastbar eine Zahl ist.
+## Purpose
 
-Die Bibliothek trifft keine Netzwerkzugriffe zur Laufzeit und hat keine
-Laufzeit-Abhängigkeiten. Alle Fakten liegen offline in `data/facts.json`
-und sind einzeln mit Quelle, Fundstelle und Wortzitat belegt.
+ThirstyAI is a TypeScript library that estimates the water, electricity,
+and CO2 consumption of an AI request from model name, token count, and
+region. The result is deliberately a range (minimum, mean, maximum), not
+a single number, because the underlying measurements come from
+different system boundaries, regions, and methods. For every result,
+the library also provides the sources used and a confidence rating
+(1-5), so it stays visible how reliable a number is.
 
-## Nutzung
+The library makes no network calls at runtime and has no runtime
+dependencies. All facts live offline in `data/facts.json` and are each
+backed by a source, a locator, and a direct quote.
+
+## Usage
 
 ```typescript
 import { loadFacts, calculate } from "thirstyai";
@@ -33,73 +35,84 @@ const result = calculate(
 );
 
 console.log(
-  `Wasser (Standort): ${result.waterScope1.min.toFixed(2)}-` +
-    `${result.waterScope1.max.toFixed(2)} mL (Mitte ${result.waterScope1.mid.toFixed(2)})`,
+  `Water (on-site): ${result.waterScope1.min.toFixed(2)}-` +
+    `${result.waterScope1.max.toFixed(2)} mL (mid ${result.waterScope1.mid.toFixed(2)})`,
 );
 console.log(
-  `Wasser (Stromerzeugung): ${result.waterScope2.min.toFixed(2)}-` +
+  `Water (electricity generation): ${result.waterScope2.min.toFixed(2)}-` +
     `${result.waterScope2.max.toFixed(2)} mL`,
 );
 console.log(
   `CO2 (Scope 2): ${result.co2Scope2.min.toFixed(3)}-${result.co2Scope2.max.toFixed(3)} g`,
 );
-console.log(`Konfidenz: ${result.confidence}/5, Quellen: ${result.factIds.join(", ")}`);
+console.log(`Confidence: ${result.confidence}/5, sources: ${result.factIds.join(", ")}`);
 ```
 
-`loadFacts` liest und prueft die Faktendateien, `calculate` liefert das
-Ergebnis. Beide Aufrufe sind synchron und greifen nicht auf das Netzwerk zu.
-Alle drei Dateien sind noetig: `facts.json` enthaelt die belegten Messwerte,
-`assumptions.json` die eigenen ANNAHME-Fakten (z.B. Referenz-Tokenzahl,
-Overhead-Faktor), `models.json` bekannte Modellgroessen (Parameterzahl) fuer
-die Klassifikation - auf sie alle greift `calculate` je nach Modell und
-Berechnungsschritt zurueck; fehlt eine, bricht die Berechnung mit einem
-Fehler zur fehlenden Fakt-ID ab.
+`loadFacts` reads and validates the fact files, `calculate` returns the
+result. Both calls are synchronous and make no network calls. All three
+files are needed: `facts.json` contains the sourced measurements,
+`assumptions.json` contains our own assumption facts (e.g. reference
+token count, overhead factor), `models.json` contains known model sizes
+(parameter counts) for classification - `calculate` draws on all of
+them depending on the model and calculation step; if one is missing,
+the calculation fails with an error naming the missing fact ID.
 
-## Was die Zahlen bedeuten
+## What the numbers mean
 
-- **waterScope1** und **waterScope2** sind getrennt, nicht addiert:
-  waterScope1 ist Kuehlwasser, das am Rechenzentrum selbst verdunstet;
-  waterScope2 ist Wasser, das bei der Stromerzeugung fuer die Anlage
-  verbraucht wird. Beide stammen aus unterschiedlichen Quellen und
-  Systemgrenzen, eine Summe waere schwerer nachvollziehbar als die
-  beiden Einzelwerte.
-- **co2Scope2** deckt bewusst nur die Emissionen des Stromverbrauchs ab
-  (location-/market-based). Herstellung der Hardware (Scope 3) und
-  Kaeltemittel (Scope 1) sind nicht enthalten - der Feldname macht das
-  absichtlich sichtbar, statt eine nicht herleitbare Gesamtzahl zu
-  suggerieren. Details und ein konkretes Beispiel dieser Luecke stehen
-  in [docs/methodology-draft.md](docs/methodology-draft.md).
-- **confidence** (1-5) ist das Minimum der Konfidenzwerte aller fuer
-  dieses Ergebnis tatsaechlich verwendeten Koeffizienten - mit
-  Ausnahme einiger universeller Annahmen, die in jede Berechnung
-  eingehen und die Zahl sonst wertlos machen wuerden (Begruendung in
-  docs/methodology-draft.md). Eine niedrige confidence heisst nicht
-  "falsch", sondern "auf duennerer Quellenlage geschaetzt" - z.B. weil
-  die Region unbekannt war und auf US-Durchschnittswerte
-  zurueckgefallen wurde. `factIds` und `assumptions` im Ergebnis zeigen,
-  welche Fakten und eigenen Annahmen konkret eingeflossen sind.
+- **waterScope1** and **waterScope2** are kept separate, not added
+  together: waterScope1 is cooling water that evaporates at the data
+  center itself; waterScope2 is water consumed generating the
+  electricity for the facility. Both come from different sources and
+  system boundaries, and a sum would be harder to follow than the two
+  individual figures.
+- **co2Scope2** deliberately covers only the emissions of electricity
+  consumption (location-/market-based). Hardware manufacturing (Scope
+  3) and refrigerants (Scope 1) are not included - the field name makes
+  that visible on purpose, instead of suggesting a total that cannot be
+  derived. Details and a concrete example of this gap are in
+  [docs/methodology.md](docs/methodology.md).
+- **confidence** (1-5) is the minimum of the confidence values of all
+  coefficients actually used for this result - except for a few
+  universal assumptions that go into every calculation and would
+  otherwise make the number meaningless (rationale in
+  docs/methodology.md). A low confidence does not mean "wrong," but
+  "estimated on thinner evidence" - for example because the region was
+  unknown and the calculation fell back to US averages. `factIds` and
+  `assumptions` in the result show exactly which facts and own
+  assumptions went into it.
 
-## Verwandte Projekte
+## Cross-check against EcoLogits
 
-- **EcoLogits** (Python, [JOSS 2025](https://joss.theoj.org/)): schätzt
-  ebenfalls Umweltwirkungen von LLM-Anfragen, mit Fokus auf Python-SDKs
-  großer Anbieter. ThirstyAI unterscheidet sich in drei Punkten:
-  - **Quellenangabe pro Koeffizient**: jeder verwendete Zahlenwert trägt
-    seine eigene Quellen-ID, Fundstelle und Konfidenz, statt eines
-    Gesamt-Disclaimers.
-  - **Scope-Trennung beim Wasser**: Wasserverbrauch (verdunstet) und
-    Wasserentnahme (überwiegend zurückgeführt) werden nicht vermischt,
-    da Anbieter beide Begriffe unterschiedlich verwenden.
-  - **TypeScript** statt Python, für Einsatz in Node- und Web-Umgebungen.
+ThirstyAI's results were checked offline against
+[EcoLogits](https://ecologits.ai/) (Python, GenAI Impact, JOSS 2025) for
+ten cases across five model families. For models with a publicly known
+size, both tools agree to within ±30%; for proprietary models, they
+diverge by a factor of 3-6, because both have to estimate the model
+size. Full tables and the reasoning behind each deviation:
+[docs/crosscheck/results.md](docs/crosscheck/results.md).
 
-## Faktendatei
+## Related projects
 
-`data/facts.json` ist eine kuratierte Sammlung öffentlich belegter
-Messwerte und Schätzungen (Version 0.2, Stand 2026-09-03). Sie wird nicht
-verändert. Eigene, klar gekennzeichnete Annahmen liegen separat in
+- **EcoLogits** (Python, [JOSS 2025](https://joss.theoj.org/)): also
+  estimates the environmental impact of LLM requests, focused on Python
+  SDKs of major providers. ThirstyAI differs in three ways:
+  - **Per-coefficient sourcing**: every numeric value used carries its
+    own source ID, locator, and confidence, instead of one overall
+    disclaimer.
+  - **Water scope separation**: water consumption (evaporated) and
+    water withdrawal (mostly returned) are not mixed together, since
+    providers use the two terms differently.
+  - **TypeScript** instead of Python, for use in Node and web
+    environments.
+
+## Fact file
+
+`data/facts.json` is a curated collection of publicly sourced
+measurements and estimates (version 0.2, as of 2026-09-03). It is not
+modified. Our own, clearly labeled assumptions live separately in
 `data/assumptions.json`.
 
-## Mitarbeit
+## Contributing
 
-Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für die Beweispflicht bei neuen
-Fakten.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the proof requirements for
+new facts.
