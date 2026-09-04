@@ -1,0 +1,367 @@
+{
+  "ecologitsVersion": "0.11.1",
+  "latencyAssumption": "1 s pro 100 Output-Token (ANNAHME, keine gemessene Latenz vorhanden)",
+  "notes": {
+    "energyWh": "Gesamtenergie inkl. embodied (Hardware-Herstellung), aus EcoLogits Impacts.energy",
+    "co2G": "Gesamt-GWP inkl. embodied (Hardware-Herstellung), aus EcoLogits Impacts.gwp",
+    "waterMl": "Nur Nutzungsphase (Strom + Kuehlung), EcoLogits modelliert keine embodied-Wasserwirkung"
+  },
+  "results": [
+    {
+      "id": "gpt-short",
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "tokensIn": 100,
+      "tokensOut": 300,
+      "requestLatencySeconds": 3.0,
+      "energyWh": {
+        "min": 0.01857420332301384,
+        "mid": 0.02062409331647812,
+        "max": 0.022673983309942403
+      },
+      "co2G": {
+        "min": 0.00762820500736652,
+        "mid": 0.00841618272085419,
+        "max": 0.00920416043434186
+      },
+      "waterMl": {
+        "min": 0.06698353030367406,
+        "mid": 0.07437598025743783,
+        "max": 0.08176843021120163
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.00048828125,
+        "mid": 0.00048828125,
+        "max": 0.00048828125
+      },
+      "co2GUsageOnly": {
+        "min": 0.0071399237573665205,
+        "mid": 0.00792790147085419,
+        "max": 0.00871587918434186
+      },
+      "warnings": [
+        "model-arch-not-released",
+        "model-arch-multimodal"
+      ]
+    },
+    {
+      "id": "gpt-long",
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "tokensIn": 2000,
+      "tokensOut": 1500,
+      "requestLatencySeconds": 15.0,
+      "energyWh": {
+        "min": 0.09287101661506919,
+        "mid": 0.10312046658239062,
+        "max": 0.11336991654971203
+      },
+      "co2G": {
+        "min": 0.03814102503683261,
+        "mid": 0.042080913604270964,
+        "max": 0.04602080217170931
+      },
+      "waterMl": {
+        "min": 0.3349176515183702,
+        "mid": 0.3718799012871892,
+        "max": 0.4088421510560082
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.00244140625,
+        "mid": 0.00244140625,
+        "max": 0.00244140625
+      },
+      "co2GUsageOnly": {
+        "min": 0.0356996187868326,
+        "mid": 0.03963950735427096,
+        "max": 0.043579395921709306
+      },
+      "warnings": [
+        "model-arch-not-released",
+        "model-arch-multimodal"
+      ]
+    },
+    {
+      "id": "claude-short",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5",
+      "tokensIn": 100,
+      "tokensOut": 300,
+      "requestLatencySeconds": 3.0,
+      "energyWh": {
+        "min": 0.3771953327525192,
+        "mid": 0.5229432446152388,
+        "max": 0.6686911564779584
+      },
+      "co2G": {
+        "min": 0.1528063859100684,
+        "mid": 0.20883188323009783,
+        "max": 0.26485738055012725
+      },
+      "waterMl": {
+        "min": 1.226400101033273,
+        "mid": 1.9533961454704698,
+        "max": 2.680392189907667
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.0078125,
+        "mid": 0.0078125,
+        "max": 0.0078125
+      },
+      "co2GUsageOnly": {
+        "min": 0.1449938859100684,
+        "mid": 0.2010193832300978,
+        "max": 0.25704488055012725
+      },
+      "warnings": [
+        "model-arch-not-released"
+      ]
+    },
+    {
+      "id": "claude-long",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5",
+      "tokensIn": 2000,
+      "tokensOut": 1500,
+      "requestLatencySeconds": 15.0,
+      "energyWh": {
+        "min": 1.8859766637625957,
+        "mid": 2.614716223076194,
+        "max": 3.343455782389792
+      },
+      "co2G": {
+        "min": 0.7640319295503418,
+        "mid": 1.044159416150489,
+        "max": 1.3242869027506363
+      },
+      "waterMl": {
+        "min": 6.1320005051663635,
+        "mid": 9.766980727352347,
+        "max": 13.401960949538333
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.0390625,
+        "mid": 0.0390625,
+        "max": 0.0390625
+      },
+      "co2GUsageOnly": {
+        "min": 0.7249694295503418,
+        "mid": 1.005096916150489,
+        "max": 1.285224402750636
+      },
+      "warnings": [
+        "model-arch-not-released"
+      ]
+    },
+    {
+      "id": "gemini-short",
+      "provider": "google_genai",
+      "model": "gemini-2.5-pro",
+      "tokensIn": 100,
+      "tokensOut": 300,
+      "requestLatencySeconds": 3.0,
+      "energyWh": {
+        "min": 3.3677855682829656,
+        "mid": 5.7511243340174385,
+        "max": 8.134463099751912
+      },
+      "co2G": {
+        "min": 1.3258267724479722,
+        "mid": 2.2419821939963036,
+        "max": 3.158137615544635
+      },
+      "waterMl": {
+        "min": 13.63486299742337,
+        "mid": 23.284081122615852,
+        "max": 32.933299247808336
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.03125,
+        "mid": 0.03125,
+        "max": 0.03125
+      },
+      "co2GUsageOnly": {
+        "min": 1.2945767724479722,
+        "mid": 2.210732193996303,
+        "max": 3.126887615544635
+      },
+      "warnings": [
+        "model-arch-not-released",
+        "model-arch-multimodal"
+      ]
+    },
+    {
+      "id": "gemini-long",
+      "provider": "google_genai",
+      "model": "gemini-2.5-pro",
+      "tokensIn": 2000,
+      "tokensOut": 1500,
+      "requestLatencySeconds": 15.0,
+      "energyWh": {
+        "min": 16.838927841414826,
+        "mid": 28.755621670087198,
+        "max": 40.67231549875956
+      },
+      "co2G": {
+        "min": 6.62913386223986,
+        "mid": 11.209910969981518,
+        "max": 15.790688077723177
+      },
+      "waterMl": {
+        "min": 68.17431498711684,
+        "mid": 116.42040561307927,
+        "max": 164.6664962390417
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.15625,
+        "mid": 0.15625,
+        "max": 0.15625
+      },
+      "co2GUsageOnly": {
+        "min": 6.4728838622398595,
+        "mid": 11.053660969981518,
+        "max": 15.634438077723175
+      },
+      "warnings": [
+        "model-arch-not-released",
+        "model-arch-multimodal"
+      ]
+    },
+    {
+      "id": "llama-short",
+      "provider": "huggingface_hub",
+      "model": "meta-llama/Meta-Llama-3.1-70B-Instruct",
+      "tokensIn": 100,
+      "tokensOut": 300,
+      "requestLatencySeconds": 3.0,
+      "energyWh": {
+        "min": 0.11407309701008297,
+        "mid": 0.11668945244609405,
+        "max": 0.11930580788210512
+      },
+      "co2G": {
+        "min": 0.0458028234906759,
+        "mid": 0.04680855052027856,
+        "max": 0.04781427754988121
+      },
+      "waterMl": {
+        "min": 0.37089339541253846,
+        "mid": 0.42408939577305926,
+        "max": 0.47728539613358006
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.001953125,
+        "mid": 0.001953125,
+        "max": 0.001953125
+      },
+      "co2GUsageOnly": {
+        "min": 0.0438496984906759,
+        "mid": 0.044855425520278554,
+        "max": 0.045861152549881205
+      },
+      "warnings": []
+    },
+    {
+      "id": "llama-long",
+      "provider": "huggingface_hub",
+      "model": "meta-llama/Meta-Llama-3.1-70B-Instruct",
+      "tokensIn": 2000,
+      "tokensOut": 1500,
+      "requestLatencySeconds": 15.0,
+      "energyWh": {
+        "min": 0.5703654850504148,
+        "mid": 0.5834472622304702,
+        "max": 0.5965290394105256
+      },
+      "co2G": {
+        "min": 0.2290141174533795,
+        "mid": 0.2340427526013928,
+        "max": 0.23907138774940606
+      },
+      "waterMl": {
+        "min": 1.8544669770626923,
+        "mid": 2.120446978865296,
+        "max": 2.3864269806679004
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.009765625,
+        "mid": 0.009765625,
+        "max": 0.009765625
+      },
+      "co2GUsageOnly": {
+        "min": 0.2192484924533795,
+        "mid": 0.22427712760139276,
+        "max": 0.22930576274940606
+      },
+      "warnings": []
+    },
+    {
+      "id": "mistral-short",
+      "provider": "mistralai",
+      "model": "mistral-large-latest",
+      "tokensIn": 100,
+      "tokensOut": 300,
+      "requestLatencySeconds": 3.0,
+      "energyWh": {
+        "min": 0.1629720278916986,
+        "mid": 0.1629720278916986,
+        "max": 0.1629720278916986
+      },
+      "co2G": {
+        "min": 0.06459957252156895,
+        "mid": 0.06459957252156895,
+        "max": 0.06459957252156895
+      },
+      "waterMl": {
+        "min": 0.5230890700339451,
+        "mid": 0.5230890700339451,
+        "max": 0.5230890700339451
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.001953125,
+        "mid": 0.001953125,
+        "max": 0.001953125
+      },
+      "co2GUsageOnly": {
+        "min": 0.06264644752156895,
+        "mid": 0.06264644752156895,
+        "max": 0.06264644752156895
+      },
+      "warnings": []
+    },
+    {
+      "id": "mistral-long",
+      "provider": "mistralai",
+      "model": "mistral-large-latest",
+      "tokensIn": 2000,
+      "tokensOut": 1500,
+      "requestLatencySeconds": 15.0,
+      "energyWh": {
+        "min": 0.8148601394584931,
+        "mid": 0.8148601394584931,
+        "max": 0.8148601394584931
+      },
+      "co2G": {
+        "min": 0.32299786260784474,
+        "mid": 0.32299786260784474,
+        "max": 0.32299786260784474
+      },
+      "waterMl": {
+        "min": 2.615445350169726,
+        "mid": 2.615445350169726,
+        "max": 2.615445350169726
+      },
+      "co2GEmbodiedOnly": {
+        "min": 0.009765625,
+        "mid": 0.009765625,
+        "max": 0.009765625
+      },
+      "co2GUsageOnly": {
+        "min": 0.31323223760784474,
+        "mid": 0.31323223760784474,
+        "max": 0.31323223760784474
+      },
+      "warnings": []
+    }
+  ]
+}

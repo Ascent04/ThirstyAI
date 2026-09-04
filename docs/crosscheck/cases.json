@@ -1,0 +1,87 @@
+{
+  "region": "US",
+  "electricity_mix_zone_ecologits": "USA",
+  "note": "region/zone gilt fuer beide Systeme; kein Anbieter-Override in ThirstyAI (EcoLogits nutzt seinen eigenen provider-Parameter, das ist bei ihm Pflicht).",
+  "cases": [
+    {
+      "id": "gpt-short",
+      "family": "gpt",
+      "ecologits": { "provider": "openai", "model": "gpt-4o-mini" },
+      "thirstyai": { "model": "gpt-4o-mini" },
+      "tokensIn": 100,
+      "tokensOut": 300
+    },
+    {
+      "id": "gpt-long",
+      "family": "gpt",
+      "ecologits": { "provider": "openai", "model": "gpt-4o-mini" },
+      "thirstyai": { "model": "gpt-4o-mini" },
+      "tokensIn": 2000,
+      "tokensOut": 1500
+    },
+    {
+      "id": "claude-short",
+      "family": "claude",
+      "ecologits": { "provider": "anthropic", "model": "claude-sonnet-4-5" },
+      "thirstyai": { "model": "claude-sonnet-4-5" },
+      "tokensIn": 100,
+      "tokensOut": 300
+    },
+    {
+      "id": "claude-long",
+      "family": "claude",
+      "ecologits": { "provider": "anthropic", "model": "claude-sonnet-4-5" },
+      "thirstyai": { "model": "claude-sonnet-4-5" },
+      "tokensIn": 2000,
+      "tokensOut": 1500
+    },
+    {
+      "id": "gemini-short",
+      "family": "gemini",
+      "ecologits": { "provider": "google_genai", "model": "gemini-2.5-pro" },
+      "thirstyai": { "model": "gemini-2.5-pro" },
+      "tokensIn": 100,
+      "tokensOut": 300
+    },
+    {
+      "id": "gemini-long",
+      "family": "gemini",
+      "ecologits": { "provider": "google_genai", "model": "gemini-2.5-pro" },
+      "thirstyai": { "model": "gemini-2.5-pro" },
+      "tokensIn": 2000,
+      "tokensOut": 1500
+    },
+    {
+      "id": "llama-short",
+      "family": "llama",
+      "ecologits": { "provider": "huggingface_hub", "model": "meta-llama/Meta-Llama-3.1-70B-Instruct" },
+      "thirstyai": { "model": "meta-llama/Meta-Llama-3.1-70B-Instruct" },
+      "tokensIn": 100,
+      "tokensOut": 300
+    },
+    {
+      "id": "llama-long",
+      "family": "llama",
+      "ecologits": { "provider": "huggingface_hub", "model": "meta-llama/Meta-Llama-3.1-70B-Instruct" },
+      "thirstyai": { "model": "meta-llama/Meta-Llama-3.1-70B-Instruct" },
+      "tokensIn": 2000,
+      "tokensOut": 1500
+    },
+    {
+      "id": "mistral-short",
+      "family": "mistral",
+      "ecologits": { "provider": "mistralai", "model": "mistral-large-latest" },
+      "thirstyai": { "model": "mistral-large-latest" },
+      "tokensIn": 100,
+      "tokensOut": 300
+    },
+    {
+      "id": "mistral-long",
+      "family": "mistral",
+      "ecologits": { "provider": "mistralai", "model": "mistral-large-latest" },
+      "thirstyai": { "model": "mistral-large-latest" },
+      "tokensIn": 2000,
+      "tokensOut": 1500
+    }
+  ]
+}

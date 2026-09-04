@@ -104,6 +104,36 @@ Alle mit `rating: "ANNAHME"`, `confidence: 1`, `source_id:
   confidence deckelt, wenn bei unbekannter Region auf US-Werte
   zurueckgefallen wird.
 
+## Gegenprobe gegen EcoLogits
+
+Ausfuehrliche Tabellen: [docs/crosscheck/results.md](crosscheck/results.md).
+EcoLogits (Python, GenAI Impact, JOSS 2025) wurde offline fuer dieselben
+zehn Faelle (fuenf Modellfamilien, kurz/lang) berechnet, ohne unsere
+Koeffizienten daran anzupassen. Drei Erkenntnisse:
+
+1. **Bei einem echten, offenen Modell mit bekannter Parameterzahl
+   (Llama-3.1-70B-Instruct) stimmen beide Systeme auf 40 % genau
+   ueberein**, obwohl sie methodisch komplett unabhaengig sind
+   (EcoLogits: Parameter-Regression; ThirstyAI: Benchmark-Fakten). Das
+   ist die staerkste externe Bestaetigung, die ThirstyAI bisher hat.
+2. **Bei allen vier proprietaeren Modellen weichen die Werte um den
+   Faktor 3-6 ab, in beide Richtungen** - nicht weil eines der Systeme
+   falsch rechnet, sondern weil EcoLogits die Parameterzahl geschlossener
+   Modelle selbst schaetzen muss (z.B. gemini-2.5-pro: 200-600 Mrd.
+   aktive Parameter, mit den Warnhinweisen `model-arch-not-released` und
+   `model-arch-multimodal` versehen) und seine GPU-Energie linear mit
+   dieser Schaetzung skaliert, waehrend ThirstyAI an gemessene
+   Benchmark-Bandbreiten aus der Faktendatei gebunden bleibt.
+3. **ThirstyAIs Namensheuristik hat eine dokumentierte Schwaeche**: bei
+   mistral-large-latest (real 123 Mrd. Parameter, laut EcoLogits/Mistral
+   selbst - passt in ThirstyAIs eigene 'mid'-Grenze von <=200 Mrd.) fuehrt
+   der Namensbestandteil "large" ohne begleitende Zahl zur falschen
+   Einordnung als "frontier" (verankert an einem 405-Mrd.-Modell). Ein
+   Modellname mit expliziter Groessenangabe (wie "70b" bei Llama) waere
+   davon nicht betroffen. Das ist eine reale Grenze der
+   Namenserkennung in `src/models.ts`, keine Korrektur der Koeffizienten
+   - siehe drittes Beispiel in den Ergebnistabellen.
+
 ## Offene Stellen
 
 1. **Referenz-Tokenzahl (300)**: Die Energie-Benchmarks der
