@@ -47,6 +47,10 @@ console.log(`Konfidenz: ${result.confidence}/5, Quellen: ${result.factIds.join("
 
 `loadFacts` liest und prueft die Faktendateien, `calculate` liefert das
 Ergebnis. Beide Aufrufe sind synchron und greifen nicht auf das Netzwerk zu.
+Beide Dateien sind noetig: `facts.json` enthaelt die belegten Messwerte,
+`assumptions.json` die eigenen ANNAHME-Fakten (z.B. Referenz-Tokenzahl,
+Overhead-Faktor), auf die `calculate` fuer jede Berechnung zurueckgreift -
+fehlt sie, bricht die Berechnung mit einem Fehler zur fehlenden Fakt-ID ab.
 
 ## Was die Zahlen bedeuten
 
