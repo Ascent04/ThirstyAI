@@ -3,3 +3,4 @@ dist/
 .venv/
 scripts/*.js
 scripts/*.js.map
+scripts/__pycache__/

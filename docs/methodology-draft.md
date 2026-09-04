@@ -141,12 +141,16 @@ werden. Der exakte Name "mistral-large-2" wurde dadurch korrekt als
 den in der Gegenprobe verwendeten Alias "mistral-large-latest" zunaechst
 bestehen, weil der Fakt auf das Token "2" angewiesen war und eine
 Alias-Aufloesung fuer "-latest"-Namen nicht Teil von Schritt 7 war.
-Ausserdem zum Gemini-Fall: ThirstyAI nutzt fuer gemini-apps Googles
-selbst gemessenen, bereits vollstaendigen Vollstack-Wert (Fakt
-`gemini-energy`), waehrend EcoLogits fuer gemini-2.5-pro eine vermutete
-Parameterzahl (200-600 Mrd. aktiv, nicht von Google bestaetigt) durch
-seine eigene Regression schickt - das ist ein grundsaetzlich anderer
-Ansatz, kein Fehler auf einer der beiden Seiten.
+Klarstellung zum Gemini-Fall: Googles selbst gemessener, bereits
+vollstaendiger Vollstack-Wert (Fakt `gemini-energy`) gilt in ThirstyAI
+nur fuer den Modellnamen "gemini-apps" (der Vollstack-Sonderfall aus
+Testfall 1, Schritt 4). Der in der Gegenprobe verwendete Name
+"gemini-2.5-pro" ist davon nicht betroffen: er laeuft ueber die normale
+"frontier"-Klasse (Monte-Carlo-Schaetzung fuer Llama-3.1-405B), also
+schaetzt ThirstyAI hier genauso wie EcoLogits (das seinerseits 200-600
+Mrd. aktive, nicht von Google bestaetigte Parameter annimmt) - der
+Gemini-Befund oben (2.) ist eine Schaetzung-gegen-Schaetzung-Abweichung,
+kein Vergleich zwischen einem gemessenen und einem geschaetzten Wert.
 
 **Nachtrag Schritt 8**: `data/models.json`-Fakten tragen jetzt ein
 `aliases`-Feld (ueber die ganze Tabelle eindeutig geprueft beim Laden).
@@ -189,3 +193,15 @@ confidence 2 zurueck" in `test/models.test.ts`, jetzt confidence 1.
    erweitern (siehe Projektregel "keine Scope-Erweiterung"). Ergebnisse
    von ThirstyAI unterschaetzen die tatsaechliche CO2-Gesamtbilanz
    entsprechend um den Scope-1+3-Anteil.
+4. **Modellklasse "small" ist nur eine grobe Untergrenze**:
+   `energy-small-lower-bound` (0.01 Wh) ist eine ANNAHME ohne eigene
+   Messung, `dsr1-distill-70b-noreason` (0.0495 Wh) dient nur als
+   konservative Obergrenze - dazwischen liegt keine belegte Bandbreite.
+   In der Gegenprobe (docs/crosscheck/results.md) faellt das auf:
+   gpt-4o-mini liegt bei ThirstyAI durchgehend um Faktor 4 hoeher als bei
+   EcoLogits, obwohl beide Werkzeuge das Modell in dieselbe kleinste
+   Groessenklasse einordnen - der Unterschied liegt an der Berechnung
+   selbst (ThirstyAIs Overhead-Faktor ohne Parallelitaets-/Batching-Modell
+   vs. EcoLogits' Regression mit batch_size=64), nicht an der
+   Modellklasse, aber die duenne Faktenlage der Klasse "small" macht eine
+   unabhaengige Pruefung schwer.
