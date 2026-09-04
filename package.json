@@ -6,6 +6,13 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "files": [
+    "dist",
+    "data",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run"

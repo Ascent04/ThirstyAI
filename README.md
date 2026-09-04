@@ -16,6 +16,62 @@ Die Bibliothek trifft keine Netzwerkzugriffe zur Laufzeit und hat keine
 Laufzeit-Abhängigkeiten. Alle Fakten liegen offline in `data/facts.json`
 und sind einzeln mit Quelle, Fundstelle und Wortzitat belegt.
 
+## Nutzung
+
+```typescript
+import { loadFacts, calculate } from "thirstyai";
+
+const table = loadFacts([
+  "node_modules/thirstyai/data/facts.json",
+  "node_modules/thirstyai/data/assumptions.json",
+]);
+
+const result = calculate(
+  { model: "claude-3-5-sonnet", tokensIn: 200, tokensOut: 300, region: "DE" },
+  table,
+);
+
+console.log(
+  `Wasser (Standort): ${result.waterScope1.min.toFixed(2)}-` +
+    `${result.waterScope1.max.toFixed(2)} mL (Mitte ${result.waterScope1.mid.toFixed(2)})`,
+);
+console.log(
+  `Wasser (Stromerzeugung): ${result.waterScope2.min.toFixed(2)}-` +
+    `${result.waterScope2.max.toFixed(2)} mL`,
+);
+console.log(
+  `CO2 (Scope 2): ${result.co2Scope2.min.toFixed(3)}-${result.co2Scope2.max.toFixed(3)} g`,
+);
+console.log(`Konfidenz: ${result.confidence}/5, Quellen: ${result.factIds.join(", ")}`);
+```
+
+`loadFacts` liest und prueft die Faktendateien, `calculate` liefert das
+Ergebnis. Beide Aufrufe sind synchron und greifen nicht auf das Netzwerk zu.
+
+## Was die Zahlen bedeuten
+
+- **waterScope1** und **waterScope2** sind getrennt, nicht addiert:
+  waterScope1 ist Kuehlwasser, das am Rechenzentrum selbst verdunstet;
+  waterScope2 ist Wasser, das bei der Stromerzeugung fuer die Anlage
+  verbraucht wird. Beide stammen aus unterschiedlichen Quellen und
+  Systemgrenzen, eine Summe waere schwerer nachvollziehbar als die
+  beiden Einzelwerte.
+- **co2Scope2** deckt bewusst nur die Emissionen des Stromverbrauchs ab
+  (location-/market-based). Herstellung der Hardware (Scope 3) und
+  Kaeltemittel (Scope 1) sind nicht enthalten - der Feldname macht das
+  absichtlich sichtbar, statt eine nicht herleitbare Gesamtzahl zu
+  suggerieren. Details und ein konkretes Beispiel dieser Luecke stehen
+  in [docs/methodology-draft.md](docs/methodology-draft.md).
+- **confidence** (1-5) ist das Minimum der Konfidenzwerte aller fuer
+  dieses Ergebnis tatsaechlich verwendeten Koeffizienten - mit
+  Ausnahme einiger universeller Annahmen, die in jede Berechnung
+  eingehen und die Zahl sonst wertlos machen wuerden (Begruendung in
+  docs/methodology-draft.md). Eine niedrige confidence heisst nicht
+  "falsch", sondern "auf duennerer Quellenlage geschaetzt" - z.B. weil
+  die Region unbekannt war und auf US-Durchschnittswerte
+  zurueckgefallen wurde. `factIds` und `assumptions` im Ergebnis zeigen,
+  welche Fakten und eigenen Annahmen konkret eingeflossen sind.
+
 ## Verwandte Projekte
 
 - **EcoLogits** (Python, [JOSS 2025](https://joss.theoj.org/)): schätzt

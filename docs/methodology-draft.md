@@ -46,29 +46,35 @@ kleinste Quotient entsteht beim groessten Divisor), bleibt
 min <= mid <= max in jedem Ergebnisfeld automatisch erhalten.
 
 **Confidence**: das Minimum der confidence-Werte aller tatsaechlich
-verwendeten Koeffizienten (der Overhead-Faktor zaehlt nur mit, wenn er
-auch angewendet wird, also nicht bei Vollstack-Fakten). Die beiden
-universellen Umrechnungs-Annahmen (Referenz-Tokenzahl,
-Input-Kostenanteil) fliessen nicht in die confidence ein. Sie
-erscheinen aber in `assumptions`, damit sie sichtbar bleiben.
+verwendeten Koeffizienten - mit einer Ausnahme, siehe Regel unten.
+Bedingte Annahmen und Fallbacks (der Overhead-Faktor bei Nicht-Vollstack,
+die WUE-Entnahme-zu-Verbrauch-Annahme bei AWS/Meta, die
+WUE-Fallback-Grenzen ohne bekannten Anbieter, die Klassen-Energiewerte
+je nach Modellklasse, der confidence-Deckel bei unbekannter Region)
+zaehlen mit, weil sie nur einen Teil der Berechnungen betreffen und
+damit echt zwischen gut und schwach belegten Faellen unterscheiden.
 
-**Warum `reference-output-tokens` und `input-token-cost-share` nicht in
-die confidence eingehen**: Beide Fakten sind ANNAHMEN mit confidence 1
-und werden bei jeder einzigen Berechnung angewendet, unabhaengig von
-Modell, Anbieter oder Region. Wuerden sie mitgezaehlt, waere die
-confidence jedes Ergebnisses immer 1 - ein Wert, der dann nichts mehr
-ueber die tatsaechlich verwendeten Modell-, Standort- oder
-Netz-Koeffizienten aussagt und die Kennzahl damit wertlos macht. Der
-Zweck von confidence ist, zwischen gut belegten Berechnungen (z.B.
-bekannte Region, gemessene Energie) und schwach belegten (z.B.
-Rueckfall auf US-Durchschnitt bei unbekannter Region) zu unterscheiden;
-eine Konstante, die ausnahmslos jede Berechnung gleichermassen trifft,
-kann diese Unterscheidung nicht leisten. Das ist ein bewusster
-Kompromiss, keine Verschleierung: beide Fakten stehen weiterhin in
-`assumptions`, ihre Unsicherheit bleibt also sichtbar - sie beeinflusst
-nur nicht die confidence-Zahl. Leserinnen und Leser sollten confidence
-deshalb als "bedingt auf Akzeptanz des Tokenisierungs-Modells" lesen,
-nicht als absolutes Mass an Sicherheit.
+**Regel für universelle Annahmen**: Eine Annahme, die ausnahmslos in
+*jede* Berechnung eingeht - unabhaengig von Modell, Anbieter, Region
+oder Vollstack/GPU-only-Pfad -, fliesst nicht in die confidence ein.
+Wuerde sie mitgezaehlt, waere die confidence jedes Ergebnisses immer
+auf ihren (typischerweise niedrigen) Wert begrenzt, egal wie gut die
+uebrigen, tatsaechlich unterscheidenden Koeffizienten belegt sind - die
+Kennzahl waere dann nur noch dieser einen Konstante gleich und koennte
+nicht mehr zwischen gut und schwach belegten Berechnungen
+unterscheiden. Betroffen sind aktuell drei Fakten:
+
+- `reference-output-tokens` (Referenz-Tokenzahl, calculate.ts)
+- `input-token-cost-share` (Input-Kostenanteil, calculate.ts)
+- `pue-range-half-width` (PUE-Bandbreite, resolve.ts) - gilt fuer jede
+  einzige PUE-Aufloesung, unabhaengig vom Anbieter
+
+Das ist ein bewusster Kompromiss, keine Verschleierung: alle drei
+Fakten stehen weiterhin in `assumptions`, ihre Unsicherheit bleibt also
+sichtbar - sie beeinflusst nur nicht die confidence-Zahl. Leserinnen
+und Leser sollten confidence deshalb als "bedingt auf Akzeptanz dieser
+drei universellen Annahmen" lesen, nicht als absolutes Mass an
+Sicherheit.
 
 ## Eigene Annahmen (`data/assumptions.json`)
 
