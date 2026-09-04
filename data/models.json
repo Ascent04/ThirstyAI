@@ -26,6 +26,30 @@
       "url": "https://arxiv.org/abs/2412.19437",
       "type": "Preprint (Tech Report)",
       "verified": "2026-09-04 durch Claude (aus Trainingswissen, kein Live-Abruf - nur 'pip install ecologits' als Netzwerkzugriff erlaubt)"
+    },
+    "M4": {
+      "title": "Meta Llama Modelluebersicht (Hugging Face Organisationsseite)",
+      "publisher": "Meta",
+      "year": 2025,
+      "url": "https://huggingface.co/meta-llama",
+      "type": "offizielle Modelluebersicht",
+      "verified": "2026-09-04 durch Claude (aus Trainingswissen, kein Live-Abruf - nur 'pip install ecologits' als Netzwerkzugriff erlaubt)"
+    },
+    "M5": {
+      "title": "Mistral Modelluebersicht",
+      "publisher": "Mistral AI",
+      "year": 2026,
+      "url": "https://docs.mistral.ai/getting-started/models/",
+      "type": "offizielle Modelluebersicht",
+      "verified": "2026-09-04 durch Claude (aus Trainingswissen, kein Live-Abruf - nur 'pip install ecologits' als Netzwerkzugriff erlaubt)"
+    },
+    "M6": {
+      "title": "DeepSeek API-Dokumentation (Modell- und Preisuebersicht)",
+      "publisher": "DeepSeek-AI",
+      "year": 2026,
+      "url": "https://api-docs.deepseek.com/quick_start/pricing",
+      "type": "offizielle Modelluebersicht",
+      "verified": "2026-09-04 durch Claude (aus Trainingswissen, kein Live-Abruf - nur 'pip install ecologits' als Netzwerkzugriff erlaubt)"
     }
   },
   "facts": [
@@ -48,7 +72,8 @@
       "locator": "Model Card, Groessenangabe im Modellnamen/Architekturtabelle",
       "quote": "8B",
       "second_source": "-",
-      "note": "Gleiche Quelle wie llama31-train-gpuh/llama31-train-co2 in data/facts.json (S12); hier nur die Parameterzahl fuer die Klassifikation, nicht Energie/CO2."
+      "note": "Gleiche Quelle wie llama31-train-gpuh/llama31-train-co2 in data/facts.json (S12); hier nur die Parameterzahl fuer die Klassifikation, nicht Energie/CO2. Aliase gemaess Meta Llama Modelluebersicht (M4).",
+      "aliases": ["meta-llama/Llama-3.1-8B-Instruct", "llama-3.1-8b-instruct"]
     },
     {
       "id": "params-llama-3-1-70b",
@@ -69,7 +94,8 @@
       "locator": "Model Card, Groessenangabe im Modellnamen/Architekturtabelle",
       "quote": "70B",
       "second_source": "-",
-      "note": "Gleiche Quelle wie llama31-train-gpuh/llama31-train-co2 in data/facts.json (S12); hier nur die Parameterzahl fuer die Klassifikation, nicht Energie/CO2."
+      "note": "Gleiche Quelle wie llama31-train-gpuh/llama31-train-co2 in data/facts.json (S12); hier nur die Parameterzahl fuer die Klassifikation, nicht Energie/CO2. Aliase gemaess Meta Llama Modelluebersicht (M4).",
+      "aliases": ["meta-llama/Llama-3.1-70B-Instruct", "llama-3.1-70b-instruct"]
     },
     {
       "id": "params-llama-3-1-405b",
@@ -90,7 +116,8 @@
       "locator": "Model Card, Groessenangabe im Modellnamen/Architekturtabelle",
       "quote": "405B",
       "second_source": "-",
-      "note": "Gleiche Quelle wie llama31-train-gpuh/llama31-train-co2 in data/facts.json (S12); hier nur die Parameterzahl fuer die Klassifikation, nicht Energie/CO2."
+      "note": "Gleiche Quelle wie llama31-train-gpuh/llama31-train-co2 in data/facts.json (S12); hier nur die Parameterzahl fuer die Klassifikation, nicht Energie/CO2. Aliase gemaess Meta Llama Modelluebersicht (M4).",
+      "aliases": ["meta-llama/Llama-3.1-405B-Instruct", "llama-3.1-405b-instruct"]
     },
     {
       "id": "params-mistral-large-2",
@@ -111,7 +138,8 @@
       "locator": "Ankuendigung, Abschnitt Modellspezifikation",
       "quote": "123 billion parameters",
       "second_source": "EcoLogits eigenes Modell-Repository (ecologits/data/models.json: 123, dense) nennt denselben Wert",
-      "note": "-"
+      "note": "Aliase gemaess Mistral Modelluebersicht (M5).",
+      "aliases": ["mistral-large-latest", "mistral-large-2407", "mistral-large-2411"]
     },
     {
       "id": "params-mixtral-8x22b",
@@ -132,7 +160,8 @@
       "locator": "Ankuendigung, Abschnitt Modellspezifikation",
       "quote": "39B active parameters out of 141B",
       "second_source": "-",
-      "note": "Gesamtparameter (141 Mrd.) werden bewusst nicht fuer die Klassifikation verwendet, siehe measurement_boundary."
+      "note": "Gesamtparameter (141 Mrd.) werden bewusst nicht fuer die Klassifikation verwendet, siehe measurement_boundary. Aliase gemaess Mistral Modelluebersicht (M5).",
+      "aliases": ["open-mixtral-8x22b", "mistralai/Mixtral-8x22B-Instruct-v0.1"]
     },
     {
       "id": "params-deepseek-v3",
@@ -153,7 +182,8 @@
       "locator": "Abstract",
       "quote": "671B total parameters with 37B activated for each token",
       "second_source": "-",
-      "note": "Gesamtparameter (671 Mrd.) werden bewusst nicht fuer die Klassifikation verwendet, siehe measurement_boundary."
+      "note": "Gesamtparameter (671 Mrd.) werden bewusst nicht fuer die Klassifikation verwendet, siehe measurement_boundary. Aliase gemaess DeepSeek API-Dokumentation (M6).",
+      "aliases": ["deepseek-chat", "deepseek-ai/DeepSeek-V3"]
     }
   ]
 }

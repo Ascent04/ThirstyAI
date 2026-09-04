@@ -63,30 +63,43 @@ function bucketBySize(paramsB: number): ModelClass {
   return "frontier";
 }
 
+function tokensEqual(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((token, i) => token === b[i]);
+}
+
 /**
  * Sucht in data/models.json (category "parameters") nach einem Fakt, dessen
- * Modellname vollstaendig in den Tokens der Anfrage enthalten ist (z.B.
- * "Llama 3.1 70B" -> ["llama","3","1","70b"] passt in
- * "llama-3.1-70b-instruct"). Bei mehreren Treffern gewinnt der spezifischste
- * (meiste Tokens), damit z.B. "70B" nicht von einem kuerzeren Treffer
- * ueberdeckt wird.
+ * kanonischer Name (model_or_object) oder einer seiner Aliase genau (Gross-
+ * /Kleinschreibung und Trennzeichen ignorierend) der Anfrage entspricht -
+ * "exakter Name, dann Alias", siehe Klassifikations-Reihenfolge unten. Keine
+ * Teilstring-/Teilmengen-Suche: ein unbekannter Namensvariante (z.B. ein
+ * anderer Praefix oder Suffix) faellt bewusst auf die Namensheuristik
+ * zurueck, statt geraten zu werden.
  */
-function findParameterFact(tokens: string[], table: FactTable): Fact | undefined {
-  const tokenSet = new Set(tokens);
-  let best: Fact | undefined;
-  let bestSize = 0;
+function findExactOrAliasFact(tokens: string[], table: FactTable): Fact | undefined {
+  const parameterFacts = table.facts.filter((fact) => fact.category === "parameters");
 
-  for (const fact of table.facts) {
-    if (fact.category !== "parameters") continue;
-    const factTokens = tokenize(fact.model_or_object);
-    if (factTokens.length === 0) continue;
-    const isSubset = factTokens.every((token) => tokenSet.has(token));
-    if (isSubset && factTokens.length > bestSize) {
-      best = fact;
-      bestSize = factTokens.length;
+  for (const fact of parameterFacts) {
+    if (tokensEqual(tokens, tokenize(fact.model_or_object))) {
+      return fact;
     }
   }
-  return best;
+  for (const fact of parameterFacts) {
+    for (const alias of fact.aliases ?? []) {
+      if (tokensEqual(tokens, tokenize(alias))) {
+        return fact;
+      }
+    }
+  }
+  return undefined;
+}
+
+/** confidence fuer einen ueber die Namensheuristik erkannten Groessen-/
+ * Verhaltensmarker (Reasoning-Token, explizite Groessenangabe, Namenshinweis
+ * wie "mini"/"large"): 2, wenn zusaetzlich eine Modellfamilie erkannt wurde,
+ * sonst 1 (die Familie allein traegt die Aussage nicht). */
+function markerConfidence(family: string | undefined): number {
+  return family !== undefined ? 2 : 1;
 }
 
 /**
@@ -112,7 +125,7 @@ export function classifyModel(
   }
 
   if (table) {
-    const parameterFact = findParameterFact(tokens, table);
+    const parameterFact = findExactOrAliasFact(tokens, table);
     if (parameterFact) {
       return {
         modelClass: bucketBySize(parameterFact.value),
@@ -127,7 +140,7 @@ export function classifyModel(
   if (tokens.some((token) => REASONING_TOKENS.includes(token))) {
     return {
       modelClass: "reasoning",
-      confidence: 3,
+      confidence: markerConfidence(family),
       fullstack: false,
       family: family ?? "unbekannt",
     };
@@ -137,30 +150,38 @@ export function classifyModel(
   if (explicitSize !== undefined) {
     return {
       modelClass: bucketBySize(explicitSize),
-      confidence: 3,
+      confidence: markerConfidence(family),
       fullstack: false,
       family: family ?? "unbekannt",
     };
   }
 
   if (tokens.some((token) => SMALL_TOKENS.includes(token))) {
-    return { modelClass: "small", confidence: 3, fullstack: false, family: family ?? "unbekannt" };
+    return {
+      modelClass: "small",
+      confidence: markerConfidence(family),
+      fullstack: false,
+      family: family ?? "unbekannt",
+    };
   }
   if (tokens.some((token) => MID_TOKENS.includes(token))) {
-    return { modelClass: "mid", confidence: 3, fullstack: false, family: family ?? "unbekannt" };
+    return {
+      modelClass: "mid",
+      confidence: markerConfidence(family),
+      fullstack: false,
+      family: family ?? "unbekannt",
+    };
   }
   if (tokens.some((token) => FRONTIER_TOKENS.includes(token))) {
     return {
       modelClass: "frontier",
-      confidence: 3,
+      confidence: markerConfidence(family),
       fullstack: false,
       family: family ?? "unbekannt",
     };
   }
 
-  if (family !== undefined) {
-    return { modelClass: "frontier", confidence: 2, fullstack: false, family };
-  }
-
-  return { modelClass: "frontier", confidence: 1, fullstack: false, family: "unbekannt" };
+  // Weder Fakt noch Groessen-/Verhaltensmarker: mit oder ohne bekannte
+  // Familie gleichermassen unbelegt, daher confidence 1 in beiden Faellen.
+  return { modelClass: "frontier", confidence: 1, fullstack: false, family: family ?? "unbekannt" };
 }

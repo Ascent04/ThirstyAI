@@ -60,19 +60,12 @@ EXPLANATIONS = {
         "kleiner und nicht MoE-basiert."
     ),
     "mistral": (
-        "EcoLogits fuehrt mistral-large-latest laut eigenen Herstellerangaben "
-        "(models.json, Quelle: docs.mistral.ai) als dichtes 123-Mrd.-Parameter-Modell "
-        "- das faellt in ThirstyAIs eigener Grenzziehung klar in die 'mid'-Klasse "
-        "(<=200 Mrd.). Seit Schritt 7 kennt ThirstyAI diese Zahl selbst "
-        "(data/models.json, Fakt params-mistral-large-2) und klassifiziert den "
-        "exakten Namen 'mistral-large-2' korrekt als 'mid' (siehe Test in "
-        "test/models.test.ts) - dieser Crosscheck-Fall nutzt aber bewusst denselben "
-        "Namen wie EcoLogits ('mistral-large-latest', Schritt 2), und dessen "
-        "'-latest'-Alias enthaelt keine Versionsnummer, matcht also nicht gegen den "
-        "Fakt (der auf das Token '2' angewiesen ist). Deshalb faellt dieser "
-        "konkrete Fall weiterhin auf die Namensheuristik zurueck (FRONTIER_TOKENS: "
-        "'large' -> an das 405-Mrd.-Llama-Modell verankert). Eine Alias-Aufloesung "
-        "fuer '-latest'-Namen war nicht Teil dieses Schritts."
+        "Kein Erklaerungsbedarf mehr seit Schritt 8: 'mistral-large-latest' ist "
+        "jetzt als Alias von params-mistral-large-2 hinterlegt (data/models.json) "
+        "und wird korrekt als 'mid' klassifiziert - Verhaeltnis liegt innerhalb "
+        "[1/3, 3]. Zuvor (Schritt 7) fiel dieser Alias mangels Versionsnummer noch "
+        "auf die Namensheuristik zurueck (FRONTIER_TOKENS: 'large') und landete "
+        "faelschlich in 'frontier'."
     ),
     "llama": (
         "Kein Erklaerungsbedarf: Verhaeltnis liegt innerhalb [1/3, 3]. Bemerkenswert "
@@ -151,8 +144,9 @@ def main() -> None:
         )
     else:
         md.append(
-            "Alle zehn Modellnamen wurden von ThirstyAIs Klassifikation direkt "
-            "erkannt (confidence 3, kein Rueckfall auf eine Standardklasse).\n"
+            "Alle zehn Modellnamen wurden von ThirstyAIs Klassifikation erkannt "
+            "(confidence >= 2: Fakt-basiert oder Namensheuristik mit Familie und "
+            "Groessenmarker, kein Rueckfall auf 'nur Familie oder unbekannt').\n"
         )
     md.append(
         "Alle zehn ThirstyAI-Ergebnisse haben confidence 1: keines der Modelle "
@@ -161,22 +155,22 @@ def main() -> None:
         "Gesamt-confidence - das ist erwartetes Verhalten, kein Fehler.\n"
     )
     md.append(
-        "Seit Schritt 7 kennt ThirstyAI bekannte Modellgroessen aus "
-        "`data/models.json` (Mistral Large 2, Llama 3.1 8B/70B/405B, Mixtral "
-        "8x22B, DeepSeek-V3) und prueft sie vor der Namensheuristik. Das aendert "
-        "die Zahlen unten fuer llama (schon vorher korrekt eingeordnet) nicht und "
-        "fuer mistral hier ebenfalls nicht (dieser Fall nutzt den Alias "
-        "'mistral-large-latest', siehe Erklaerung unten) - der exakte Name "
-        "'mistral-large-2' wird aber jetzt korrekt als 'mid' erkannt (Test in "
-        "test/models.test.ts).\n"
+        "Seit Schritt 8 loest ThirstyAI Modellnamen in drei Stufen auf: exakter "
+        "Fakt-Name, dann deklarierter Alias (beide aus `data/models.json`), erst "
+        "dann die Namensheuristik. 'mistral-large-latest' ist jetzt als Alias von "
+        "params-mistral-large-2 hinterlegt und landet dadurch korrekt in 'mid' "
+        "(vorher, Schritt 7: 'frontier' ueber die Namensheuristik, siehe "
+        "methodology-draft.md).\n"
     )
     md.append(
-        "**Wichtigster Befund vorab:** Nur bei Llama-3.1-70B-Instruct (reales, "
-        "offenes Modell mit oeffentlich bekannter Parameterzahl) liegen beide "
-        "Systeme innerhalb von 40 % beieinander (siehe llama-Zeilen unten). Bei "
-        "allen anderen vier Familien muss EcoLogits die Parameterzahl selbst "
-        "schaetzen (proprietaere Modelle) - das ist der groesste Einzelfaktor fuer "
-        "die Abweichungen unten, nicht ein Fehler in einem der beiden Systeme.\n"
+        "**Wichtigster Befund vorab:** Bei den beiden Modellen mit oeffentlich "
+        "bekannter (nicht geschaetzter) Parameterzahl - Llama-3.1-70B-Instruct und "
+        "seit der Alias-Korrektur auch Mistral Large 2 - liegen beide Systeme "
+        "innerhalb von 25 % beieinander (siehe llama- und mistral-Zeilen unten). "
+        "Bei den drei verbleibenden Familien (GPT, Claude, Gemini) muss EcoLogits "
+        "die Parameterzahl selbst schaetzen (proprietaere Modelle) - das ist der "
+        "groesste Einzelfaktor fuer die Abweichungen dort, nicht ein Fehler in "
+        "einem der beiden Systeme.\n"
     )
 
     md.append("## Energie (Wh)\n")

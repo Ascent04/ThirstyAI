@@ -7,7 +7,7 @@
       "tokensOut": 300,
       "classification": {
         "modelClass": "small",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
         "family": "gpt"
       },
@@ -74,7 +74,7 @@
       "tokensOut": 1500,
       "classification": {
         "modelClass": "small",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
         "family": "gpt"
       },
@@ -141,7 +141,7 @@
       "tokensOut": 300,
       "classification": {
         "modelClass": "mid",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
         "family": "claude"
       },
@@ -209,7 +209,7 @@
       "tokensOut": 1500,
       "classification": {
         "modelClass": "mid",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
         "family": "claude"
       },
@@ -277,7 +277,7 @@
       "tokensOut": 300,
       "classification": {
         "modelClass": "frontier",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
         "family": "gemini"
       },
@@ -346,7 +346,7 @@
       "tokensOut": 1500,
       "classification": {
         "modelClass": "frontier",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
         "family": "gemini"
       },
@@ -415,10 +415,9 @@
       "tokensOut": 300,
       "classification": {
         "modelClass": "mid",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
-        "family": "llama",
-        "sourceFactId": "params-llama-3-1-70b"
+        "family": "llama"
       },
       "recognized": true,
       "energyWh": {
@@ -484,10 +483,9 @@
       "tokensOut": 1500,
       "classification": {
         "modelClass": "mid",
-        "confidence": 3,
+        "confidence": 2,
         "fullstack": false,
-        "family": "llama",
-        "sourceFactId": "params-llama-3-1-70b"
+        "family": "llama"
       },
       "recognized": true,
       "energyWh": {
@@ -552,46 +550,47 @@
       "tokensIn": 100,
       "tokensOut": 300,
       "classification": {
-        "modelClass": "frontier",
+        "modelClass": "mid",
         "confidence": 3,
         "fullstack": false,
-        "family": "mistral"
+        "family": "mistral",
+        "sourceFactId": "params-mistral-large-2"
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.47957,
-        "mid": 1.1284,
-        "max": 2.5296000000000003
+        "min": 0.09134666666666666,
+        "mid": 0.14466666666666667,
+        "max": 0.40920000000000006
       },
       "co2G": {
-        "min": 0.1678495,
-        "mid": 0.39494,
-        "max": 0.8853600000000001
+        "min": 0.03197133333333333,
+        "mid": 0.050633333333333336,
+        "max": 0.14322000000000004
       },
       "waterMl": {
-        "min": 1.62485694,
-        "mid": 3.8355928,
-        "max": 8.6225632
+        "min": 0.30949656,
+        "mid": 0.49174266666666666,
+        "max": 1.3948264000000004
       },
       "waterScope1Ml": {
-        "min": 0.11804800000000003,
-        "mid": 0.29016000000000003,
-        "max": 0.67456
+        "min": 0.022485333333333336,
+        "mid": 0.037200000000000004,
+        "max": 0.10912000000000002
       },
       "waterScope2Ml": {
-        "min": 1.50680894,
-        "mid": 3.5454328,
-        "max": 7.9480032000000005
+        "min": 0.2870112266666666,
+        "mid": 0.45454266666666665,
+        "max": 1.2857064000000002
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
         "ewif-us-average",
-        "frontier-class-joule-iqr-max",
-        "frontier-class-joule-median",
         "grid-co2-egrid-us-2023",
         "input-token-cost-share",
-        "llama31-405b-inf-energy",
+        "llama31-70b-inf-energy",
+        "mid-class-caravaca-energy",
+        "mixtral-8x22b-inf-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
@@ -603,9 +602,8 @@
         "wue-site-fallback-min"
       ],
       "assumptions": [
-        "frontier-class-joule-iqr-max",
-        "frontier-class-joule-median",
         "input-token-cost-share",
+        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
@@ -621,46 +619,47 @@
       "tokensIn": 2000,
       "tokensOut": 1500,
       "classification": {
-        "modelClass": "frontier",
+        "modelClass": "mid",
         "confidence": 3,
         "fullstack": false,
-        "family": "mistral"
+        "family": "mistral",
+        "sourceFactId": "params-mistral-large-2"
       },
       "recognized": true,
       "energyWh": {
-        "min": 2.6298999999999992,
-        "mid": 6.188000000000001,
-        "max": 13.872000000000002
+        "min": 0.5009333333333333,
+        "mid": 0.7933333333333334,
+        "max": 2.244
       },
       "co2G": {
-        "min": 0.9204649999999998,
-        "mid": 2.1658000000000004,
-        "max": 4.855200000000001
+        "min": 0.1753266666666667,
+        "mid": 0.2776666666666667,
+        "max": 0.7854000000000001
       },
       "waterMl": {
-        "min": 8.910505799999996,
-        "mid": 21.033896000000002,
-        "max": 47.285024
+        "min": 1.6972392,
+        "mid": 2.696653333333334,
+        "max": 7.6490480000000005
       },
       "waterScope1Ml": {
-        "min": 0.6473599999999999,
-        "mid": 1.5912000000000002,
-        "max": 3.6992000000000007
+        "min": 0.12330666666666668,
+        "mid": 0.20400000000000001,
+        "max": 0.5984000000000002
       },
       "waterScope2Ml": {
-        "min": 8.263145799999997,
-        "mid": 19.442696,
-        "max": 43.585824
+        "min": 1.5739325333333334,
+        "mid": 2.4926533333333336,
+        "max": 7.050648000000001
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
         "ewif-us-average",
-        "frontier-class-joule-iqr-max",
-        "frontier-class-joule-median",
         "grid-co2-egrid-us-2023",
         "input-token-cost-share",
-        "llama31-405b-inf-energy",
+        "llama31-70b-inf-energy",
+        "mid-class-caravaca-energy",
+        "mixtral-8x22b-inf-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
@@ -672,9 +671,8 @@
         "wue-site-fallback-min"
       ],
       "assumptions": [
-        "frontier-class-joule-iqr-max",
-        "frontier-class-joule-median",
         "input-token-cost-share",
+        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",

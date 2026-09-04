@@ -45,10 +45,16 @@ describe("classifyModel", () => {
     expect(result.confidence).toBe(1);
   });
 
-  it("faellt bei bekannter Familie ohne Groessenhinweis auf frontier mit confidence 2 zurueck", () => {
+  it("faellt bei bekannter Familie ohne Groessenhinweis auf frontier mit confidence 1 zurueck (seit Schritt 8: nur Familie ohne Marker zaehlt wie unbekannt)", () => {
     const result = classifyModel("gpt-5");
     expect(result.modelClass).toBe("frontier");
-    expect(result.confidence).toBe(2);
+    expect(result.confidence).toBe(1);
+  });
+
+  it("staffelt die Namensheuristik-confidence: Familie+Groessenmarker=2, nur Familie oder unbekannt=1", () => {
+    expect(classifyModel("gpt-4o-mini").confidence).toBe(2);
+    expect(classifyModel("gpt-5").confidence).toBe(1);
+    expect(classifyModel("xyzzy-modell-9000").confidence).toBe(1);
   });
 
   it("nutzt eine bekannte Parameterzahl aus data/models.json vor der Namensheuristik", () => {
@@ -59,5 +65,15 @@ describe("classifyModel", () => {
     // Namensheuristik (FRONTIER_TOKENS: "large") falsch als "frontier"
     // eingeordnet - das zeigt, warum die Fakten-Pruefung zuerst kommt.
     expect(classifyModel("mistral-large-2").modelClass).toBe("frontier");
+  });
+
+  it("loest einen bekannten Alias auf (exakter Name -> Alias -> Heuristik)", () => {
+    // "mistral-large-latest" ist kein exakter Fakt-Name, aber ein
+    // deklarierter Alias von params-mistral-large-2 - ohne Alias-Aufloesung
+    // wuerde die Namensheuristik (FRONTIER_TOKENS: "large") faelschlich
+    // "frontier" liefern.
+    const result = classifyModel("mistral-large-latest", undefined, tableWithModels());
+    expect(result.modelClass).toBe("mid");
+    expect(result.sourceFactId).toBe("params-mistral-large-2");
   });
 });

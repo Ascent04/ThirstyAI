@@ -56,10 +56,11 @@ function main(): void {
       tokensIn: c.tokensIn,
       tokensOut: c.tokensOut,
       classification,
-      // confidence 3 heisst: Modellname direkt anhand von Groesse/Namenshinweis
-      // erkannt. confidence 1/2 heisst: Rueckfall (unbekanntes Modell bzw.
-      // bekannte Familie ohne Groessenhinweis) - siehe src/models.ts.
-      recognized: classification.confidence >= 3,
+      // Seit Schritt 8 (src/models.ts): confidence >= fact.confidence (Fakt-
+      // basiert, meist 3+) oder 2 (Namensheuristik mit Familie+Groessenmarker)
+      // heisst erkannt. confidence 1 heisst: nur Familie ohne Marker oder
+      // komplett unbekannt - beide sind laut Design gleich schwach belegt.
+      recognized: classification.confidence >= 2,
       energyWh: result.energyTotal,
       co2G: result.co2Scope2,
       waterMl: {

@@ -124,30 +124,46 @@ Koeffizienten daran anzupassen. Drei Erkenntnisse:
    `model-arch-multimodal` versehen) und seine GPU-Energie linear mit
    dieser Schaetzung skaliert, waehrend ThirstyAI an gemessene
    Benchmark-Bandbreiten aus der Faktendatei gebunden bleibt.
-3. **ThirstyAIs Namensheuristik hat eine dokumentierte Schwaeche**: bei
-   mistral-large-latest (real 123 Mrd. Parameter, laut EcoLogits/Mistral
-   selbst - passt in ThirstyAIs eigene 'mid'-Grenze von <=200 Mrd.) fuehrt
-   der Namensbestandteil "large" ohne begleitende Zahl zur falschen
+3. **ThirstyAIs Namensheuristik hatte eine dokumentierte Schwaeche**
+   (behoben in Schritt 8, siehe Nachtrag): bei mistral-large-latest (real
+   123 Mrd. Parameter, laut EcoLogits/Mistral selbst - passt in
+   ThirstyAIs eigene 'mid'-Grenze von <=200 Mrd.) fuehrte der
+   Namensbestandteil "large" ohne begleitende Zahl zur falschen
    Einordnung als "frontier" (verankert an einem 405-Mrd.-Modell). Ein
-   Modellname mit expliziter Groessenangabe (wie "70b" bei Llama) waere
-   davon nicht betroffen. Das ist eine reale Grenze der
-   Namenserkennung in `src/models.ts`, keine Korrektur der Koeffizienten
-   - siehe drittes Beispiel in den Ergebnistabellen.
+   Modellname mit expliziter Groessenangabe (wie "70b" bei Llama) war
+   davon nicht betroffen.
 
-**Nachtrag Schritt 7**: `data/models.json` gibt ThirstyAI jetzt bekannte
-Parameterzahlen (Mistral Large 2, Llama 3.1 8B/70B/405B, Mixtral 8x22B,
-DeepSeek-V3), die vor der Namensheuristik geprueft werden. Der exakte
-Name "mistral-large-2" wird dadurch korrekt als "mid" erkannt (Test in
-`test/models.test.ts`) - Befund 3 oben bleibt aber fuer den in der
-Gegenprobe verwendeten Alias "mistral-large-latest" bestehen, weil der
-Fakt auf das Token "2" angewiesen ist und eine Alias-Aufloesung fuer
-"-latest"-Namen nicht Teil dieses Schritts war. Ausserdem zum
-Gemini-Fall: ThirstyAI nutzt fuer gemini-apps Googles selbst gemessenen,
-bereits vollstaendigen Vollstack-Wert (Fakt `gemini-energy`), waehrend
-EcoLogits fuer gemini-2.5-pro eine vermutete Parameterzahl (200-600 Mrd.
-aktiv, nicht von Google bestaetigt) durch seine eigene Regression
-schickt - das ist ein grundsaetzlich anderer Ansatz, kein Fehler auf
-einer der beiden Seiten.
+**Nachtrag Schritt 7**: `data/models.json` gibt ThirstyAI seither
+bekannte Parameterzahlen (Mistral Large 2, Llama 3.1 8B/70B/405B,
+Mixtral 8x22B, DeepSeek-V3), die vor der Namensheuristik geprueft
+werden. Der exakte Name "mistral-large-2" wurde dadurch korrekt als
+"mid" erkannt (Test in `test/models.test.ts`) - Befund 3 blieb aber fuer
+den in der Gegenprobe verwendeten Alias "mistral-large-latest" zunaechst
+bestehen, weil der Fakt auf das Token "2" angewiesen war und eine
+Alias-Aufloesung fuer "-latest"-Namen nicht Teil von Schritt 7 war.
+Ausserdem zum Gemini-Fall: ThirstyAI nutzt fuer gemini-apps Googles
+selbst gemessenen, bereits vollstaendigen Vollstack-Wert (Fakt
+`gemini-energy`), waehrend EcoLogits fuer gemini-2.5-pro eine vermutete
+Parameterzahl (200-600 Mrd. aktiv, nicht von Google bestaetigt) durch
+seine eigene Regression schickt - das ist ein grundsaetzlich anderer
+Ansatz, kein Fehler auf einer der beiden Seiten.
+
+**Nachtrag Schritt 8**: `data/models.json`-Fakten tragen jetzt ein
+`aliases`-Feld (ueber die ganze Tabelle eindeutig geprueft beim Laden).
+`classifyModel` loest in drei Stufen auf: exakter Fakt-Name, dann Alias,
+erst dann die Namensheuristik. "mistral-large-latest" ist als Alias von
+`params-mistral-large-2` hinterlegt und wird dadurch korrekt als "mid"
+klassifiziert - Befund 3 ist damit fuer die Gegenprobe behoben (siehe
+aktualisierte results.md, mistral-Zeilen jetzt innerhalb von 25 % statt
+Faktor 6-8). Ausserdem wurde die confidence-Staffelung der
+Namensheuristik verfeinert: Fakt-basierte Treffer uebernehmen die
+confidence des Fakts, ein Namenstreffer mit erkannter Familie UND
+Groessen-/Verhaltensmarker (z.B. "mini", "70b", "r1") ergibt confidence
+2, eine erkannte Familie ohne Marker oder ein komplett unbekannter Name
+ergeben beide confidence 1 (vorher: 2 bzw. 1) - eine Familie allein ist
+keine verlaessliche Groessenaussage. Betroffener Test:
+"faellt bei bekannter Familie ohne Groessenhinweis auf frontier mit
+confidence 2 zurueck" in `test/models.test.ts`, jetzt confidence 1.
 
 ## Offene Stellen
 

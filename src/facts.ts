@@ -38,6 +38,10 @@ export interface Fact {
   quote: string;
   second_source: string;
   note: string;
+  /** Bekannte alternative Namen fuer denselben Gegenstand (z.B. Modellnamen
+   * verschiedener Anbieter-Schreibweisen). Optional, muss ueber die ganze
+   * Tabelle eindeutig sein (siehe loadFacts). */
+  aliases?: string[];
 }
 
 export interface FactTable {
@@ -89,10 +93,15 @@ function readJsonFile(path: string): RawFactFile {
   return JSON.parse(text) as RawFactFile;
 }
 
+function normalizeAlias(alias: string): string {
+  return alias.toLowerCase().trim();
+}
+
 function validateFact(
   fact: Fact,
   sources: Record<string, Source>,
   byId: Map<string, Fact>,
+  seenAliases: Map<string, string>,
 ): void {
   const id = fact?.id;
   if (typeof id !== "string" || id === "") {
@@ -135,6 +144,25 @@ function validateFact(
       `source_id '${fact.source_id}' ist nicht im Quellenregister`,
     );
   }
+  if (fact.aliases !== undefined) {
+    if (!Array.isArray(fact.aliases)) {
+      throw new FactValidationError(id, "Feld 'aliases' ist kein Array");
+    }
+    for (const alias of fact.aliases) {
+      if (typeof alias !== "string" || alias.trim() === "") {
+        throw new FactValidationError(id, "Eintrag in 'aliases' ist kein nicht-leerer String");
+      }
+      const key = normalizeAlias(alias);
+      const owner = seenAliases.get(key);
+      if (owner !== undefined) {
+        throw new FactValidationError(
+          id,
+          `Alias '${alias}' ist nicht eindeutig (bereits bei Fakt '${owner}')`,
+        );
+      }
+      seenAliases.set(key, id);
+    }
+  }
 }
 
 /**
@@ -142,7 +170,8 @@ function validateFact(
  * zusammen. Quellenregister werden vereinigt (spätere Dateien überschreiben
  * gleiche Quellen-IDs), Fakten werden über alle Dateien geprüft: Pflichtfelder
  * gefüllt, IDs eindeutig, source_id im Quellenregister, confidence 1-5,
- * value numerisch.
+ * value numerisch, optionale Aliase (Groß-/Kleinschreibung ignorierend)
+ * eindeutig über die ganze Tabelle.
  */
 export function loadFacts(paths: string[]): FactTable {
   const rawFiles = paths.map(readJsonFile);
@@ -154,9 +183,10 @@ export function loadFacts(paths: string[]): FactTable {
 
   const facts: Fact[] = [];
   const byId = new Map<string, Fact>();
+  const seenAliases = new Map<string, string>();
   for (const raw of rawFiles) {
     for (const fact of raw.facts ?? []) {
-      validateFact(fact, sources, byId);
+      validateFact(fact, sources, byId, seenAliases);
       byId.set(fact.id, fact);
       facts.push(fact);
     }
