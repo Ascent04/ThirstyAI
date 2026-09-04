@@ -58,8 +58,10 @@ function mul(a: ResultRange, b: CoefficientRange): ResultRange {
   return { min: a.min * b.min, mid: a.mid * b.mid, max: a.max * b.max };
 }
 
+// Intervall-Division: der kleinste Quotient entsteht beim groessten Divisor
+// und umgekehrt, daher min/max ueber Kreuz (nicht indexweise wie bei mul()).
 function div(a: ResultRange, b: CoefficientRange): ResultRange {
-  return { min: a.min / b.min, mid: a.mid / b.mid, max: a.max / b.max };
+  return { min: a.min / b.max, mid: a.mid / b.mid, max: a.max / b.min };
 }
 
 /**
@@ -69,8 +71,10 @@ function div(a: ResultRange, b: CoefficientRange): ResultRange {
  * Referenz 300 Output-Token, Input-Token zu `input-token-cost-share` gewichtet)
  * -> energyIt (bei Vollstack-Fakten durch PUE geteilt, um den reinen
  * IT-Anteil zurueckzurechnen; sonst mit overheadFactor multipliziert) ->
- * energyTotal (energyIt x PUE) -> waterScope1 (energyIt x wueSite),
- * waterScope2 (energyTotal x ewif), co2Scope2 (energyTotal x carbonIntensity).
+ * energyTotal (bei Vollstack-Fakten = energyGpu selbst, da dort schon die
+ * Gesamtenergie inkl. PUE gemessen wurde; sonst energyIt x PUE) ->
+ * waterScope1 (energyIt x wueSite), waterScope2 (energyTotal x ewif),
+ * co2Scope2 (energyTotal x carbonIntensity).
  * Die Gesamt-confidence ist das Minimum der tatsaechlich genutzten
  * Koeffizienten (overheadFactor zaehlt nur mit, wenn er auch verwendet wird);
  * die beiden universellen Umrechnungs-Annahmen (Referenz-Token, Input-Anteil)
@@ -92,11 +96,16 @@ export function calculate(input: CalculateInput, table: FactTable): Result {
 
   const energyGpu = scale(coeffs.energyPerRequestGpuOnly, tokenScale);
 
+  // Vollstack-Fakten (aktuell nur Gemini Apps) sind bereits die
+  // Gesamtenergie inkl. PUE - energyTotal ist deshalb der Fakt selbst, nicht
+  // energyIt*PUE (das wuerde durch die Intervall-Division keine exakte
+  // Rundreise mehr ergeben). energyIt wird nur fuer waterScope1 gebraucht
+  // und daraus zurueckgerechnet.
   const energyIt = coeffs.fullstack
     ? div(energyGpu, coeffs.pue)
     : mul(energyGpu, coeffs.overheadFactor);
 
-  const energyTotal = mul(energyIt, coeffs.pue);
+  const energyTotal = coeffs.fullstack ? energyGpu : mul(energyIt, coeffs.pue);
 
   const waterScope1 = mul(energyIt, coeffs.wueSite);
   const waterScope2 = mul(energyTotal, coeffs.ewif);

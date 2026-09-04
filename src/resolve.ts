@@ -46,26 +46,49 @@ function pointRange(fact: Fact): CoefficientRange {
   };
 }
 
-function spreadRange(fact: Fact, delta: number): CoefficientRange {
+/**
+ * deltaFact (die Bandbreite um den PUE-Punktwert) wird auf jede einzige
+ * Anfrage angewendet, unabhaengig von Modell, Anbieter oder Region - genau
+ * wie reference-output-tokens/input-token-cost-share in calculate.ts geht
+ * seine confidence deshalb nicht in die Gesamt-confidence ein (sonst waere
+ * jedes Ergebnis unabhaengig von der Qualitaet der PUE-Quelle auf 1
+ * begrenzt), erscheint aber ueber factIds in `assumptions`.
+ */
+function spreadRange(fact: Fact, deltaFact: Fact): CoefficientRange {
+  const delta = deltaFact.value;
   return {
     min: fact.value - delta,
     mid: fact.value,
     max: fact.value + delta,
     confidence: fact.confidence,
-    factIds: [fact.id],
+    factIds: [fact.id, deltaFact.id],
   };
 }
 
 /**
  * Fakten, die eine Wasser-ENTNAHME (withdrawal) ausweisen statt Verbrauch
  * (consumption), werden so behandelt: mid = Entnahme x consumptionShare
- * (z.B. 0.8, Googles eigener Verbrauchsanteil an der Entnahme), max = die
- * Entnahme selbst als Obergrenze (Annahme: im ungünstigsten Fall wird alles
- * verbraucht). min = mid, da keine belegte untere Grenze vorliegt.
+ * (shareFact, z.B. Googles eigener Verbrauchsanteil an der Entnahme), max =
+ * die Entnahme selbst als Obergrenze (Annahme: im ungünstigsten Fall wird
+ * alles verbraucht). min = mid, da keine belegte untere Grenze vorliegt.
  */
-function withdrawalRange(fact: Fact, consumptionShare: number): CoefficientRange {
-  const mid = fact.value * consumptionShare;
-  return { min: mid, mid, max: fact.value, confidence: fact.confidence, factIds: [fact.id] };
+function withdrawalRange(fact: Fact, shareFact: Fact): CoefficientRange {
+  const mid = fact.value * shareFact.value;
+  return {
+    min: mid,
+    mid,
+    max: fact.value,
+    confidence: Math.min(fact.confidence, shareFact.confidence),
+    factIds: [fact.id, shareFact.id],
+  };
+}
+
+function capConfidence(range: CoefficientRange, capFact: Fact): CoefficientRange {
+  return {
+    ...range,
+    confidence: Math.min(range.confidence, capFact.value),
+    factIds: [...range.factIds, capFact.id],
+  };
 }
 
 function normalizeProvider(provider?: string): string | undefined {
@@ -112,39 +135,38 @@ function resolveEnergyPerRequest(
     }
     case "mid": {
       const min = requireFact(table, "llama31-70b-inf-energy");
+      const mid = requireFact(table, "mid-class-caravaca-energy");
       const max = requireFact(table, "mixtral-8x22b-inf-energy");
-      // mid = 0.05 Wh, Caravaca et al. Produktionsmessung, dokumentiert im
-      // second_source-Feld von llama31-70b-inf-energy (kein eigener Fakt).
       return {
         min: min.value,
-        mid: 0.05,
+        mid: mid.value,
         max: max.value,
-        confidence: Math.min(min.confidence, max.confidence),
-        factIds: [min.id, max.id],
+        confidence: Math.min(min.confidence, mid.confidence, max.confidence),
+        factIds: [min.id, mid.id, max.id],
       };
     }
     case "frontier": {
-      const fact = requireFact(table, "llama31-405b-inf-energy");
-      // mid/max = Joule Monte-Carlo-Median 0.39 Wh, IQR 0.19-0.68, dokumentiert
-      // im second_source-Feld desselben Fakts.
+      const min = requireFact(table, "llama31-405b-inf-energy");
+      const mid = requireFact(table, "frontier-class-joule-median");
+      const max = requireFact(table, "frontier-class-joule-iqr-max");
       return {
-        min: fact.value,
-        mid: 0.39,
-        max: 0.68,
-        confidence: fact.confidence,
-        factIds: [fact.id],
+        min: min.value,
+        mid: mid.value,
+        max: max.value,
+        confidence: Math.min(min.confidence, mid.confidence, max.confidence),
+        factIds: [min.id, mid.id, max.id],
       };
     }
     case "reasoning": {
-      const midFact = requireFact(table, "dsr1-distill-70b-reason");
-      const frontierMidFact = requireFact(table, "llama31-405b-inf-energy");
-      const maxFact = requireFact(table, "jegham-long-prompt-max");
+      const min = requireFact(table, "frontier-class-joule-median");
+      const mid = requireFact(table, "dsr1-distill-70b-reason");
+      const max = requireFact(table, "jegham-long-prompt-max");
       return {
-        min: 0.39,
-        mid: midFact.value,
-        max: maxFact.value,
-        confidence: Math.min(midFact.confidence, frontierMidFact.confidence, maxFact.confidence),
-        factIds: [midFact.id, frontierMidFact.id, maxFact.id],
+        min: min.value,
+        mid: mid.value,
+        max: max.value,
+        confidence: Math.min(min.confidence, mid.confidence, max.confidence),
+        factIds: [min.id, mid.id, max.id],
       };
     }
     default: {
@@ -181,7 +203,8 @@ function resolvePue(provider: string | undefined, table: FactTable): Coefficient
   } else {
     fact = requireFact(table, "us-dc-pue-2023");
   }
-  return spreadRange(fact, 0.1);
+  const halfWidth = requireFact(table, "pue-range-half-width");
+  return spreadRange(fact, halfWidth);
 }
 
 // --- d) wueSite ---
@@ -214,16 +237,28 @@ function resolveWueSite(
     const fact =
       latest(table, { ids: ["aws-wue-2024", "aws-wue-2025"] }, asOf)[0] ??
       requireFact(table, "aws-wue-2024");
-    return withdrawalRange(fact, 0.8);
+    return withdrawalRange(fact, requireFact(table, "withdrawal-to-consumption-share"));
   }
   if (isMetaProvider(p)) {
-    return withdrawalRange(requireFact(table, "meta-wue-2024"), 0.8);
+    return withdrawalRange(
+      requireFact(table, "meta-wue-2024"),
+      requireFact(table, "withdrawal-to-consumption-share"),
+    );
   }
 
-  // Fallback: US-Rechenzentren-Durchschnitt. Bandbreite aus der Notiz des
-  // Fakts selbst (Hyperscale-Median 0.32, LBNL-Wert 0.36, Sensitivitaet 0.40).
+  // Fallback: US-Rechenzentren-Durchschnitt. min/max stehen nur in der Notiz
+  // des Fakts (Hyperscale-Median 0.32, Sensitivitaet 0.40), daher als eigene
+  // ANNAHME-Fakten herausgezogen.
   const fallback = requireFact(table, "us-dc-wue-site-2023");
-  return { min: 0.32, mid: fallback.value, max: 0.4, confidence: fallback.confidence, factIds: [fallback.id] };
+  const min = requireFact(table, "wue-site-fallback-min");
+  const max = requireFact(table, "wue-site-fallback-max");
+  return {
+    min: min.value,
+    mid: fallback.value,
+    max: max.value,
+    confidence: Math.min(min.confidence, fallback.confidence, max.confidence),
+    factIds: [min.id, fallback.id, max.id],
+  };
 }
 
 // --- e) ewif und carbonIntensity nach Region ---
@@ -263,7 +298,8 @@ function resolveEwif(
   }
   const fallback =
     latest(table, { ids: FALLBACK_EWIF_IDS }, asOf)[0] ?? requireFact(table, FALLBACK_EWIF_IDS[0]);
-  return { ...pointRange(fallback), confidence: Math.min(fallback.confidence, 2) };
+  const cap = requireFact(table, "region-fallback-confidence-cap");
+  return capConfidence(pointRange(fallback), cap);
 }
 
 function resolveCarbonIntensity(
@@ -288,7 +324,8 @@ function resolveCarbonIntensity(
   const fallback =
     latest(table, { ids: FALLBACK_CARBON_IDS }, asOf)[0] ??
     requireFact(table, FALLBACK_CARBON_IDS[0]);
-  return { ...pointRange(fallback), confidence: Math.min(fallback.confidence, 2) };
+  const cap = requireFact(table, "region-fallback-confidence-cap");
+  return capConfidence(pointRange(fallback), cap);
 }
 
 /**

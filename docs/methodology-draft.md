@@ -41,17 +41,34 @@ Output-Token, optional ein Stichtag (`asOf`).
 
 Alle Schritte sind Multiplikation oder Division durch positive Werte,
 nie Subtraktion. Wendet man auf jeden Schritt konsequent die min- bzw.
-max-Auspraegung jedes Koeffizienten an, bleibt min <= mid <= max in
-jedem Ergebnisfeld automatisch erhalten.
+max-Auspraegung jedes Koeffizienten an (bei Division ueber Kreuz: der
+kleinste Quotient entsteht beim groessten Divisor), bleibt
+min <= mid <= max in jedem Ergebnisfeld automatisch erhalten.
 
 **Confidence**: das Minimum der confidence-Werte aller tatsaechlich
 verwendeten Koeffizienten (der Overhead-Faktor zaehlt nur mit, wenn er
 auch angewendet wird, also nicht bei Vollstack-Fakten). Die beiden
 universellen Umrechnungs-Annahmen (Referenz-Tokenzahl,
-Input-Kostenanteil) fliessen nicht in die confidence ein - sonst waere
-jedes Ergebnis unabhaengig von der Qualitaet der uebrigen Fakten auf 1
-begrenzt. Sie erscheinen aber in `assumptions`, damit sie sichtbar
-bleiben.
+Input-Kostenanteil) fliessen nicht in die confidence ein. Sie
+erscheinen aber in `assumptions`, damit sie sichtbar bleiben.
+
+**Warum `reference-output-tokens` und `input-token-cost-share` nicht in
+die confidence eingehen**: Beide Fakten sind ANNAHMEN mit confidence 1
+und werden bei jeder einzigen Berechnung angewendet, unabhaengig von
+Modell, Anbieter oder Region. Wuerden sie mitgezaehlt, waere die
+confidence jedes Ergebnisses immer 1 - ein Wert, der dann nichts mehr
+ueber die tatsaechlich verwendeten Modell-, Standort- oder
+Netz-Koeffizienten aussagt und die Kennzahl damit wertlos macht. Der
+Zweck von confidence ist, zwischen gut belegten Berechnungen (z.B.
+bekannte Region, gemessene Energie) und schwach belegten (z.B.
+Rueckfall auf US-Durchschnitt bei unbekannter Region) zu unterscheiden;
+eine Konstante, die ausnahmslos jede Berechnung gleichermassen trifft,
+kann diese Unterscheidung nicht leisten. Das ist ein bewusster
+Kompromiss, keine Verschleierung: beide Fakten stehen weiterhin in
+`assumptions`, ihre Unsicherheit bleibt also sichtbar - sie beeinflusst
+nur nicht die confidence-Zahl. Leserinnen und Leser sollten confidence
+deshalb als "bedingt auf Akzeptanz des Tokenisierungs-Modells" lesen,
+nicht als absolutes Mass an Sicherheit.
 
 ## Eigene Annahmen (`data/assumptions.json`)
 
@@ -65,6 +82,21 @@ Alle mit `rating: "ANNAHME"`, `confidence: 1`, `source_id:
   Verhaeltnis von Googles Vollstack- zu enger Systemgrenze.
 - **reference-output-tokens** (300 Token): siehe offene Stelle 1.
 - **input-token-cost-share** (0.1): siehe offene Stelle 2.
+- **mid-class-caravaca-energy** (0.05 Wh), **frontier-class-joule-median**
+  (0.39 Wh), **frontier-class-joule-iqr-max** (0.68 Wh): Zahlen, die nur im
+  `second_source`-Feld eines Fakts standen (Caravaca-Messung bzw.
+  Joule-Monte-Carlo-Schaetzung), hier als eigene, referenzierte ANNAHME
+  herausgezogen, damit resolve.ts keine Zahlen-Literale enthaelt.
+- **pue-range-half-width** (0.1): eigene Bandbreite um den PUE-Punktwert,
+  da Anbieter PUE meist ohne Unsicherheitsangabe berichten.
+- **withdrawal-to-consumption-share** (0.8): aus der Notiz von
+  `google-wue-cat2` ("Google verbraucht im Schnitt 80 % des entnommenen
+  Wassers"), auf AWS und Meta uebertragen.
+- **wue-site-fallback-min/max** (0.32 / 0.4 L/kWh): Hyperscale-Median bzw.
+  Sensitivitaet aus der Notiz von `us-dc-wue-site-2023`.
+- **region-fallback-confidence-cap** (2): redaktionelle Regel, die die
+  confidence deckelt, wenn bei unbekannter Region auf US-Werte
+  zurueckgefallen wird.
 
 ## Offene Stellen
 

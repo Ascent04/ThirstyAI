@@ -17,13 +17,15 @@ function closeWithin(value: number, target: number, tolerance: number): void {
 
 /**
  * Baut eine eigenstaendige Faktentabelle fuer Testfall 2. Sie tritt nicht
- * gegen data/facts.json an, sondern liefert eigene Werte unter denselben
- * Fakt-IDs, die resolve.ts fuer die Modellklasse "small" nachschlaegt - so
- * laesst sich Li et al.s GPT-3-Wasserzahl (16.904 mL, arXiv:2304.03271 Tab. 1)
- * unabhaengig von den echten Projektfakten pruefen. GPT-3 wird hier absichtlich
- * nicht als "small" klassifiziert, weil es das ist, sondern weil nur diese
- * Klasse ihre Koeffizienten vollstaendig aus (ueberschreibbaren) Fakten statt
- * aus Literalen im Code bezieht.
+ * gegen data/facts.json an, sondern liefert Li et al.s eigene Koeffizienten
+ * (PUE 1.17, WUE 0.55, EWIF 3.142, Energie 4.0 Wh, kein Overhead) unter
+ * denselben Fakt-IDs, die resolve.ts fuer die Modellklasse "small"
+ * nachschlaegt - so lassen sich waterScope1 (2.2 mL) und waterScope2
+ * (14.7 mL) aus arXiv:2304.03271 Tab. 1 unabhaengig von den echten
+ * Projektfakten pruefen. GPT-3 wird hier absichtlich nicht als "small"
+ * klassifiziert, weil es das ist, sondern weil nur diese Klasse ihre
+ * Koeffizienten vollstaendig aus (ueberschreibbaren) Fakten statt aus
+ * Literalen im Code bezieht.
  */
 function overrideTable(): FactTable {
   const source: Source = {
@@ -65,8 +67,11 @@ function overrideTable(): FactTable {
     fact({ id: "overhead-factor-min", value: 1.0 }),
     fact({ id: "overhead-factor-mid", value: 1.0 }),
     fact({ id: "overhead-factor-max", value: 1.0 }),
-    fact({ id: "us-dc-pue-2023", value: 1.0 }),
-    fact({ id: "us-dc-wue-site-2023", value: 1.084 }),
+    fact({ id: "us-dc-pue-2023", value: 1.17 }),
+    fact({ id: "pue-range-half-width", value: 0.1 }),
+    fact({ id: "us-dc-wue-site-2023", value: 0.55 }),
+    fact({ id: "wue-site-fallback-min", value: 0.4 }),
+    fact({ id: "wue-site-fallback-max", value: 0.7 }),
     fact({ id: "ewif-us-average", value: 3.142 }),
     fact({ id: "grid-co2-egrid-us-2023", value: 350 }),
     fact({ id: "reference-output-tokens", value: 300 }),
@@ -86,15 +91,18 @@ describe("calculate", () => {
     closeWithin(result.waterScope1.mid, 0.26, 0.1);
     closeWithin(result.co2Scope2.mid, 0.023, 0.1);
     expect(result.boundary).toBe("fullstack");
+    // Vollstack-Fakt ist bereits die Gesamtenergie inkl. PUE, energyTotal
+    // darf durch die Intervall-Division bei energyIt nicht verfaelscht werden.
+    expect(result.energyTotal.mid).toBeCloseTo(0.24, 10);
   });
 
-  it("GPT-3/Li et al.: mit ueberschriebenen Fakten ~16.9 mL Gesamtwasser", () => {
+  it("GPT-3/Li et al.: mit Original-Koeffizienten waterScope1 ~2.2 mL, waterScope2 ~14.7 mL", () => {
     const result = calculate(
       { model: "small-test-model", tokensIn: 0, tokensOut: 300, region: "US" },
       overrideTable(),
     );
-    const totalWater = result.waterScope1.mid + result.waterScope2.mid;
-    closeWithin(totalWater, 16.904, 0.05);
+    closeWithin(result.waterScope1.mid, 2.2, 0.05);
+    closeWithin(result.waterScope2.mid, 14.7, 0.05);
   });
 
   it("liefert bei 0 Token ueberall 0", () => {
@@ -117,9 +125,16 @@ describe("calculate", () => {
     expect(result.factIds).toContain("ewif-us-average");
   });
 
-  it("haelt min <= mid <= max fuer alle Groessen ein", () => {
-    for (const model of ["gpt-4o-mini", "claude-3-5-sonnet", "llama-3.1-405b", "deepseek-r1"]) {
-      const result = calculate({ model, tokensIn: 500, tokensOut: 300 }, table());
+  it("haelt min <= mid <= max ein, auch bei Vollstack-Fakten (PUE-Division)", () => {
+    const cases: Array<{ model: string; provider?: string }> = [
+      { model: "gpt-4o-mini" },
+      { model: "claude-3-5-sonnet" },
+      { model: "llama-3.1-405b" },
+      { model: "deepseek-r1" },
+      { model: "gemini-apps", provider: "google" },
+    ];
+    for (const { model, provider } of cases) {
+      const result = calculate({ model, provider, tokensIn: 500, tokensOut: 300 }, table());
       for (const range of [result.energyTotal, result.waterScope1, result.waterScope2, result.co2Scope2]) {
         expect(range.min).toBeLessThanOrEqual(range.mid);
         expect(range.mid).toBeLessThanOrEqual(range.max);
