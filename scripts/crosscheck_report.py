@@ -63,12 +63,16 @@ EXPLANATIONS = {
         "EcoLogits fuehrt mistral-large-latest laut eigenen Herstellerangaben "
         "(models.json, Quelle: docs.mistral.ai) als dichtes 123-Mrd.-Parameter-Modell "
         "- das faellt in ThirstyAIs eigener Grenzziehung klar in die 'mid'-Klasse "
-        "(<=200 Mrd.). ThirstyAIs Namensheuristik (src/models.ts, FRONTIER_TOKENS) "
-        "ordnet den Namensbestandteil 'large' aber ohne Groessenangabe in der "
-        "Zeichenkette der 'frontier'-Klasse zu, die an das 405-Mrd.-Llama-Modell "
-        "verankert ist. Das ist eine echte Schwaeche der Namensheuristik, nicht der "
-        "Koeffizienten selbst: eine Zahl im Modellnamen (aehnlich '70b' bei Llama) "
-        "wuerde korrekt zu 'mid' fuehren."
+        "(<=200 Mrd.). Seit Schritt 7 kennt ThirstyAI diese Zahl selbst "
+        "(data/models.json, Fakt params-mistral-large-2) und klassifiziert den "
+        "exakten Namen 'mistral-large-2' korrekt als 'mid' (siehe Test in "
+        "test/models.test.ts) - dieser Crosscheck-Fall nutzt aber bewusst denselben "
+        "Namen wie EcoLogits ('mistral-large-latest', Schritt 2), und dessen "
+        "'-latest'-Alias enthaelt keine Versionsnummer, matcht also nicht gegen den "
+        "Fakt (der auf das Token '2' angewiesen ist). Deshalb faellt dieser "
+        "konkrete Fall weiterhin auf die Namensheuristik zurueck (FRONTIER_TOKENS: "
+        "'large' -> an das 405-Mrd.-Llama-Modell verankert). Eine Alias-Aufloesung "
+        "fuer '-latest'-Namen war nicht Teil dieses Schritts."
     ),
     "llama": (
         "Kein Erklaerungsbedarf: Verhaeltnis liegt innerhalb [1/3, 3]. Bemerkenswert "
@@ -155,6 +159,16 @@ def main() -> None:
         "trifft ThirstyAIs Vollstack-Sonderfall (nur 'gemini-apps'), daher greift "
         "ueberall der overhead-factor (ANNAHME, confidence 1) und floort die "
         "Gesamt-confidence - das ist erwartetes Verhalten, kein Fehler.\n"
+    )
+    md.append(
+        "Seit Schritt 7 kennt ThirstyAI bekannte Modellgroessen aus "
+        "`data/models.json` (Mistral Large 2, Llama 3.1 8B/70B/405B, Mixtral "
+        "8x22B, DeepSeek-V3) und prueft sie vor der Namensheuristik. Das aendert "
+        "die Zahlen unten fuer llama (schon vorher korrekt eingeordnet) nicht und "
+        "fuer mistral hier ebenfalls nicht (dieser Fall nutzt den Alias "
+        "'mistral-large-latest', siehe Erklaerung unten) - der exakte Name "
+        "'mistral-large-2' wird aber jetzt korrekt als 'mid' erkannt (Test in "
+        "test/models.test.ts).\n"
     )
     md.append(
         "**Wichtigster Befund vorab:** Nur bei Llama-3.1-70B-Instruct (reales, "

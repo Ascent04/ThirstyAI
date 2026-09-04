@@ -134,6 +134,21 @@ Koeffizienten daran anzupassen. Drei Erkenntnisse:
    Namenserkennung in `src/models.ts`, keine Korrektur der Koeffizienten
    - siehe drittes Beispiel in den Ergebnistabellen.
 
+**Nachtrag Schritt 7**: `data/models.json` gibt ThirstyAI jetzt bekannte
+Parameterzahlen (Mistral Large 2, Llama 3.1 8B/70B/405B, Mixtral 8x22B,
+DeepSeek-V3), die vor der Namensheuristik geprueft werden. Der exakte
+Name "mistral-large-2" wird dadurch korrekt als "mid" erkannt (Test in
+`test/models.test.ts`) - Befund 3 oben bleibt aber fuer den in der
+Gegenprobe verwendeten Alias "mistral-large-latest" bestehen, weil der
+Fakt auf das Token "2" angewiesen ist und eine Alias-Aufloesung fuer
+"-latest"-Namen nicht Teil dieses Schritts war. Ausserdem zum
+Gemini-Fall: ThirstyAI nutzt fuer gemini-apps Googles selbst gemessenen,
+bereits vollstaendigen Vollstack-Wert (Fakt `gemini-energy`), waehrend
+EcoLogits fuer gemini-2.5-pro eine vermutete Parameterzahl (200-600 Mrd.
+aktiv, nicht von Google bestaetigt) durch seine eigene Regression
+schickt - das ist ein grundsaetzlich anderer Ansatz, kein Fehler auf
+einer der beiden Seiten.
+
 ## Offene Stellen
 
 1. **Referenz-Tokenzahl (300)**: Die Energie-Benchmarks der

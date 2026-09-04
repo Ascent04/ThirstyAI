@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { classifyModel } from "../src/models.js";
+import { loadFacts } from "../src/facts.js";
+
+const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
+const MODELS = new URL("../data/models.json", import.meta.url).pathname;
+
+function tableWithModels() {
+  return loadFacts([FACTS, MODELS]);
+}
 
 describe("classifyModel", () => {
   it("erkennt kleine Modelle an Groessen- oder Namenshinweisen", () => {
@@ -41,5 +49,15 @@ describe("classifyModel", () => {
     const result = classifyModel("gpt-5");
     expect(result.modelClass).toBe("frontier");
     expect(result.confidence).toBe(2);
+  });
+
+  it("nutzt eine bekannte Parameterzahl aus data/models.json vor der Namensheuristik", () => {
+    const result = classifyModel("mistral-large-2", undefined, tableWithModels());
+    expect(result.modelClass).toBe("mid");
+    expect(result.sourceFactId).toBe("params-mistral-large-2");
+    // Ohne Fakten-Tabelle wuerde dieselbe Zeichenkette ueber die
+    // Namensheuristik (FRONTIER_TOKENS: "large") falsch als "frontier"
+    // eingeordnet - das zeigt, warum die Fakten-Pruefung zuerst kommt.
+    expect(classifyModel("mistral-large-2").modelClass).toBe("frontier");
   });
 });

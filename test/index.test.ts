@@ -3,10 +3,11 @@ import { calculate, loadFacts } from "../src/index.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;
+const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
 describe("oeffentlicher Einstieg (src/index.ts)", () => {
   it("laedt Fakten und berechnet ein plausibles Ergebnis end-to-end", () => {
-    const table = loadFacts([FACTS, ASSUMPTIONS]);
+    const table = loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 
     const result = calculate(
       { model: "claude-3-5-sonnet", tokensIn: 200, tokensOut: 300, region: "DE" },

@@ -4,9 +4,10 @@ import { resolveCoefficients } from "../src/resolve.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;
+const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
 function table() {
-  return loadFacts([FACTS, ASSUMPTIONS]);
+  return loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 }
 
 describe("resolveCoefficients", () => {

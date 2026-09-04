@@ -5,9 +5,10 @@ import { calculate } from "../src/calculate.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;
+const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
 function table(): FactTable {
-  return loadFacts([FACTS, ASSUMPTIONS]);
+  return loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 }
 
 function closeWithin(value: number, target: number, tolerance: number): void {

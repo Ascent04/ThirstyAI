@@ -1,3 +1,5 @@
+import type { Fact, FactTable } from "./facts.js";
+
 export type ModelClass = "small" | "mid" | "frontier" | "reasoning";
 
 export interface ModelClassification {
@@ -5,6 +7,9 @@ export interface ModelClassification {
   confidence: number;
   fullstack: boolean;
   family: string;
+  /** Fakt-ID aus data/models.json, falls die Klasse ueber eine bekannte
+   * Parameterzahl statt ueber die Namensheuristik bestimmt wurde. */
+  sourceFactId?: string;
 }
 
 function tokenize(text: string): string[] {
@@ -59,13 +64,43 @@ function bucketBySize(paramsB: number): ModelClass {
 }
 
 /**
+ * Sucht in data/models.json (category "parameters") nach einem Fakt, dessen
+ * Modellname vollstaendig in den Tokens der Anfrage enthalten ist (z.B.
+ * "Llama 3.1 70B" -> ["llama","3","1","70b"] passt in
+ * "llama-3.1-70b-instruct"). Bei mehreren Treffern gewinnt der spezifischste
+ * (meiste Tokens), damit z.B. "70B" nicht von einem kuerzeren Treffer
+ * ueberdeckt wird.
+ */
+function findParameterFact(tokens: string[], table: FactTable): Fact | undefined {
+  const tokenSet = new Set(tokens);
+  let best: Fact | undefined;
+  let bestSize = 0;
+
+  for (const fact of table.facts) {
+    if (fact.category !== "parameters") continue;
+    const factTokens = tokenize(fact.model_or_object);
+    if (factTokens.length === 0) continue;
+    const isSubset = factTokens.every((token) => tokenSet.has(token));
+    if (isSubset && factTokens.length > bestSize) {
+      best = fact;
+      bestSize = factTokens.length;
+    }
+  }
+  return best;
+}
+
+/**
  * Ordnet einen Modellnamen einer groben Groessenklasse zu. Die Klasse
  * bestimmt in resolve.ts, welche Energie-Koeffizienten verwendet werden.
  * Ein unbekannter Modellname (keine erkennbare Familie, keine Groessen- oder
  * Reasoning-Hinweise) faellt auf "frontier" mit confidence 1 zurueck, da das
  * die konservativste (energieintensivste) Annahme ist.
  */
-export function classifyModel(model: string, provider?: string): ModelClassification {
+export function classifyModel(
+  model: string,
+  provider?: string,
+  table?: FactTable,
+): ModelClassification {
   const tokens = tokenize(model);
   const family =
     detectFamily(tokens) ?? (provider ? detectFamily(tokenize(provider)) : undefined);
@@ -74,6 +109,19 @@ export function classifyModel(model: string, provider?: string): ModelClassifica
     family === "gemini" && (tokens.includes("app") || tokens.includes("apps"));
   if (isGeminiApps) {
     return { modelClass: "frontier", confidence: 3, fullstack: true, family: "gemini" };
+  }
+
+  if (table) {
+    const parameterFact = findParameterFact(tokens, table);
+    if (parameterFact) {
+      return {
+        modelClass: bucketBySize(parameterFact.value),
+        confidence: parameterFact.confidence,
+        fullstack: false,
+        family: family ?? "unbekannt",
+        sourceFactId: parameterFact.id,
+      };
+    }
   }
 
   if (tokens.some((token) => REASONING_TOKENS.includes(token))) {

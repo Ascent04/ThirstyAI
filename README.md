@@ -24,6 +24,7 @@ import { loadFacts, calculate } from "thirstyai";
 const table = loadFacts([
   "node_modules/thirstyai/data/facts.json",
   "node_modules/thirstyai/data/assumptions.json",
+  "node_modules/thirstyai/data/models.json",
 ]);
 
 const result = calculate(
@@ -47,10 +48,12 @@ console.log(`Konfidenz: ${result.confidence}/5, Quellen: ${result.factIds.join("
 
 `loadFacts` liest und prueft die Faktendateien, `calculate` liefert das
 Ergebnis. Beide Aufrufe sind synchron und greifen nicht auf das Netzwerk zu.
-Beide Dateien sind noetig: `facts.json` enthaelt die belegten Messwerte,
+Alle drei Dateien sind noetig: `facts.json` enthaelt die belegten Messwerte,
 `assumptions.json` die eigenen ANNAHME-Fakten (z.B. Referenz-Tokenzahl,
-Overhead-Faktor), auf die `calculate` fuer jede Berechnung zurueckgreift -
-fehlt sie, bricht die Berechnung mit einem Fehler zur fehlenden Fakt-ID ab.
+Overhead-Faktor), `models.json` bekannte Modellgroessen (Parameterzahl) fuer
+die Klassifikation - auf sie alle greift `calculate` je nach Modell und
+Berechnungsschritt zurueck; fehlt eine, bricht die Berechnung mit einem
+Fehler zur fehlenden Fakt-ID ab.
 
 ## Was die Zahlen bedeuten
 

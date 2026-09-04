@@ -417,7 +417,8 @@
         "modelClass": "mid",
         "confidence": 3,
         "fullstack": false,
-        "family": "llama"
+        "family": "llama",
+        "sourceFactId": "params-llama-3-1-70b"
       },
       "recognized": true,
       "energyWh": {
@@ -485,7 +486,8 @@
         "modelClass": "mid",
         "confidence": 3,
         "fullstack": false,
-        "family": "llama"
+        "family": "llama",
+        "sourceFactId": "params-llama-3-1-70b"
       },
       "recognized": true,
       "energyWh": {

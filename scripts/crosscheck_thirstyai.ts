@@ -40,10 +40,11 @@ function main(): void {
   const table = loadFacts([
     join(ROOT, "data", "facts.json"),
     join(ROOT, "data", "assumptions.json"),
+    join(ROOT, "data", "models.json"),
   ]);
 
   const results = data.cases.map((c) => {
-    const classification = classifyModel(c.thirstyai.model);
+    const classification = classifyModel(c.thirstyai.model, undefined, table);
     const result = calculate(
       { model: c.thirstyai.model, region: data.region, tokensIn: c.tokensIn, tokensOut: c.tokensOut },
       table,

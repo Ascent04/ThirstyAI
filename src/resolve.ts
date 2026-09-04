@@ -334,7 +334,7 @@ function resolveCarbonIntensity(
  * nachvollziehbar bleibt.
  */
 export function resolveCoefficients(input: ResolveInput, table: FactTable): ResolvedCoefficients {
-  const classification = classifyModel(input.model, input.provider);
+  const classification = classifyModel(input.model, input.provider, table);
 
   return {
     energyPerRequestGpuOnly: resolveEnergyPerRequest(classification, table),
