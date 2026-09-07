@@ -174,7 +174,7 @@
       "year": 2025,
       "url": "https://www.ema.gov.sg/resources/singapore-energy-statistics/chapter2",
       "type": "Behörde; Average Operating Margin, CO2 ohne Vorketten",
-      "verified": "aus Addendum, nicht selbst geöffnet"
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert."
     },
     "S21": {
       "title": "RTE: French Annual Electricity Review 2024",
@@ -182,7 +182,7 @@
       "year": 2025,
       "url": "https://analysesetdonnees.rte-france.com/en/annual-review-2024/keyfindings",
       "type": "Netzbetreiber-Primärquelle",
-      "verified": "aus Addendum, nicht selbst geöffnet"
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert."
     },
     "S22": {
       "title": "US EPA eGRID2023 Summary Data",
@@ -190,7 +190,7 @@
       "year": 2025,
       "url": "https://www.epa.gov/egrid/summary-data",
       "type": "Behörde; Total Output Emission Rate, Subregionen",
-      "verified": "aus Addendum, nicht selbst geöffnet"
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert."
     }
   },
   "facts": [
@@ -2007,19 +2007,20 @@
       "model_or_object": "Strommix Singapur (EMA)",
       "value": 402,
       "unit": "gCO2/kWh",
-      "functional_unit": "je erzeugter kWh (Average Operating Margin)",
+      "functional_unit": "je Netto-kWh Erzeugung (Grid Emission Factor)",
       "measurement_boundary": "direkte CO2, ohne Vorketten",
       "water_scope": "-",
       "carbon_accounting": "location-based",
       "region": "Singapur",
       "year": 2024,
       "rating": "UMSTRITTEN",
-      "confidence": 3,
+      "confidence": 4,
       "source_id": "S20",
       "locator": "Ch. 2 Grid Emission Factor",
-      "quote": "0.402 kg CO2/kWh in 2024",
+      "quote": "Singapore's average GEF decreased from 0.412 kg CO2/kWh in 2023 to 0.402 kg CO2/kWh in 2024",
       "second_source": "S17 Ember 498.74 (mit Vorketten)",
-      "note": "Methodenunterschied erklärt Differenz; im Addendum belegt, nicht selbst geöffnet"
+      "note": "Methodenunterschied erklärt Differenz; im Addendum belegt. Datenstand Publikation Sep 2025.",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert."
     },
     {
       "id": "grid-co2-rte-fr-2024",
@@ -2035,12 +2036,13 @@
       "region": "Frankreich",
       "year": 2024,
       "rating": "UMSTRITTEN",
-      "confidence": 2,
+      "confidence": 4,
       "source_id": "S21",
       "locator": "Key findings",
-      "quote": "21.7 / 30.2 gCO2eq/kWh",
+      "quote": "The average carbon intensity of French electricity generation reached 21.7 gCO2eq/kWh in 2024",
       "second_source": "S17 Ember 40.48",
-      "note": "aus Addendum, nicht selbst geöffnet"
+      "note": "Lebenszyklus 30.2 gCO2eq/kWh ebenfalls auf der Seite belegt.",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert."
     },
     {
       "id": "grid-co2-egrid-us-2023",
@@ -2050,18 +2052,19 @@
       "value": 350,
       "unit": "gCO2e/kWh",
       "functional_unit": "je erzeugter kWh (Total Output Emission Rate)",
-      "measurement_boundary": "location-based; Subregionen weichen bis 5x ab",
+      "measurement_boundary": "location-based; Festland-Subregionen 242.8 bis 1405.0 gCO2e/kWh (5.8x), mit Puerto Rico 6.4x",
       "water_scope": "-",
       "carbon_accounting": "location-based",
       "region": "USA",
       "year": 2023,
-      "rating": "EINZELQUELLE",
-      "confidence": 2,
+      "rating": "BESTÄTIGT",
+      "confidence": 4,
       "source_id": "S22",
-      "locator": "eGRID2023 Summary",
-      "quote": "-",
+      "locator": "eGRID with 2023 Data, Rev. 2 (2025-06-12), Tabelle Subregion Total Output Emission Rates, Zeile U.S.",
+      "quote": "U.S. ... CO2e 770.884 [lb/MWh]",
       "second_source": "S17 Ember 383.78 (2024)",
-      "note": "aus Addendum, kein Wortzitat; für US-Standorte Subregion verwenden"
+      "note": "Umrechnung 770.884 lb/MWh x 0.45359 = 349.7 gCO2e/kWh; CO2 allein 348.0",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert."
     },
     {
       "id": "us-dc-pue-2023",
@@ -2103,7 +2106,8 @@
       "locator": "Kap. 4, Text zu Fig. 4.7",
       "quote": "stays just over 0.36 L/kWh through 2023",
       "second_source": "S7 (0.56, IEA-basiert, global)",
-      "note": "KORREKTUR: Addendum nannte 0.38, Original sagt 'knapp über 0.36'. Hyperscale-Median 0.32 (Sensitivität 0.40). Prognose 2028: 0.45-0.48"
+      "note": "KORREKTUR: Addendum nannte 0.38, Original sagt 'knapp über 0.36'. Hyperscale-Median 0.32 (Sensitivität 0.40). Prognose 2028: 0.45-0.48",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf dokumentiert. PDF-Fundstelle S. 47-48, Text zu Fig. 4.7."
     },
     {
       "id": "us-dc-energy-2023",
