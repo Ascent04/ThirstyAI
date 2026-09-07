@@ -3,10 +3,13 @@ import { classifyModel } from "../src/models.js";
 import { loadFacts } from "../src/facts.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
+const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;
 const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
 function tableWithModels() {
-  return loadFacts([FACTS, MODELS]);
+  // assumptions.json muss mitgeladen werden, weil class-claude-sonnet-5
+  // (data/models.json) auf die dort registrierte Quelle "A-THIRSTYAI" verweist.
+  return loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 }
 
 describe("classifyModel", () => {

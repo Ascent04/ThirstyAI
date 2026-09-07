@@ -10,6 +10,14 @@
       "url": "-",
       "type": "Eigene Annahme",
       "verified": "2026-09-03"
+    },
+    "ANTHROPIC-PROMPT-CACHING": {
+      "title": "Prompt caching (Anthropic Docs)",
+      "publisher": "Anthropic",
+      "year": 2026,
+      "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-caching",
+      "type": "offizielle Herstellerseite",
+      "verified": "2026-09-07 durch Claude (aus Trainingswissen, kein Live-Abruf - kein Netzwerkzugriff in dieser Aufgabe erlaubt)"
     }
   },
   "facts": [
@@ -306,6 +314,27 @@
       "quote": "-",
       "second_source": "-",
       "note": "Siehe docs/methodology-draft.md"
+    },
+    {
+      "id": "cache-read-compute-share-anthropic",
+      "category": "assumption",
+      "phase": "-",
+      "model_or_object": "Rechenanteil eines Cache-Read-Tokens ggue. einem frischen Input-Token (Anthropic-Modelle)",
+      "value": 0.1,
+      "unit": "Faktor",
+      "functional_unit": "Multiplikator auf cache_read_input_tokens in src/readers/claudeCode.ts, um sie anteilig wie frische Input-Token zu behandeln",
+      "measurement_boundary": "ANNAHME; konzeptionelles Intervall 0 (kein zusaetzlicher Rechenaufwand, reiner KV-Cache-Treffer) bis 0.1 (Anthropics Preisverhaeltnis als Proxy fuer Rechenaufwand). Hier gespeichert wird nur der obere/mid-Wert 0.1; die Untergrenze 0 wird in toInputTokenRange() strukturell durch die eigene min-Formel realisiert (cacheRead dort komplett ausgeschlossen), nicht durch einen zweiten Fakt.",
+      "water_scope": "-",
+      "carbon_accounting": "-",
+      "region": "-",
+      "year": 2026,
+      "rating": "ANNAHME",
+      "confidence": 1,
+      "source_id": "ANTHROPIC-PROMPT-CACHING",
+      "locator": "Abschnitt Pricing",
+      "quote": "Cache reads: 0.1x the base input tokens price",
+      "second_source": "-",
+      "note": "Preis als Proxy fuer Rechenanteil, keine Energiemessung; anbieterspezifisch (nur direkt anwendbar auf Anthropic-Modelle). Ersetzt die fruehere Annahme, cache reads wie volle Input-Token zu zaehlen (Faktor 1.0), die fuer stark gecachte Sitzungen unrealistisch hohe Werte ergab. Siehe docs/claude-code-reader.md."
     }
   ]
 }

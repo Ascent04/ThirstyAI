@@ -1,0 +1,6 @@
+{"type":"assistant","timestamp":"2026-09-04T09:00:00.000Z","message":{"id":"msg_test_1","model":"claude-sonnet-5","role":"assistant","content":[{"type":"thinking","thinking":"placeholder"}],"usage":{"input_tokens":10,"output_tokens":100,"cache_creation_input_tokens":50,"cache_read_input_tokens":200,"output_tokens_details":{"thinking_tokens":30}}}}
+{"type":"assistant","timestamp":"2026-09-04T09:00:01.000Z","message":{"id":"msg_test_1","model":"claude-sonnet-5","role":"assistant","content":[{"type":"tool_use","name":"placeholder"}],"usage":{"input_tokens":10,"output_tokens":150,"cache_creation_input_tokens":50,"cache_read_input_tokens":200,"output_tokens_details":{"thinking_tokens":30}}}}
+{"type":"assistant","timestamp":"2026-09-04T09:00:05.000Z","message":{"id":"msg_test_2","model":"claude-sonnet-5","role":"assistant","content":[{"type":"text","text":"placeholder"}],"usage":{"input_tokens":25,"output_tokens":40}}}
+{"type":"user","timestamp":"2026-09-04T09:00:06.000Z","message":{"role":"user","content":[{"type":"text","text":"placeholder"}]}}
+this is not valid json {{{
+{"type":"assistant","timestamp":"2026-09-04T09:00:10.000Z","message":{"id":"msg_test_3","model":"<synthetic>","role":"assistant","content":[{"type":"text","text":"placeholder"}],"usage":{"input_tokens":1,"output_tokens":1}}}

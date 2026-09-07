@@ -4,4 +4,6 @@ dist/
 scripts/*.js
 scripts/*.js.map
 scripts/__pycache__/
+examples/*.js
+examples/*.js.map
 *.log

@@ -184,6 +184,28 @@
       "second_source": "-",
       "note": "Gesamtparameter (671 Mrd.) werden bewusst nicht fuer die Klassifikation verwendet, siehe measurement_boundary. Aliase gemaess DeepSeek API-Dokumentation (M6).",
       "aliases": ["deepseek-chat", "deepseek-ai/DeepSeek-V3"]
+    },
+    {
+      "id": "class-claude-sonnet-5",
+      "category": "parameters",
+      "phase": "-",
+      "model_or_object": "Claude Sonnet 5",
+      "value": 50,
+      "unit": "Mrd. Parameter (Platzhalter)",
+      "functional_unit": "Groessenklassen-Zuordnung, keine echte Parameterzahl",
+      "measurement_boundary": "Anthropic veroeffentlicht keine Parameterzahlen fuer Claude-Modelle. Der Wert 50 ist kein Schaetzwert der tatsaechlichen Groesse, sondern nur so gewaehlt, dass er in ThirstyAIs eigener Bucket-Grenze (bucketBySize: 10 < value <= 200) sicher in die Klasse 'mid' faellt - dieselbe Klasse, die die Namensheuristik (Familie 'claude' + Marker 'sonnet') ohnehin liefert.",
+      "water_scope": "-",
+      "carbon_accounting": "-",
+      "region": "-",
+      "year": 2026,
+      "rating": "ANNAHME",
+      "confidence": 2,
+      "source_id": "A-THIRSTYAI",
+      "locator": "-",
+      "quote": "-",
+      "second_source": "-",
+      "note": "Parameterzahl nicht veroeffentlicht, Zuordnung nach Namensschema, ANNAHME.",
+      "aliases": ["claude-sonnet-5"]
     }
   ]
 }
