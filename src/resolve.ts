@@ -365,11 +365,15 @@ function resolveEwif(
 
 /**
  * min/mid/max je Region als eigene Fakt-ID-Listen (nicht ein einzelner
- * Punktwert wie zuvor). Jede Liste geht durch `latest()`, damit asOf weiter
- * greift (z.B. DE mid: UBA 2024 vs. 2025). In diesem Zyklus (Teilschritt 1,
- * "Strukturumbau ohne Ergebnisaenderung") sind min/mid/max je Region noch
- * identisch zur bisherigen alleinigen Quelle - Teilschritt 2 ersetzt min/max
- * durch die tatsaechlichen Grenzwerte (EEA/Ember-Bandbreite).
+ * Punktwert wie zuvor). Jede Liste geht durch `latest()`, damit asOf
+ * grundsaetzlich greifen wuerde - fuer 2024 enthaelt aber jede Liste genau
+ * eine Fakt-ID (keine Auswahl mehr noetig), daher ist `latest()` hier ein
+ * reiner Existenz-/Cutoff-Check, keine Auswahl zwischen mehreren Jahrgaengen.
+ * DE mid/max sind bewusst fest auf grid-co2-uba-de-2024 gepinnt (nicht die
+ * neuere grid-co2-uba-de-2025), da diese Tabelle den Bezugsjahr-Report 2024
+ * abbildet, nicht den "aktuell bekannten" Wert. min = kleinster, max =
+ * groesster 2024-Wert ueber alle Quellen inkl. mid (EEA/Ember/nationale
+ * Referenz je nach Region, siehe Zyklus B, Stufe 1 Soll-Tabelle).
  */
 interface RegionCarbonFacts {
   minIds: string[];
@@ -380,44 +384,44 @@ interface RegionCarbonFacts {
 const CARBON_REGION_TABLE_BY_YEAR: Record<number, Record<string, RegionCarbonFacts>> = {
   2024: {
     DE: {
-      minIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"],
-      midIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"],
-      maxIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"],
+      minIds: ["grid-co2-eea-deutschland-2024"],
+      midIds: ["grid-co2-uba-de-2024"],
+      maxIds: ["grid-co2-uba-de-2024"],
     },
     IE: {
-      minIds: ["grid-co2-ember-irland"],
+      minIds: ["grid-co2-eea-irland-2024"],
       midIds: ["grid-co2-ember-irland"],
       maxIds: ["grid-co2-ember-irland"],
     },
     NL: {
-      minIds: ["grid-co2-ember-niederlande"],
+      minIds: ["grid-co2-eea-niederlande-2024"],
       midIds: ["grid-co2-ember-niederlande"],
       maxIds: ["grid-co2-ember-niederlande"],
     },
     SE: {
-      minIds: ["grid-co2-ember-schweden"],
+      minIds: ["grid-co2-eea-schweden-2024"],
       midIds: ["grid-co2-ember-schweden"],
       maxIds: ["grid-co2-ember-schweden"],
     },
     FI: {
-      minIds: ["grid-co2-ember-finnland"],
+      minIds: ["grid-co2-eea-finnland-2024"],
       midIds: ["grid-co2-ember-finnland"],
       maxIds: ["grid-co2-ember-finnland"],
     },
     FR: {
       minIds: ["grid-co2-rte-fr-2024"],
       midIds: ["grid-co2-rte-fr-2024"],
-      maxIds: ["grid-co2-rte-fr-2024"],
+      maxIds: ["grid-co2-ember-frankreich"],
     },
     US: {
       minIds: ["grid-co2-egrid-us-2023"],
       midIds: ["grid-co2-egrid-us-2023"],
-      maxIds: ["grid-co2-egrid-us-2023"],
+      maxIds: ["grid-co2-ember-usa"],
     },
     SG: {
       minIds: ["grid-co2-ema-sg-2024"],
       midIds: ["grid-co2-ema-sg-2024"],
-      maxIds: ["grid-co2-ema-sg-2024"],
+      maxIds: ["grid-co2-ember-singapur"],
     },
     IN: {
       minIds: ["grid-co2-ember-indien"],
@@ -430,7 +434,7 @@ const CARBON_REGION_TABLE_BY_YEAR: Record<number, Record<string, RegionCarbonFac
       maxIds: ["grid-co2-ember-japan"],
     },
     EU: {
-      minIds: ["grid-co2-ember-eu-27"],
+      minIds: ["grid-co2-eea-eu-27-2024"],
       midIds: ["grid-co2-ember-eu-27"],
       maxIds: ["grid-co2-ember-eu-27"],
     },

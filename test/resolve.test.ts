@@ -13,7 +13,11 @@ function table() {
 describe("resolveCoefficients", () => {
   it("region DE liefert UBA-CO2 und Lohrmann-Wasserwerte", () => {
     const result = resolveCoefficients({ model: "llama-3.1-70b", region: "DE" }, table());
-    expect(result.carbonIntensity.factIds).toContain("grid-co2-uba-de-2025");
+    // mid/max sind fuer das Bezugsjahr 2024 fest auf den UBA-2024-Fakt
+    // gepinnt (nicht die neuere grid-co2-uba-de-2025), siehe
+    // CARBON_REGION_TABLE_BY_YEAR in resolve.ts.
+    expect(result.carbonIntensity.factIds).toContain("grid-co2-uba-de-2024");
+    expect(result.carbonIntensity.factIds).not.toContain("grid-co2-uba-de-2025");
     expect(result.ewif.factIds).toContain("eu-grid-water-germany");
     expect(result.ewif.mid).toBeCloseTo(2.04, 5);
   });
@@ -92,5 +96,43 @@ describe("resolveCoefficients", () => {
     expect(() => resolveCoefficients({ model: "llama-3.1-405b" }, t)).not.toThrow();
     expect(() => resolveCoefficients({ model: "deepseek-r1" }, t)).not.toThrow();
     expect(() => resolveCoefficients({ model: "gemini-apps", provider: "google" }, t)).not.toThrow();
+  });
+
+  it("carbonIntensity 2024: DE/FR/US/EU-27 liefern die erwarteten min/mid/max-Werte", () => {
+    const t = table();
+    const de = resolveCoefficients({ model: "llama-3.1-70b", region: "DE" }, t);
+    expect(de.carbonIntensity.min).toBeCloseTo(291, 5);
+    expect(de.carbonIntensity.mid).toBeCloseTo(353, 5);
+    expect(de.carbonIntensity.max).toBeCloseTo(353, 5);
+
+    const fr = resolveCoefficients({ model: "llama-3.1-70b", region: "FR" }, t);
+    expect(fr.carbonIntensity.min).toBeCloseTo(21.7, 5);
+    expect(fr.carbonIntensity.mid).toBeCloseTo(21.7, 5);
+    expect(fr.carbonIntensity.max).toBeCloseTo(40.48, 5);
+
+    const us = resolveCoefficients({ model: "llama-3.1-70b", region: "US" }, t);
+    expect(us.carbonIntensity.min).toBeCloseTo(350, 5);
+    expect(us.carbonIntensity.mid).toBeCloseTo(350, 5);
+    expect(us.carbonIntensity.max).toBeCloseTo(383.78, 5);
+
+    const eu = resolveCoefficients({ model: "llama-3.1-70b", region: "EU" }, t);
+    expect(eu.carbonIntensity.min).toBeCloseTo(183.44, 5);
+    expect(eu.carbonIntensity.mid).toBeCloseTo(211.2, 5);
+    expect(eu.carbonIntensity.max).toBeCloseTo(211.2, 5);
+  });
+
+  it("carbonIntensity 2024: min <= mid <= max fuer jede Region im REGION_TABLE", () => {
+    const t = table();
+    for (const region of ["DE", "IE", "NL", "SE", "FI", "FR", "US", "SG", "IN", "JP", "EU"]) {
+      const result = resolveCoefficients({ model: "llama-3.1-70b", region }, t);
+      expect(
+        result.carbonIntensity.min,
+        `Region ${region}: min <= mid`,
+      ).toBeLessThanOrEqual(result.carbonIntensity.mid);
+      expect(
+        result.carbonIntensity.mid,
+        `Region ${region}: mid <= max`,
+      ).toBeLessThanOrEqual(result.carbonIntensity.max);
+    }
   });
 });
