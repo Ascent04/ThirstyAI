@@ -26,7 +26,10 @@ export interface ResolveInput {
   provider?: string;
   region?: string;
   asOf?: Date;
+  referenceYear?: number;
 }
+
+export const DEFAULT_REFERENCE_YEAR = 2024;
 
 function requireFact(table: FactTable, id: string): Fact {
   const fact = table.byId.get(id);
@@ -318,25 +321,24 @@ function resolveWueSite(
   };
 }
 
-// --- e) ewif und carbonIntensity nach Region ---
+// --- e) ewif nach Region ---
 
-interface RegionFacts {
+interface EwifRegionFacts {
   ewifIds: string[];
-  carbonIds: string[];
 }
 
-const REGION_TABLE: Record<string, RegionFacts> = {
-  DE: { ewifIds: ["eu-grid-water-germany"], carbonIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"] },
-  IE: { ewifIds: ["eu-grid-water-ireland"], carbonIds: ["grid-co2-ember-irland"] },
-  NL: { ewifIds: ["eu-grid-water-netherlands"], carbonIds: ["grid-co2-ember-niederlande"] },
-  SE: { ewifIds: ["eu-grid-water-sweden"], carbonIds: ["grid-co2-ember-schweden"] },
-  FI: { ewifIds: ["eu-grid-water-finland"], carbonIds: ["grid-co2-ember-finnland"] },
-  FR: { ewifIds: ["eu-grid-water-france"], carbonIds: ["grid-co2-rte-fr-2024"] },
-  US: { ewifIds: ["ewif-us-average"], carbonIds: ["grid-co2-egrid-us-2023"] },
-  SG: { ewifIds: [], carbonIds: ["grid-co2-ema-sg-2024"] },
-  IN: { ewifIds: ["ewif-india"], carbonIds: ["grid-co2-ember-indien"] },
-  JP: { ewifIds: [], carbonIds: ["grid-co2-ember-japan"] },
-  EU: { ewifIds: [], carbonIds: ["grid-co2-ember-eu-27"] },
+const EWIF_REGION_TABLE: Record<string, EwifRegionFacts> = {
+  DE: { ewifIds: ["eu-grid-water-germany"] },
+  IE: { ewifIds: ["eu-grid-water-ireland"] },
+  NL: { ewifIds: ["eu-grid-water-netherlands"] },
+  SE: { ewifIds: ["eu-grid-water-sweden"] },
+  FI: { ewifIds: ["eu-grid-water-finland"] },
+  FR: { ewifIds: ["eu-grid-water-france"] },
+  US: { ewifIds: ["ewif-us-average"] },
+  SG: { ewifIds: [] },
+  IN: { ewifIds: ["ewif-india"] },
+  JP: { ewifIds: [] },
+  EU: { ewifIds: [] },
 };
 
 const FALLBACK_EWIF_IDS = ["ewif-us-average"];
@@ -347,7 +349,7 @@ function resolveEwif(
   table: FactTable,
   asOf: Date | undefined,
 ): CoefficientRange {
-  const entry = region ? REGION_TABLE[region.toUpperCase()] : undefined;
+  const entry = region ? EWIF_REGION_TABLE[region.toUpperCase()] : undefined;
   if (entry && entry.ewifIds.length > 0) {
     const fact =
       latest(table, { ids: entry.ewifIds }, asOf)[0] ?? requireFact(table, entry.ewifIds[0]);
@@ -359,9 +361,90 @@ function resolveEwif(
   return capConfidence(pointRange(fallback), cap);
 }
 
+// --- f) carbonIntensity nach Region und Bezugsjahr ---
+
+/**
+ * min/mid/max je Region als eigene Fakt-ID-Listen (nicht ein einzelner
+ * Punktwert wie zuvor). Jede Liste geht durch `latest()`, damit asOf weiter
+ * greift (z.B. DE mid: UBA 2024 vs. 2025). In diesem Zyklus (Teilschritt 1,
+ * "Strukturumbau ohne Ergebnisaenderung") sind min/mid/max je Region noch
+ * identisch zur bisherigen alleinigen Quelle - Teilschritt 2 ersetzt min/max
+ * durch die tatsaechlichen Grenzwerte (EEA/Ember-Bandbreite).
+ */
+interface RegionCarbonFacts {
+  minIds: string[];
+  midIds: string[];
+  maxIds: string[];
+}
+
+const CARBON_REGION_TABLE_BY_YEAR: Record<number, Record<string, RegionCarbonFacts>> = {
+  2024: {
+    DE: {
+      minIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"],
+      midIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"],
+      maxIds: ["grid-co2-uba-de-2024", "grid-co2-uba-de-2025"],
+    },
+    IE: {
+      minIds: ["grid-co2-ember-irland"],
+      midIds: ["grid-co2-ember-irland"],
+      maxIds: ["grid-co2-ember-irland"],
+    },
+    NL: {
+      minIds: ["grid-co2-ember-niederlande"],
+      midIds: ["grid-co2-ember-niederlande"],
+      maxIds: ["grid-co2-ember-niederlande"],
+    },
+    SE: {
+      minIds: ["grid-co2-ember-schweden"],
+      midIds: ["grid-co2-ember-schweden"],
+      maxIds: ["grid-co2-ember-schweden"],
+    },
+    FI: {
+      minIds: ["grid-co2-ember-finnland"],
+      midIds: ["grid-co2-ember-finnland"],
+      maxIds: ["grid-co2-ember-finnland"],
+    },
+    FR: {
+      minIds: ["grid-co2-rte-fr-2024"],
+      midIds: ["grid-co2-rte-fr-2024"],
+      maxIds: ["grid-co2-rte-fr-2024"],
+    },
+    US: {
+      minIds: ["grid-co2-egrid-us-2023"],
+      midIds: ["grid-co2-egrid-us-2023"],
+      maxIds: ["grid-co2-egrid-us-2023"],
+    },
+    SG: {
+      minIds: ["grid-co2-ema-sg-2024"],
+      midIds: ["grid-co2-ema-sg-2024"],
+      maxIds: ["grid-co2-ema-sg-2024"],
+    },
+    IN: {
+      minIds: ["grid-co2-ember-indien"],
+      midIds: ["grid-co2-ember-indien"],
+      maxIds: ["grid-co2-ember-indien"],
+    },
+    JP: {
+      minIds: ["grid-co2-ember-japan"],
+      midIds: ["grid-co2-ember-japan"],
+      maxIds: ["grid-co2-ember-japan"],
+    },
+    EU: {
+      minIds: ["grid-co2-ember-eu-27"],
+      midIds: ["grid-co2-ember-eu-27"],
+      maxIds: ["grid-co2-ember-eu-27"],
+    },
+  },
+};
+
+function resolveCarbonRangeFact(ids: string[], table: FactTable, asOf: Date | undefined): Fact {
+  return latest(table, { ids }, asOf)[0] ?? requireFact(table, ids[0]);
+}
+
 function resolveCarbonIntensity(
   provider: string | undefined,
   region: string | undefined,
+  referenceYear: number,
   table: FactTable,
   asOf: Date | undefined,
 ): CoefficientRange {
@@ -372,11 +455,23 @@ function resolveCarbonIntensity(
     return pointRange(requireFact(table, "google-ef-mb-2024"));
   }
 
-  const entry = region ? REGION_TABLE[region.toUpperCase()] : undefined;
-  if (entry && entry.carbonIds.length > 0) {
-    const fact =
-      latest(table, { ids: entry.carbonIds }, asOf)[0] ?? requireFact(table, entry.carbonIds[0]);
-    return pointRange(fact);
+  const yearTable = CARBON_REGION_TABLE_BY_YEAR[referenceYear];
+  if (!yearTable) {
+    throw new Error(`Kein CO2-Regionsraster fuer Bezugsjahr ${referenceYear} hinterlegt`);
+  }
+
+  const entry = region ? yearTable[region.toUpperCase()] : undefined;
+  if (entry) {
+    const minFact = resolveCarbonRangeFact(entry.minIds, table, asOf);
+    const midFact = resolveCarbonRangeFact(entry.midIds, table, asOf);
+    const maxFact = resolveCarbonRangeFact(entry.maxIds, table, asOf);
+    return {
+      min: minFact.value,
+      mid: midFact.value,
+      max: maxFact.value,
+      confidence: Math.min(minFact.confidence, midFact.confidence, maxFact.confidence),
+      factIds: [...new Set([minFact.id, midFact.id, maxFact.id])],
+    };
   }
   const fallback =
     latest(table, { ids: FALLBACK_CARBON_IDS }, asOf)[0] ??
@@ -392,6 +487,7 @@ function resolveCarbonIntensity(
  */
 export function resolveCoefficients(input: ResolveInput, table: FactTable): ResolvedCoefficients {
   const classification = classifyModel(input.model, input.provider, table);
+  const referenceYear = input.referenceYear ?? DEFAULT_REFERENCE_YEAR;
 
   return {
     energyPerRequestGpuOnly: resolveEnergyPerRequest(classification, table),
@@ -399,7 +495,13 @@ export function resolveCoefficients(input: ResolveInput, table: FactTable): Reso
     pue: resolvePue(input.provider, table),
     wueSite: resolveWueSite(input.provider, input.region, table, input.asOf),
     ewif: resolveEwif(input.region, table, input.asOf),
-    carbonIntensity: resolveCarbonIntensity(input.provider, input.region, table, input.asOf),
+    carbonIntensity: resolveCarbonIntensity(
+      input.provider,
+      input.region,
+      referenceYear,
+      table,
+      input.asOf,
+    ),
     fullstack: classification.fullstack,
     modelClass: classification,
   };

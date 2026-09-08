@@ -1,5 +1,7 @@
 import type { Fact, FactTable } from "./facts.js";
-import { resolveCoefficients, type CoefficientRange } from "./resolve.js";
+import { DEFAULT_REFERENCE_YEAR, resolveCoefficients, type CoefficientRange } from "./resolve.js";
+
+export { DEFAULT_REFERENCE_YEAR };
 
 const INPUT_SHARE_ID = "input-token-cost-share";
 
@@ -26,6 +28,8 @@ export interface Result {
   assumptions: string[];
   boundary: "fullstack" | "gpu-only";
   asOf?: Date;
+  /** Bezugsjahr des CO2-Regionsrasters (siehe resolve.ts:CARBON_REGION_TABLE_BY_YEAR). */
+  referenceYear: number;
 }
 
 export interface CalculateInput {
@@ -35,6 +39,8 @@ export interface CalculateInput {
   tokensIn: number;
   tokensOut: number;
   asOf?: Date;
+  /** Default: DEFAULT_REFERENCE_YEAR. Unbekanntes Jahr wirft einen Fehler. */
+  referenceYear?: number;
 }
 
 function requireFact(table: FactTable, id: string): Fact {
@@ -83,8 +89,15 @@ function div(a: ResultRange, b: CoefficientRange): ResultRange {
  * erscheint aber in `assumptions`. Details in docs/methodology-de.md.
  */
 export function calculate(input: CalculateInput, table: FactTable): Result {
+  const referenceYear = input.referenceYear ?? DEFAULT_REFERENCE_YEAR;
   const coeffs = resolveCoefficients(
-    { model: input.model, provider: input.provider, region: input.region, asOf: input.asOf },
+    {
+      model: input.model,
+      provider: input.provider,
+      region: input.region,
+      asOf: input.asOf,
+      referenceYear,
+    },
     table,
   );
 
@@ -139,5 +152,6 @@ export function calculate(input: CalculateInput, table: FactTable): Result {
     assumptions: assumptions.sort(),
     boundary: coeffs.fullstack ? "fullstack" : "gpu-only",
     asOf: input.asOf,
+    referenceYear,
   };
 }
