@@ -112,6 +112,10 @@ measurements and estimates (version 0.2, as of 2026-09-03). It is not
 modified. Our own, clearly labeled assumptions live separately in
 `data/assumptions.json`.
 
+How the facts carried over from the research addendum were later
+checked against their primary sources is documented (German only) in
+[docs/verification-v0.2.md](docs/verification-v0.2.md).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the proof requirements for

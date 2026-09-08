@@ -101,6 +101,10 @@ Messwerte und Schätzungen (Version 0.2, Stand 2026-09-03). Sie wird nicht
 verändert. Eigene, klar gekennzeichnete Annahmen liegen separat in
 `data/assumptions.json`.
 
+Wie die aus dem Recherche-Addendum übernommenen Fakten nachträglich
+gegen ihre Primärquellen geprüft wurden, steht in
+[docs/verification-v0.2.md](docs/verification-v0.2.md).
+
 ## Mitarbeit
 
 Siehe [CONTRIBUTING.md](CONTRIBUTING.md) für die Beweispflicht bei neuen
