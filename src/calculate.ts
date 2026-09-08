@@ -80,7 +80,7 @@ function div(a: ResultRange, b: CoefficientRange): ResultRange {
  * Koeffizienten (overheadFactor zaehlt nur mit, wenn er auch verwendet
  * wird); die universelle Umrechnungs-Annahme (Input-Anteil) fliesst nicht in
  * die confidence ein, sonst waere jedes Ergebnis auf 1 begrenzt - sie
- * erscheint aber in `assumptions`. Details in docs/methodology-draft.md.
+ * erscheint aber in `assumptions`. Details in docs/methodology-de.md.
  */
 export function calculate(input: CalculateInput, table: FactTable): Result {
   const coeffs = resolveCoefficients(
