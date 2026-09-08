@@ -255,16 +255,26 @@ function resolveOverheadFactor(table: FactTable): CoefficientRange {
 
 function resolvePue(provider: string | undefined, table: FactTable): CoefficientRange {
   const p = normalizeProvider(provider);
-  let fact: Fact;
   if (isGoogleProvider(p)) {
-    fact = requireFact(table, "google-pue");
-  } else if (isMicrosoftProvider(p)) {
-    fact = requireFact(table, "msft-pue-global-fy25");
-  } else {
-    fact = requireFact(table, "us-dc-pue-2023");
+    const fact = requireFact(table, "google-pue");
+    const halfWidth = requireFact(table, "pue-range-half-width");
+    return spreadRange(fact, halfWidth);
   }
+  if (isMicrosoftProvider(p)) {
+    const fact = requireFact(table, "msft-pue-global-fy25");
+    const halfWidth = requireFact(table, "pue-range-half-width");
+    return spreadRange(fact, halfWidth);
+  }
+  const minFact = requireFact(table, "us-dc-pue-ai-2024");
+  const midFact = requireFact(table, "us-dc-pue-2024");
   const halfWidth = requireFact(table, "pue-range-half-width");
-  return spreadRange(fact, halfWidth);
+  return {
+    min: minFact.value,
+    mid: midFact.value,
+    max: midFact.value + halfWidth.value,
+    confidence: Math.min(minFact.confidence, midFact.confidence),
+    factIds: [minFact.id, midFact.id, halfWidth.id],
+  };
 }
 
 // --- d) wueSite ---

@@ -121,6 +121,34 @@ describe("resolveCoefficients", () => {
     expect(eu.carbonIntensity.max).toBeCloseTo(211.2, 5);
   });
 
+  it("PUE Default-Anbieter: min = us-dc-pue-ai-2024, mid = us-dc-pue-2024, max = mid + Bandbreite", () => {
+    const result = resolveCoefficients({ model: "llama-3.1-70b" }, table());
+    expect(result.pue.min).toBeCloseTo(1.145, 5);
+    expect(result.pue.mid).toBeCloseTo(1.45, 5);
+    expect(result.pue.max).toBeCloseTo(1.55, 5);
+    expect(result.pue.min).toBeLessThanOrEqual(result.pue.mid);
+    expect(result.pue.mid).toBeLessThanOrEqual(result.pue.max);
+    expect(result.pue.factIds).toEqual([
+      "us-dc-pue-ai-2024",
+      "us-dc-pue-2024",
+      "pue-range-half-width",
+    ]);
+  });
+
+  it("PUE Google/Microsoft: unveraendert symmetrisch um den jeweiligen Punktwert", () => {
+    const t = table();
+    const google = resolveCoefficients({ model: "llama-3.1-70b", provider: "google" }, t);
+    expect(google.pue.factIds).toContain("google-pue");
+    expect(google.pue.mid - google.pue.min).toBeCloseTo(google.pue.max - google.pue.mid, 10);
+
+    const microsoft = resolveCoefficients({ model: "llama-3.1-70b", provider: "microsoft" }, t);
+    expect(microsoft.pue.factIds).toContain("msft-pue-global-fy25");
+    expect(microsoft.pue.mid - microsoft.pue.min).toBeCloseTo(
+      microsoft.pue.max - microsoft.pue.mid,
+      10,
+    );
+  });
+
   it("carbonIntensity 2024: min <= mid <= max fuer jede Region im REGION_TABLE", () => {
     const t = table();
     for (const region of ["DE", "IE", "NL", "SE", "FI", "FR", "US", "SG", "IN", "JP", "EU"]) {

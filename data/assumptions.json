@@ -187,7 +187,7 @@
       "locator": "-",
       "quote": "-",
       "second_source": "-",
-      "note": "Siehe docs/methodology-draft.md"
+      "note": "Siehe docs/methodology-draft.md. Fuer den Default-Anbieter (kein Google/Microsoft) wird die Bandbreite seit Zyklus C nur noch nach oben verwendet: die Untergrenze ist der Fakt us-dc-pue-ai-2024, die Obergrenze us-dc-pue-2024 + diese Bandbreite. Google (google-pue) und Microsoft (msft-pue-global-fy25) bleiben unveraendert symmetrisch um ihren Punktwert."
     },
     {
       "id": "withdrawal-to-consumption-share",

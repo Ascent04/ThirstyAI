@@ -69,6 +69,8 @@ function overrideTable(): FactTable {
     fact({ id: "overhead-factor-mid", value: 1.0 }),
     fact({ id: "overhead-factor-max", value: 1.0 }),
     fact({ id: "us-dc-pue-2023", value: 1.17 }),
+    fact({ id: "us-dc-pue-2024", value: 1.17 }),
+    fact({ id: "us-dc-pue-ai-2024", value: 1.07 }),
     fact({ id: "pue-range-half-width", value: 0.1 }),
     fact({ id: "us-dc-wue-site-2023", value: 0.55 }),
     fact({ id: "wue-site-fallback-min", value: 0.4 }),
