@@ -7,3 +7,5 @@ scripts/__pycache__/
 examples/*.js
 examples/*.js.map
 *.log
+.env
+*.jsonl

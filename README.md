@@ -1,5 +1,9 @@
 # ThirstyAI
 
+<p align="center">
+  <img src="docs/assets/banner.jpg" alt="ThirstyAI – water, energy and CO2 footprint of AI calls" width="800">
+</p>
+
 *[Deutsch](README-de.md)*
 
 **Status: in development**
@@ -17,6 +21,18 @@ the library also provides the sources used and a confidence rating
 The library makes no network calls at runtime and has no runtime
 dependencies. All facts live offline in `data/facts.json` and are each
 backed by a source, a locator, and a direct quote.
+
+## Installation
+
+Not yet published to npm. Until then, use it from source:
+
+```bash
+git clone https://github.com/Ascent04/thirstyai.git
+cd thirstyai
+npm install
+npm run build
+npm test        # expected: 39 tests passing
+```
 
 ## Usage
 
@@ -108,9 +124,9 @@ size. Full tables and the reasoning behind each deviation:
 ## Fact file
 
 `data/facts.json` is a curated collection of publicly sourced
-measurements and estimates (version 0.2, as of 2026-09-03). It is not
-modified. Our own, clearly labeled assumptions live separately in
-`data/assumptions.json`.
+measurements and estimates (schema version and generation date are
+recorded in the file header). It is not modified. Our own, clearly
+labeled assumptions live separately in `data/assumptions.json`.
 
 How the facts carried over from the research addendum were later
 checked against their primary sources is documented (German only) in
@@ -120,3 +136,12 @@ checked against their primary sources is documented (German only) in
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the proof requirements for
 new facts.
+
+```
+        .          _____  _     _            _            _     ___
+       ( )        |_   _||_    (_) _ _  ___ | |_  _  _   / \   |_ _|
+      (   )         | |  | ' \ | || '_|(_-< |  _|| || | / _ \   | |
+       '-'          |_|  |_||_||_||_|  /__/  \__|\_, | /_/ \_\ |___|
+   ~ ~ ~ ~ ~                                     |__/
+                        water | energy | CO2 footprint of AI calls
+```
