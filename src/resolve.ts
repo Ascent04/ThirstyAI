@@ -49,8 +49,8 @@ function pointRange(fact: Fact): CoefficientRange {
 /**
  * deltaFact (die Bandbreite um den PUE-Punktwert) wird auf jede einzige
  * Anfrage angewendet, unabhaengig von Modell, Anbieter oder Region - genau
- * wie reference-output-tokens/input-token-cost-share in calculate.ts geht
- * seine confidence deshalb nicht in die Gesamt-confidence ein (sonst waere
+ * wie input-token-cost-share in calculate.ts geht seine confidence deshalb
+ * nicht in die Gesamt-confidence ein (sonst waere
  * jedes Ergebnis unabhaengig von der Qualitaet der PUE-Quelle auf 1
  * begrenzt), erscheint aber ueber factIds in `assumptions`.
  */

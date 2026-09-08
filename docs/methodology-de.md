@@ -95,16 +95,13 @@ Alle mit `rating: "ANNAHME"`, `confidence: 1`, `source_id:
 - **overhead-factor-min/mid/max** (1.7 / 2.0 / 2.4): Spanne
   GPU-zu-IT-Energie, angelehnt an MIT Technology Review und das
   Verhaeltnis von Googles Vollstack- zu enger Systemgrenze.
-- **reference-output-tokens** (300 Token, inzwischen unbenutzt): urspruengliche
-  pauschale Referenz-Tokenzahl fuer die Skalierung; durch die
-  per-Fakt-Zuordnung in `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`)
-  abgeloest, siehe offene Stelle 1. Der Fakt steht weiter in
-  `data/assumptions.json`, wird aber von keinem Code mehr gelesen.
+- **reference-output-tokens** (300 Token): entfernt in 2026-09-08, ersetzt
+  durch per-Fakt-Token-Bezug (`OUTPUT_TOKENS_FOR_ENERGY_FACT`,
+  `src/resolve.ts`), siehe offene Stelle 1.
 - **input-token-cost-share** (0.1): siehe offene Stelle 2.
-- **mid-class-caravaca-energy** (0.05 Wh), **frontier-class-joule-median**
-  (0.39 Wh), **frontier-class-joule-iqr-max** (0.68 Wh): Zahlen, die nur im
-  `second_source`-Feld eines Fakts standen (Caravaca-Messung bzw.
-  Joule-Monte-Carlo-Schaetzung), hier als eigene, referenzierte ANNAHME
+- **frontier-class-joule-median** (0.39 Wh), **frontier-class-joule-iqr-max**
+  (0.68 Wh): Zahlen, die nur im `second_source`-Feld eines Fakts standen
+  (Joule-Monte-Carlo-Schaetzung), hier als eigene, referenzierte ANNAHME
   herausgezogen, damit resolve.ts keine Zahlen-Literale enthaelt.
 - **pue-range-half-width** (0.1): eigene Bandbreite um den PUE-Punktwert,
   da Anbieter PUE meist ohne Unsicherheitsangabe berichten.

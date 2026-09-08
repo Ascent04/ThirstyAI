@@ -93,17 +93,14 @@ All with `rating: "ANNAHME"` (ASSUMPTION), `confidence: 1`, `source_id:
 - **overhead-factor-min/mid/max** (1.7 / 2.0 / 2.4): GPU-to-IT-energy
   range, based on MIT Technology Review and the ratio of Google's
   fullstack figure to its narrow system boundary.
-- **reference-output-tokens** (300 tokens, now unused): the original
-  flat reference token count used for scaling; superseded by the
-  per-fact mapping in `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`),
-  see open issue 1. The fact still lives in `data/assumptions.json` but
-  is no longer read by any code.
+- **reference-output-tokens** (300 tokens): removed on 2026-09-08,
+  superseded by the per-fact token mapping
+  (`OUTPUT_TOKENS_FOR_ENERGY_FACT`, `src/resolve.ts`), see open issue 1.
 - **input-token-cost-share** (0.1): see open issue 2.
-- **mid-class-caravaca-energy** (0.05 Wh), **frontier-class-joule-median**
-  (0.39 Wh), **frontier-class-joule-iqr-max** (0.68 Wh): numbers that
-  only appeared in a fact's `second_source` field (the Caravaca
-  measurement and the Joule Monte Carlo estimate, respectively), pulled
-  out here as their own, referenced assumptions so that resolve.ts
+- **frontier-class-joule-median** (0.39 Wh), **frontier-class-joule-iqr-max**
+  (0.68 Wh): numbers that only appeared in a fact's `second_source` field
+  (the Joule Monte Carlo estimate), pulled out here as their own,
+  referenced assumptions so that resolve.ts
   contains no numeric literals.
 - **pue-range-half-width** (0.1): our own spread around the PUE point
   estimate, since providers usually report PUE without an uncertainty
