@@ -51,8 +51,8 @@ console.log(`Confidence: ${result.confidence}/5, sources: ${result.factIds.join(
 `loadFacts` reads and validates the fact files, `calculate` returns the
 result. Both calls are synchronous and make no network calls. All three
 files are needed: `facts.json` contains the sourced measurements,
-`assumptions.json` contains our own assumption facts (e.g. reference
-token count, overhead factor), `models.json` contains known model sizes
+`assumptions.json` contains our own assumption facts (e.g. input cost
+share, overhead factor), `models.json` contains known model sizes
 (parameter counts) for classification - `calculate` draws on all of
 them depending on the model and calculation step; if one is missing,
 the calculation fails with an error naming the missing fact ID.

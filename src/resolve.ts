@@ -108,7 +108,77 @@ function isMetaProvider(p?: string): boolean {
   return p !== undefined && p.includes("meta");
 }
 
-// --- a) energyPerRequestGpuOnly ---
+// --- a) energyPerRequestGpuOnly (Einheit: Wh pro 1.000 Output-Token) ---
+
+/**
+ * Ordnet jedem in resolveEnergyPerRequest verwendeten Energie-Fakt den Fakt
+ * zu, aus dem die zugehoerige mittlere Output-Tokenzahl stammt - explizite
+ * Tabelle, keine Heuristik. "measured": die Tokenzahl stammt aus derselben
+ * Messung/demselben Benchmark wie der Energiewert. "assumed": die Tokenzahl
+ * stammt aus einer anderen Quelle und wird dem Energiewert nur zugeordnet -
+ * das drueckt sich in einem confidence-Deckel von 2 aus, siehe
+ * perThousandOutputTokens().
+ */
+export const OUTPUT_TOKENS_FOR_ENERGY_FACT: Record<
+  string,
+  { tokenFactId: string; basis: "measured" | "assumed" }
+> = {
+  "llama31-70b-inf-energy": { tokenFactId: "mlenergy-llama31-70b-output-tokens", basis: "measured" },
+  "caravaca-llama31-70b-measured": { tokenFactId: "caravaca-output-tokens", basis: "measured" },
+  "mixtral-8x22b-inf-energy": { tokenFactId: "mlenergy-mixtral-8x22b-output-tokens", basis: "measured" },
+  "llama31-405b-inf-energy": { tokenFactId: "mlenergy-llama31-405b-output-tokens", basis: "measured" },
+  "frontier-class-joule-median": { tokenFactId: "oviedo-typical-output-tokens", basis: "assumed" },
+  "frontier-class-joule-iqr-max": { tokenFactId: "oviedo-typical-output-tokens", basis: "assumed" },
+  "energy-small-lower-bound": { tokenFactId: "oviedo-typical-output-tokens", basis: "assumed" },
+  "dsr1-distill-70b-noreason": { tokenFactId: "oviedo-typical-output-tokens", basis: "assumed" },
+  "dsr1-distill-70b-reason": { tokenFactId: "oviedo-reasoning-output-tokens", basis: "assumed" },
+  "jegham-long-prompt-max": { tokenFactId: "jegham-long-output-tokens", basis: "measured" },
+  "gemini-energy": { tokenFactId: "oviedo-typical-output-tokens", basis: "assumed" },
+};
+
+interface PerThousandTokens {
+  value: number;
+  confidence: number;
+  factIds: string[];
+}
+
+/**
+ * Rechnet einen Wh-pro-Anfrage-Fakt in Wh pro 1.000 Output-Token um, ueber
+ * den in OUTPUT_TOKENS_FOR_ENERGY_FACT hinterlegten Token-Fakt. Bei
+ * basis "assumed" wird die confidence zusaetzlich auf 2 gedeckelt, weil die
+ * Tokenzahl nicht aus derselben Messung stammt wie der Energiewert.
+ */
+function perThousandOutputTokens(energyFact: Fact, table: FactTable): PerThousandTokens {
+  const mapping = OUTPUT_TOKENS_FOR_ENERGY_FACT[energyFact.id];
+  if (!mapping) {
+    throw new Error(`Kein Token-Fakt fuer Energie-Fakt "${energyFact.id}" hinterlegt`);
+  }
+  const tokenFact = requireFact(table, mapping.tokenFactId);
+  const value = (energyFact.value / tokenFact.value) * 1000;
+  let confidence = Math.min(energyFact.confidence, tokenFact.confidence);
+  if (mapping.basis === "assumed") {
+    confidence = Math.min(confidence, 2);
+  }
+  return { value, confidence, factIds: [energyFact.id, tokenFact.id] };
+}
+
+function energyRangeFromFacts(
+  minFact: Fact,
+  midFact: Fact,
+  maxFact: Fact,
+  table: FactTable,
+): CoefficientRange {
+  const min = perThousandOutputTokens(minFact, table);
+  const mid = perThousandOutputTokens(midFact, table);
+  const max = perThousandOutputTokens(maxFact, table);
+  return {
+    min: min.value,
+    mid: mid.value,
+    max: max.value,
+    confidence: Math.min(min.confidence, mid.confidence, max.confidence),
+    factIds: [...min.factIds, ...mid.factIds, ...max.factIds],
+  };
+}
 
 function resolveEnergyPerRequest(
   classification: ModelClassification,
@@ -117,57 +187,44 @@ function resolveEnergyPerRequest(
   if (classification.fullstack) {
     // Gemini Apps: der Fakt ist bereits Vollstack (inkl. PUE), kein
     // GPU-only-Wert. calculate.ts erkennt fullstack und wendet keinen
-    // zusaetzlichen Overhead an.
-    return pointRange(requireFact(table, "gemini-energy"));
+    // zusaetzlichen Overhead an. Skaliert wie alle anderen Klassen auf
+    // Wh pro 1.000 Output-Token (keine Sonderbehandlung).
+    const fact = requireFact(table, "gemini-energy");
+    const r = perThousandOutputTokens(fact, table);
+    return { min: r.value, mid: r.value, max: r.value, confidence: r.confidence, factIds: r.factIds };
   }
 
   switch (classification.modelClass) {
     case "small": {
       const lower = requireFact(table, "energy-small-lower-bound");
       const upper = requireFact(table, "dsr1-distill-70b-noreason");
+      const lowerR = perThousandOutputTokens(lower, table);
+      const upperR = perThousandOutputTokens(upper, table);
       return {
-        min: lower.value,
-        mid: (lower.value + upper.value) / 2,
-        max: upper.value,
-        confidence: Math.min(lower.confidence, upper.confidence),
-        factIds: [lower.id, upper.id],
+        min: lowerR.value,
+        mid: (lowerR.value + upperR.value) / 2,
+        max: upperR.value,
+        confidence: Math.min(lowerR.confidence, upperR.confidence),
+        factIds: [...lowerR.factIds, ...upperR.factIds],
       };
     }
     case "mid": {
       const min = requireFact(table, "llama31-70b-inf-energy");
-      const mid = requireFact(table, "mid-class-caravaca-energy");
+      const mid = requireFact(table, "caravaca-llama31-70b-measured");
       const max = requireFact(table, "mixtral-8x22b-inf-energy");
-      return {
-        min: min.value,
-        mid: mid.value,
-        max: max.value,
-        confidence: Math.min(min.confidence, mid.confidence, max.confidence),
-        factIds: [min.id, mid.id, max.id],
-      };
+      return energyRangeFromFacts(min, mid, max, table);
     }
     case "frontier": {
       const min = requireFact(table, "llama31-405b-inf-energy");
       const mid = requireFact(table, "frontier-class-joule-median");
       const max = requireFact(table, "frontier-class-joule-iqr-max");
-      return {
-        min: min.value,
-        mid: mid.value,
-        max: max.value,
-        confidence: Math.min(min.confidence, mid.confidence, max.confidence),
-        factIds: [min.id, mid.id, max.id],
-      };
+      return energyRangeFromFacts(min, mid, max, table);
     }
     case "reasoning": {
       const min = requireFact(table, "frontier-class-joule-median");
       const mid = requireFact(table, "dsr1-distill-70b-reason");
       const max = requireFact(table, "jegham-long-prompt-max");
-      return {
-        min: min.value,
-        mid: mid.value,
-        max: max.value,
-        confidence: Math.min(min.confidence, mid.confidence, max.confidence),
-        factIds: [min.id, mid.id, max.id],
-      };
+      return energyRangeFromFacts(min, mid, max, table);
     }
     default: {
       const exhaustive: never = classification.modelClass;

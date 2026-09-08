@@ -51,7 +51,7 @@ console.log(`Konfidenz: ${result.confidence}/5, Quellen: ${result.factIds.join("
 `loadFacts` liest und prueft die Faktendateien, `calculate` liefert das
 Ergebnis. Beide Aufrufe sind synchron und greifen nicht auf das Netzwerk zu.
 Alle drei Dateien sind noetig: `facts.json` enthaelt die belegten Messwerte,
-`assumptions.json` die eigenen ANNAHME-Fakten (z.B. Referenz-Tokenzahl,
+`assumptions.json` die eigenen ANNAHME-Fakten (z.B. Input-Kostenanteil,
 Overhead-Faktor), `models.json` bekannte Modellgroessen (Parameterzahl) fuer
 die Klassifikation - auf sie alle greift `calculate` je nach Modell und
 Berechnungsschritt zurueck; fehlt eine, bricht die Berechnung mit einem

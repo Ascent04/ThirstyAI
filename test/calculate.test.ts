@@ -75,7 +75,7 @@ function overrideTable(): FactTable {
     fact({ id: "wue-site-fallback-max", value: 0.7 }),
     fact({ id: "ewif-us-average", value: 3.142 }),
     fact({ id: "grid-co2-egrid-us-2023", value: 350 }),
-    fact({ id: "reference-output-tokens", value: 300 }),
+    fact({ id: "oviedo-typical-output-tokens", value: 300 }),
     fact({ id: "input-token-cost-share", value: 0.1 }),
   ];
 

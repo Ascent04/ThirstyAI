@@ -16,11 +16,14 @@ Output-Token, optional ein Stichtag (`asOf`).
    oder bei Gemini Apps bereits Vollstack), Overhead-Faktor (GPU zu
    IT-Energie), PUE, WUE (Standort-Kuehlwasser) und EWIF
    (Wasser der Stromerzeugung) plus CO2-Faktor des Stromnetzes.
-2. **Auf Tokenzahl skalieren**: Die Energie-Koeffizienten gelten fuer
-   eine Referenzantwort von 300 Output-Token. Input-Token zaehlen zu
-   10 % wie ein Output-Token (Prefill ist billiger als Decoding, siehe
-   Annahmen unten). `effectiveTokens = tokensOut + 0.1 * tokensIn`,
-   skaliert linear mit `effectiveTokens / 300`.
+2. **Auf Tokenzahl skalieren**: Die Energie-Koeffizienten sind in Wh pro
+   1.000 Output-Token angegeben, umgerechnet aus dem urspruenglichen
+   Wh-pro-Anfrage-Fakt und der mittleren Output-Tokenzahl der jeweiligen
+   Benchmark-Messung (`src/resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT`,
+   siehe offene Stelle 1). Input-Token zaehlen zu 10 % wie ein
+   Output-Token (Prefill ist billiger als Decoding, siehe Annahmen
+   unten). `effectiveTokens = tokensOut + 0.1 * tokensIn`, skaliert
+   linear mit `effectiveTokens / 1000`.
 3. **energyGpu -> energyIt**: Bei Vollstack-Fakten (aktuell nur Gemini
    Apps) ist der Ausgangswert bereits die Gesamtenergie inklusive PUE;
    `energyIt` wird durch Teilen durch PUE zurueckgerechnet. Sonst wird
@@ -62,19 +65,25 @@ auf ihren (typischerweise niedrigen) Wert begrenzt, egal wie gut die
 uebrigen, tatsaechlich unterscheidenden Koeffizienten belegt sind - die
 Kennzahl waere dann nur noch dieser einen Konstante gleich und koennte
 nicht mehr zwischen gut und schwach belegten Berechnungen
-unterscheiden. Betroffen sind aktuell drei Fakten:
+unterscheiden. Betroffen sind aktuell zwei Fakten:
 
-- `reference-output-tokens` (Referenz-Tokenzahl, calculate.ts)
 - `input-token-cost-share` (Input-Kostenanteil, calculate.ts)
 - `pue-range-half-width` (PUE-Bandbreite, resolve.ts) - gilt fuer jede
   einzige PUE-Aufloesung, unabhaengig vom Anbieter
 
-Das ist ein bewusster Kompromiss, keine Verschleierung: alle drei
-Fakten stehen weiterhin in `assumptions`, ihre Unsicherheit bleibt also
-sichtbar - sie beeinflusst nur nicht die confidence-Zahl. Leserinnen
-und Leser sollten confidence deshalb als "bedingt auf Akzeptanz dieser
-drei universellen Annahmen" lesen, nicht als absolutes Mass an
-Sicherheit.
+Die frueher hier gefuehrte pauschale Referenz-Tokenzahl
+(`reference-output-tokens`, 300 Token fuer jede Berechnung) ist keine
+universelle Annahme mehr: die Skalierung erfolgt jetzt je Energie-Fakt
+ueber `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`), und deren
+Unsicherheit fliesst - anders als vorher - in die normale
+confidence-Berechnung ein (siehe offene Stelle 1).
+
+Das ist ein bewusster Kompromiss, keine Verschleierung: beide
+verbleibenden Fakten stehen weiterhin in `assumptions`, ihre
+Unsicherheit bleibt also sichtbar - sie beeinflusst nur nicht die
+confidence-Zahl. Leserinnen und Leser sollten confidence deshalb als
+"bedingt auf Akzeptanz dieser zwei universellen Annahmen" lesen, nicht
+als absolutes Mass an Sicherheit.
 
 ## Eigene Annahmen (`data/assumptions.json`)
 
@@ -86,7 +95,11 @@ Alle mit `rating: "ANNAHME"`, `confidence: 1`, `source_id:
 - **overhead-factor-min/mid/max** (1.7 / 2.0 / 2.4): Spanne
   GPU-zu-IT-Energie, angelehnt an MIT Technology Review und das
   Verhaeltnis von Googles Vollstack- zu enger Systemgrenze.
-- **reference-output-tokens** (300 Token): siehe offene Stelle 1.
+- **reference-output-tokens** (300 Token, inzwischen unbenutzt): urspruengliche
+  pauschale Referenz-Tokenzahl fuer die Skalierung; durch die
+  per-Fakt-Zuordnung in `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`)
+  abgeloest, siehe offene Stelle 1. Der Fakt steht weiter in
+  `data/assumptions.json`, wird aber von keinem Code mehr gelesen.
 - **input-token-cost-share** (0.1): siehe offene Stelle 2.
 - **mid-class-caravaca-energy** (0.05 Wh), **frontier-class-joule-median**
   (0.39 Wh), **frontier-class-joule-iqr-max** (0.68 Wh): Zahlen, die nur im
@@ -171,11 +184,21 @@ confidence 2 zurueck" in `test/models.test.ts`, jetzt confidence 1.
 
 ## Offene Stellen
 
-1. **Referenz-Tokenzahl (300)**: Die Energie-Benchmarks der
-   Faktendatei geben Wh pro Anfrage an, aber meist ohne dokumentierte
-   mittlere Antwortlaenge. 300 Output-Token ist eine plausible, aber
-   nicht empirisch belegte Annahme fuer die Skalierung auf andere
-   Tokenzahlen.
+1. **Token-Zuordnung fuer die Skalierung**: Jeder Energie-Fakt wird ueber
+   `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`) einem Token-Fakt
+   zugeordnet, der die zugehoerige mittlere Output-Tokenzahl liefert.
+   Bei `basis: "measured"` (z.B. `llama31-70b-inf-energy` ->
+   `mlenergy-llama31-70b-output-tokens`) stammen Energie- und Tokenwert
+   aus derselben Messung/demselben Benchmark. Bei `basis: "assumed"`
+   (u.a. alle Faelle, die einer Oviedo-Typwertannahme wie
+   `oviedo-typical-output-tokens` zugeordnet sind, darunter auch der
+   Vollstack-Fakt `gemini-energy`) wird eine Tokenzahl aus einer anderen
+   Quelle uebernommen; die confidence wird in diesen Faellen zusaetzlich
+   auf 2 gedeckelt (`perThousandOutputTokens()`). Das loest die frueher
+   hier dokumentierte pauschale Referenz-Tokenzahl (300, fuer jede
+   Berechnung dieselbe) ab, bleibt aber fuer `basis: "assumed"`-Faelle
+   ein aehnliches methodisches Risiko: die zugeordnete Tokenzahl misst
+   nicht dieselbe Anfrage wie der Energiewert.
 2. **Input-Kostenanteil (0.1)**: Dass ein Input-Token energetisch wie
    0.1 Output-Token zaehlt, ist eine Annahme (Prefill ist parallelisierbar
    und damit billiger als sequentielles Decoding), aber mit den

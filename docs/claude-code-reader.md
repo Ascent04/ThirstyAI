@@ -59,12 +59,17 @@ volle Input-Token (Faktor 1.0) - das ergab fuer stark gecachte Sitzungen
   tatsaechliche Rechen-/Energieanteil eines Cache-Reads kann davon
   abweichen (in beide Richtungen) und ist zudem anbieterspezifisch - der
   Faktor gilt so nur fuer Anthropic-Modelle.
-- **Energie pro Ausgabe-Token aus Kurzkontext-Benchmarks**: die in
-  `data/facts.json`/`data/assumptions.json` hinterlegten Energie-Koeffizienten
-  stammen aus Benchmarks mit kurzen Prompts (siehe Referenz-Tokenzahl,
-  300 Output-Token). Claude-Code-Nachrichten tragen oft zehntausende
-  Kontext-Token (System-Prompt, Tool-Definitionen, bisherige
+- **Energie pro Ausgabe-Token aus Kurzkontext-Benchmarks**: Die
+  Energie-Koeffizienten in `data/facts.json`/`data/assumptions.json`
+  sind seit der Umstellung auf Wh pro 1.000 Output-Token direkt an die
+  mittlere Output-Tokenzahl der jeweiligen Benchmark-Messung gekoppelt
+  (`src/resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT`, u.a. Oviedo et al.
+  2025, arXiv:2509.20241) statt an eine einzelne pauschale
+  Referenz-Tokenzahl. Die zugrunde liegenden Benchmarks selbst sind aber
+  weiterhin Kurzkontext-Messungen (typische Werte 300-390 Output-Token,
+  bei Reasoning-Modellen 5.000). Claude-Code-Nachrichten tragen oft
+  zehntausende Kontext-Token (System-Prompt, Tool-Definitionen, bisherige
   Konversation) - die tatsaechliche Rechenlast pro Ausgabe-Token steigt
   mit der Kontextlaenge (laengere Attention-Berechnung), was die
-  bestehenden Koeffizienten fuer lange Kontexte systematisch
+  bestehenden Koeffizienten fuer lange Kontexte weiterhin systematisch
   unterschaetzen duerfte.

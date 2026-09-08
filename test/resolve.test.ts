@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadFacts } from "../src/facts.js";
-import { resolveCoefficients } from "../src/resolve.js";
+import { OUTPUT_TOKENS_FOR_ENERGY_FACT, resolveCoefficients } from "../src/resolve.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;
@@ -41,7 +41,10 @@ describe("resolveCoefficients", () => {
   it("erkennt Gemini Apps als Vollstack und nutzt Googles eigene Koeffizienten", () => {
     const result = resolveCoefficients({ model: "gemini-apps", provider: "google" }, table());
     expect(result.fullstack).toBe(true);
-    expect(result.energyPerRequestGpuOnly.mid).toBeCloseTo(0.24, 5);
+    // Einheit seit der Umstellung auf Wh/1.000 Output-Token: 0.24 Wh /
+    // oviedo-typical-output-tokens (300) * 1000 = 0.8 (vorher: 0.24, als
+    // die Koeffizienten noch in Wh pro Anfrage bei Referenz 300 Token waren).
+    expect(result.energyPerRequestGpuOnly.mid).toBeCloseTo(0.8, 5);
     expect(result.wueSite.mid).toBeCloseTo(1.15, 5);
     expect(result.carbonIntensity.mid).toBeCloseTo(94, 5);
   });
@@ -56,5 +59,38 @@ describe("resolveCoefficients", () => {
         result.energyPerRequestGpuOnly.max,
       );
     }
+  });
+
+  it("hat fuer jeden von resolveEnergyPerRequest tatsaechlich verwendeten Energie-Fakt einen Token-Fakt hinterlegt", () => {
+    // Jeder Energie-Fakt, den resolveEnergyPerRequest ueber alle vier
+    // Modellklassen und den Vollstack-Pfad hinweg nachschlaegt, muss in
+    // OUTPUT_TOKENS_FOR_ENERGY_FACT (resolve.ts) eine Zuordnung haben -
+    // sonst wirft perThousandOutputTokens() zur Laufzeit. Diese Liste
+    // synchron zu den case-Zweigen in resolveEnergyPerRequest halten.
+    const usedEnergyFactIds = [
+      "energy-small-lower-bound",
+      "dsr1-distill-70b-noreason",
+      "llama31-70b-inf-energy",
+      "caravaca-llama31-70b-measured",
+      "mixtral-8x22b-inf-energy",
+      "llama31-405b-inf-energy",
+      "frontier-class-joule-median",
+      "frontier-class-joule-iqr-max",
+      "dsr1-distill-70b-reason",
+      "jegham-long-prompt-max",
+      "gemini-energy",
+    ];
+    for (const id of usedEnergyFactIds) {
+      expect(OUTPUT_TOKENS_FOR_ENERGY_FACT[id], `fehlende Zuordnung fuer "${id}"`).toBeDefined();
+    }
+
+    // Gegenprobe: fuer je ein Modell pro Klasse (+ Vollstack) darf
+    // resolveCoefficients tatsaechlich nicht werfen.
+    const t = table();
+    expect(() => resolveCoefficients({ model: "gpt-4o-mini" }, t)).not.toThrow();
+    expect(() => resolveCoefficients({ model: "claude-3-5-sonnet" }, t)).not.toThrow();
+    expect(() => resolveCoefficients({ model: "llama-3.1-405b" }, t)).not.toThrow();
+    expect(() => resolveCoefficients({ model: "deepseek-r1" }, t)).not.toThrow();
+    expect(() => resolveCoefficients({ model: "gemini-apps", provider: "google" }, t)).not.toThrow();
   });
 });

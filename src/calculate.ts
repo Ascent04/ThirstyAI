@@ -1,7 +1,6 @@
 import type { Fact, FactTable } from "./facts.js";
 import { resolveCoefficients, type CoefficientRange } from "./resolve.js";
 
-const REFERENCE_TOKENS_ID = "reference-output-tokens";
 const INPUT_SHARE_ID = "input-token-cost-share";
 
 export interface ResultRange {
@@ -67,20 +66,21 @@ function div(a: ResultRange, b: CoefficientRange): ResultRange {
 /**
  * Berechnet Wasser-, Strom- und CO2-Bandbreiten fuer eine Anfrage.
  *
- * Ablauf: energyGpu (Koeffizient skaliert auf die tatsaechliche Tokenzahl,
- * Referenz 300 Output-Token, Input-Token zu `input-token-cost-share` gewichtet)
- * -> energyIt (bei Vollstack-Fakten durch PUE geteilt, um den reinen
- * IT-Anteil zurueckzurechnen; sonst mit overheadFactor multipliziert) ->
- * energyTotal (bei Vollstack-Fakten = energyGpu selbst, da dort schon die
- * Gesamtenergie inkl. PUE gemessen wurde; sonst energyIt x PUE) ->
- * waterScope1 (energyIt x wueSite), waterScope2 (energyTotal x ewif),
- * co2Scope2 (energyTotal x carbonIntensity).
+ * Ablauf: energyGpu (Koeffizient in Wh pro 1.000 Output-Token, siehe
+ * resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT, multipliziert mit den
+ * tatsaechlichen Token - Input-Token zu `input-token-cost-share` gewichtet,
+ * da Output-Token die Energie dominieren, siehe Oviedo et al. 2025
+ * arXiv:2509.20241) -> energyIt (bei Vollstack-Fakten durch PUE geteilt, um
+ * den reinen IT-Anteil zurueckzurechnen; sonst mit overheadFactor
+ * multipliziert) -> energyTotal (bei Vollstack-Fakten = energyGpu selbst, da
+ * dort schon die Gesamtenergie inkl. PUE gemessen wurde; sonst energyIt x
+ * PUE) -> waterScope1 (energyIt x wueSite), waterScope2 (energyTotal x
+ * ewif), co2Scope2 (energyTotal x carbonIntensity).
  * Die Gesamt-confidence ist das Minimum der tatsaechlich genutzten
- * Koeffizienten (overheadFactor zaehlt nur mit, wenn er auch verwendet wird);
- * die beiden universellen Umrechnungs-Annahmen (Referenz-Token, Input-Anteil)
- * fliessen nicht in die confidence ein, sonst waere jedes Ergebnis auf 1
- * begrenzt - sie erscheinen aber in `assumptions`. Details in
- * docs/methodology-draft.md.
+ * Koeffizienten (overheadFactor zaehlt nur mit, wenn er auch verwendet
+ * wird); die universelle Umrechnungs-Annahme (Input-Anteil) fliesst nicht in
+ * die confidence ein, sonst waere jedes Ergebnis auf 1 begrenzt - sie
+ * erscheint aber in `assumptions`. Details in docs/methodology-draft.md.
  */
 export function calculate(input: CalculateInput, table: FactTable): Result {
   const coeffs = resolveCoefficients(
@@ -88,13 +88,11 @@ export function calculate(input: CalculateInput, table: FactTable): Result {
     table,
   );
 
-  const referenceTokens = requireFact(table, REFERENCE_TOKENS_ID);
   const inputShare = requireFact(table, INPUT_SHARE_ID);
 
   const effectiveTokens = input.tokensOut + inputShare.value * input.tokensIn;
-  const tokenScale = effectiveTokens / referenceTokens.value;
 
-  const energyGpu = scale(coeffs.energyPerRequestGpuOnly, tokenScale);
+  const energyGpu = scale(coeffs.energyPerRequestGpuOnly, effectiveTokens / 1000);
 
   // Vollstack-Fakten (aktuell nur Gemini Apps) sind bereits die
   // Gesamtenergie inkl. PUE - energyTotal ist deshalb der Fakt selbst, nicht
@@ -127,7 +125,6 @@ export function calculate(input: CalculateInput, table: FactTable): Result {
   for (const range of usedRanges) {
     for (const id of range.factIds) factIds.add(id);
   }
-  factIds.add(referenceTokens.id);
   factIds.add(inputShare.id);
 
   const assumptions = [...factIds].filter((id) => table.byId.get(id)?.rating === "ANNAHME");

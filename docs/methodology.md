@@ -16,11 +16,14 @@ output tokens, optionally a cutoff date (`asOf`).
    fullstack for Gemini Apps), overhead factor (GPU to IT energy), PUE,
    WUE (on-site cooling water), and EWIF (water from electricity
    generation) plus the grid's CO2 factor.
-2. **Scale to token count**: the energy coefficients apply to a
-   reference response of 300 output tokens. Input tokens count for 10%
-   as much as an output token (prefill is cheaper than decoding, see
-   assumptions below). `effectiveTokens = tokensOut + 0.1 * tokensIn`,
-   scaled linearly by `effectiveTokens / 300`.
+2. **Scale to token count**: the energy coefficients are stated in Wh
+   per 1,000 output tokens, converted from the original Wh-per-request
+   fact and the average output token count of the matching benchmark
+   measurement (`src/resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT`, see open
+   issue 1). Input tokens count for 10% as much as an output token
+   (prefill is cheaper than decoding, see assumptions below).
+   `effectiveTokens = tokensOut + 0.1 * tokensIn`, scaled linearly by
+   `effectiveTokens / 1000`.
 3. **energyGpu -> energyIt**: for fullstack facts (currently only Gemini
    Apps) the starting value is already total energy including PUE;
    `energyIt` is derived by dividing by PUE. Otherwise it is multiplied
@@ -61,17 +64,23 @@ If it did, every result's confidence would always be capped at its
 (typically low) value, no matter how well-supported the other,
 genuinely distinguishing coefficients are - the metric would then just
 equal that one constant and could no longer distinguish well-supported
-from weakly-supported calculations. Three facts are currently affected:
+from weakly-supported calculations. Two facts are currently affected:
 
-- `reference-output-tokens` (reference token count, calculate.ts)
 - `input-token-cost-share` (input cost share, calculate.ts)
 - `pue-range-half-width` (PUE range, resolve.ts) - applies to every
   single PUE resolution, regardless of provider
 
-This is a deliberate trade-off, not concealment: all three facts still
-appear in `assumptions`, so their uncertainty remains visible - it just
-doesn't affect the confidence number. Readers should therefore read
-confidence as "conditional on accepting these three universal
+The flat reference token count formerly listed here
+(`reference-output-tokens`, 300 tokens for every calculation) is no
+longer a universal assumption: scaling now happens per energy fact via
+`OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`), and its uncertainty
+- unlike before - feeds into the regular confidence calculation (see
+open issue 1).
+
+This is a deliberate trade-off, not concealment: both remaining facts
+still appear in `assumptions`, so their uncertainty remains visible -
+it just doesn't affect the confidence number. Readers should therefore
+read confidence as "conditional on accepting these two universal
 assumptions," not as an absolute measure of certainty.
 
 ## Own assumptions (`data/assumptions.json`)
@@ -84,7 +93,11 @@ All with `rating: "ANNAHME"` (ASSUMPTION), `confidence: 1`, `source_id:
 - **overhead-factor-min/mid/max** (1.7 / 2.0 / 2.4): GPU-to-IT-energy
   range, based on MIT Technology Review and the ratio of Google's
   fullstack figure to its narrow system boundary.
-- **reference-output-tokens** (300 tokens): see open issue 1.
+- **reference-output-tokens** (300 tokens, now unused): the original
+  flat reference token count used for scaling; superseded by the
+  per-fact mapping in `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`),
+  see open issue 1. The fact still lives in `data/assumptions.json` but
+  is no longer read by any code.
 - **input-token-cost-share** (0.1): see open issue 2.
 - **mid-class-caravaca-energy** (0.05 Wh), **frontier-class-joule-median**
   (0.39 Wh), **frontier-class-joule-iqr-max** (0.68 Wh): numbers that
@@ -167,10 +180,21 @@ without a size hint" in `test/models.test.ts`, now confidence 1.
 
 ## Open issues
 
-1. **Reference token count (300)**: the fact file's energy benchmarks
-   state Wh per request, but mostly without a documented average
-   response length. 300 output tokens is a plausible but not
-   empirically grounded assumption for scaling to other token counts.
+1. **Token mapping for scaling**: each energy fact is mapped via
+   `OUTPUT_TOKENS_FOR_ENERGY_FACT` (`src/resolve.ts`) to a token fact
+   that supplies the matching average output token count. With
+   `basis: "measured"` (e.g. `llama31-70b-inf-energy` ->
+   `mlenergy-llama31-70b-output-tokens`), the energy value and the token
+   count come from the same measurement/benchmark. With
+   `basis: "assumed"` (including every case mapped to an Oviedo typical
+   value such as `oviedo-typical-output-tokens`, which also covers the
+   fullstack fact `gemini-energy`), the token count is carried over from
+   a different source; confidence is additionally capped at 2 in these
+   cases (`perThousandOutputTokens()`). This supersedes the flat
+   reference token count (300, the same for every calculation)
+   previously documented here, but for `basis: "assumed"` cases it
+   remains a similar methodological risk: the assigned token count does
+   not measure the same request as the energy value.
 2. **Input cost share (0.1)**: that an input token counts energetically
    as 0.1 of an output token is an assumption (prefill is
    parallelizable and therefore cheaper than sequential decoding), but

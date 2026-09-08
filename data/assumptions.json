@@ -145,7 +145,7 @@
       "locator": "-",
       "quote": "-",
       "second_source": "-",
-      "note": "Offene Stelle, siehe docs/methodology-draft.md"
+      "note": "Offene Stelle, siehe docs/methodology-draft.md. Betrifft nur die Gewichtung von Input- zu Output-Token, nicht die Skalierung auf die Gesamt-Tokenzahl (dafuer seit der Umstellung auf Wh/1.000 Output-Token: src/resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT)."
     },
     {
       "id": "mid-class-caravaca-energy",
@@ -166,7 +166,7 @@
       "locator": "-",
       "quote": "-",
       "second_source": "Ursprungsfakt: llama31-70b-inf-energy (S14: Caravaca et al. Produktionsmessung 0.05 Wh)",
-      "note": "Siehe docs/methodology-draft.md"
+      "note": "Siehe docs/methodology-draft.md. Nicht mehr referenziert seit Umstellung auf Wh/1.000-Output-Token (Schritt: Wh pro 1.000 Output-Token); ersetzt durch caravaca-llama31-70b-measured (data/facts.json, unnormalisierter FP16-Messwert 0.08 Wh)."
     },
     {
       "id": "frontier-class-joule-median",
