@@ -126,7 +126,9 @@
       "year": 2026,
       "url": "https://www.sciencedirect.com/science/article/pii/S2542435126001145",
       "type": "peer-reviewed; zitiert ML.ENERGY v3.0 und eine Produktionsmessung (Caravaca et al.)",
-      "verified": "aus Addendum, nicht selbst geöffnet"
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf.",
+      "authors": "Oviedo, Kazhamiaka, Choukse, Kim, Luers, Nakagawa, Bianchini, Lavista Ferres (Microsoft Research)",
+      "note": "Preprint arXiv:2509.20241; Joule-Fassung hinter Bezahlschranke, geprüft am Preprint; Werte weichen zwischen Versionen leicht ab (0.34 vs 0.31 Wh Frontier-Median)"
     },
     "S15": {
       "title": "AI Energy Score v2 (Hugging Face / Salesforce)",
@@ -145,18 +147,18 @@
       "verified": "Wert zweitzitiert in S1 §2.2 (selbst gelesen)"
     },
     "S17": {
-      "title": "Ember Yearly Electricity Data 2024 (via Our World in Data CSV)",
+      "title": "Ember Yearly Electricity Data 2024, Release 2026 (via Our World in Data CSV)",
       "publisher": "Ember",
       "year": 2025,
       "url": "https://ourworldindata.org/grapher/carbon-intensity-electricity",
       "type": "Datensatz; gCO2e/kWh der Stromerzeugung, location-based, Ember-Methodik (IPCC-Lebenszyklusfaktoren je Brennstoff)",
-      "verified": "2026-09-03 durch Claude (CSV heruntergeladen, Werte extrahiert)"
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     "S18": {
-      "title": "Umweltbundesamt: CO2-Emissionen pro Kilowattstunde Strom (Themenseiten 2025/2026) und CLIMATE CHANGE-Reihe 'Entwicklung der spezifischen THG-Emissionen des deutschen Strommix'",
+      "title": "Umweltbundesamt: CLIMATE CHANGE 16/2026 (Icha/Lauf, 1990-2025), Themenseite 'CO2-Emissionen pro Kilowattstunde Strom 2025 nur leicht gesunken'",
       "publisher": "Umweltbundesamt",
       "year": 2026,
-      "url": "https://www.umweltbundesamt.de/themen/co2-emissionen-pro-kilowattstunde-strom-2025-nur",
+      "url": "https://www.umweltbundesamt.de/n307435de",
       "type": "Behörde; direkter CO2-Emissionsfaktor des Stromverbrauchs, ohne Vorketten",
       "verified": "2026-09-03 durch Claude (Themenseiten gelesen)"
     },
@@ -213,7 +215,8 @@
       "locator": "§4.1, Tab. 1/2",
       "quote": "median Gemini Apps text prompt in May 2025 is 0.24 Wh",
       "second_source": "-",
-      "note": "Google-eigene Messung; Median, nicht Mittelwert"
+      "note": "Google-eigene Messung; Median, nicht Mittelwert",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "gemini-energy-narrow",
@@ -1576,9 +1579,10 @@
       "confidence": 3,
       "source_id": "S12",
       "locator": "Training GHG",
-      "quote": "11,390 tons CO2eq",
+      "quote": "Estimated total location-based greenhouse gas emissions were 11,390 tons CO2eq for training",
       "second_source": "-",
-      "note": "market-based: 0 (Renewable-Matching)"
+      "note": "market-based: 0 (Renewable-Matching) 39.3M GPU-Stunden H100-80GB (TDP 700 W), laut Meta 'adjusted for power usage efficiency', PUE also enthalten.",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "llama31-70b-inf-energy",
@@ -1588,18 +1592,19 @@
       "value": 0.04,
       "unit": "Wh",
       "functional_unit": "pro Anfrage",
-      "measurement_boundary": "nur GPU (Zeus), H100, vLLM, Steady-State-Batching; ohne CPU/DRAM, ohne Idle, ohne PUE",
+      "measurement_boundary": "nur GPU, 4xH100, BF16 (nicht FP8), vLLM, Steady-State, ohne PUE; Oviedo et al. nehmen rechnerisch Äquivalenz zu 8xH100/FP8 an; Ø 361 Output-Token",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "Testbed",
       "year": 2025,
-      "rating": "BESTÄTIGT",
+      "rating": "EINZELQUELLE",
       "confidence": 3,
       "source_id": "S14",
-      "locator": "Joule Tab. 1 (zitiert ML.ENERGY v3.0)",
-      "quote": "Llama 3.1 70B 0.04 [Wh/query]",
-      "second_source": "S14: Caravaca et al. Produktionsmessung 0.05 Wh",
-      "note": "zwei unabhängige Messungen 0.04/0.05 Wh; Sekundärzitat, da Leaderboard-Rohdaten nicht als Datei verfügbar. Für Vollstack grob x1.7 (S1) bis x2 (MIT TR) plus PUE"
+      "locator": "Oviedo et al. 2025, Table 1",
+      "quote": "Median energy per query for 4xH100 using BF16 reported as 0.04 Wh",
+      "second_source": "Caravaca et al. 2025 (arXiv:2511.05597): gemessen 0.08 Wh (FP16, 300 Output-Token); 0.05 ist Oviedos Normalisierung auf FP8",
+      "note": "zwei unabhängige Messungen 0.04/0.05 Wh; Sekundärzitat, da Leaderboard-Rohdaten nicht als Datei verfügbar. Für Vollstack grob x1.7 (S1) bis x2 (MIT TR) plus PUE Oviedo: Wert liegt leicht unter deren IQR (Ausreißer).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "llama31-405b-inf-energy",
@@ -1609,7 +1614,7 @@
       "value": 0.21,
       "unit": "Wh",
       "functional_unit": "pro Anfrage",
-      "measurement_boundary": "nur GPU, H100, vLLM, Steady-State; ohne PUE",
+      "measurement_boundary": "nur GPU, H100, vLLM, Steady-State; ohne PUE FP8 laut Table 1.",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "Testbed",
@@ -1618,9 +1623,10 @@
       "confidence": 3,
       "source_id": "S14",
       "locator": "Joule Results (zitiert ML.ENERGY v3.0)",
-      "quote": "median measured energy of 0.21 Wh",
+      "quote": "consistent with the ML.ENERGY leaderboard (v3.0) with a median measured energy of 0.21 Wh",
       "second_source": "S14 Monte-Carlo-Schätzung Median 0.39 Wh (IQR 0.19-0.68)",
-      "note": "Messung als Untergrenze der Frontier-Klasse verwenden"
+      "note": "Messung als Untergrenze der Frontier-Klasse verwenden",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "mixtral-8x22b-inf-energy",
@@ -1630,7 +1636,7 @@
       "value": 0.11,
       "unit": "Wh",
       "functional_unit": "pro Anfrage",
-      "measurement_boundary": "nur GPU, H100, FP8-normalisiert aus BF16 0.18 Wh / 1.7 (ML.ENERGY v2.0)",
+      "measurement_boundary": "nur GPU, H100, FP8-normalisiert aus BF16 0.18 Wh / 1.7 (ML.ENERGY v2.0) Ø 389 Output-Token.",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "Testbed",
@@ -1641,7 +1647,8 @@
       "locator": "Joule Results",
       "quote": "0.11 Wh (v2.0, normalized from BF16 to FP8)",
       "second_source": "-",
-      "note": "rechnerisch normalisiert, keine Direktmessung"
+      "note": "rechnerisch normalisiert, keine Direktmessung",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "dsr1-distill-70b-noreason",
@@ -1651,18 +1658,19 @@
       "value": 0.0495,
       "unit": "Wh",
       "functional_unit": "pro Anfrage (49.53 Wh je 1.000 Anfragen)",
-      "measurement_boundary": "nur GPU, H100, CodeCarbon, Batchgröße 1; ohne PUE",
+      "measurement_boundary": "unklar: Batchgröße, Hardware und Messwerkzeug stehen nicht im Blog, nur auf separater AI-Energy-Score-Methodikseite (nicht geöffnet)",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "Testbed",
       "year": 2025,
       "rating": "EINZELQUELLE",
-      "confidence": 3,
+      "confidence": 2,
       "source_id": "S15",
       "locator": "Tabelle 'Reasoning comes at a cost'",
       "quote": "70B Off 49.53",
       "second_source": "-",
-      "note": "Batch 1 überschätzt Wh/Anfrage gegenüber Produktion (S13)"
+      "note": "Batch 1 überschätzt Wh/Anfrage gegenüber Produktion (S13)",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Werte in Blog-Tabelle bestätigt."
     },
     {
       "id": "dsr1-distill-70b-reason",
@@ -1672,18 +1680,19 @@
       "value": 7.63,
       "unit": "Wh",
       "functional_unit": "pro Anfrage (7.626,53 Wh je 1.000 Anfragen)",
-      "measurement_boundary": "nur GPU, H100, CodeCarbon, Batchgröße 1; ohne PUE",
+      "measurement_boundary": "unklar: Batchgröße, Hardware und Messwerkzeug stehen nicht im Blog, nur auf separater AI-Energy-Score-Methodikseite (nicht geöffnet)",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "Testbed",
       "year": 2025,
       "rating": "EINZELQUELLE",
-      "confidence": 3,
+      "confidence": 2,
       "source_id": "S15",
       "locator": "Tabelle 'Reasoning comes at a cost'",
       "quote": "70B On 7,626.53",
       "second_source": "-",
-      "note": "Faktor 154 gegenüber Reasoning aus; Output-Token dominieren Energie; als Obergrenze-Indikator"
+      "note": "Faktor 154 gegenüber Reasoning aus; Output-Token dominieren Energie; als Obergrenze-Indikator",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Werte in Blog-Tabelle bestätigt."
     },
     {
       "id": "llama65b-inf-energy",
@@ -1698,13 +1707,14 @@
       "carbon_accounting": "-",
       "region": "MIT Supercloud",
       "year": 2023,
-      "rating": "BESTÄTIGT",
-      "confidence": 4,
-      "source_id": "S16",
-      "locator": "Results",
-      "quote": "approximately 0.3 Wh per response",
-      "second_source": "S1 §2.2",
-      "note": "historischer Referenzwert, ca. 1 Größenordnung über H100/FP8"
+      "rating": "EINZELQUELLE",
+      "confidence": 3,
+      "source_id": "S1",
+      "locator": "Elsworth et al. 2025, Related Work",
+      "quote": "For the LLaMA-65B model, they measure an energy consumption of approximately 0.3 Wh per response",
+      "second_source": "Samsi arXiv: 2310.03003",
+      "note": "Wert steht nicht in Samsi et al. selbst; Sekundärangabe durch Google. Plausibel: 3.5 J x ~300 Token",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "llama65b-inf-energy-per-token",
@@ -1723,9 +1733,10 @@
       "confidence": 3,
       "source_id": "S16",
       "locator": "Results (3-4 J/Token)",
-      "quote": "around 3-4 Joules per output token",
+      "quote": "with length 512, we see that it takes about 3-4 Joules for a output token",
       "second_source": "-",
-      "note": "1 Wh = 3600 J -> ca. 1 Wh je 1.000 Output-Token (GPU-only, alte Hardware)"
+      "note": "1 Wh = 3600 J -> ca. 1 Wh je 1.000 Output-Token (GPU-only, alte Hardware). Zuordnung zu 65B aus Fig. 6/7-Kontext, nicht eindeutig im Satz.",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "grid-co2-ember-usa",
@@ -1746,7 +1757,8 @@
       "locator": "CSV Zeile USA 2024",
       "quote": "383.78",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-eu-27",
@@ -1767,7 +1779,8 @@
       "locator": "CSV Zeile EU-27 2024",
       "quote": "211.2",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-deutschland",
@@ -1809,7 +1822,8 @@
       "locator": "CSV Zeile Irland 2024",
       "quote": "270.91",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-niederlande",
@@ -1830,7 +1844,8 @@
       "locator": "CSV Zeile Niederlande 2024",
       "quote": "250.72",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-schweden",
@@ -1851,7 +1866,8 @@
       "locator": "CSV Zeile Schweden 2024",
       "quote": "34.91",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-frankreich",
@@ -1872,7 +1888,8 @@
       "locator": "CSV Zeile Frankreich 2024",
       "quote": "40.48",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-finnland",
@@ -1893,7 +1910,8 @@
       "locator": "CSV Zeile Finnland 2024",
       "quote": "66.63",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-singapur",
@@ -1935,7 +1953,8 @@
       "locator": "CSV Zeile Indien 2024",
       "quote": "705.4",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-ember-japan",
@@ -1956,7 +1975,8 @@
       "locator": "CSV Zeile Japan 2024",
       "quote": "483.43",
       "second_source": "-",
-      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen"
+      "note": "Datensatz selbst geladen; nicht mit Behördenwerten (direkte Emissionen) mischen. Datensatz enthält 2025-Wert (USA 384.4, EU-27 209.9, NL 253.56, SE 35.26, FR 41.44, FI 57.47, IE 256.54, IN 670.13, JP 477.26).",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf. Ember Yearly Electricity Data, Release 2026 (30.06.2026), via OWID carbon-intensity-electricity, Wert 2024 exakt identisch."
     },
     {
       "id": "grid-co2-uba-de-2024",
@@ -1974,10 +1994,11 @@
       "rating": "BESTÄTIGT",
       "confidence": 5,
       "source_id": "S18",
-      "locator": "Themenseite 'CO2-Emissionen pro kWh Strom 2025 nur leicht gesunken'",
-      "quote": "2024 lag dieser Wert bei 353",
+      "locator": "UBA CLIMATE CHANGE 16/2026 (Icha/Lauf, 1990-2025) bzw. Themenseite 'CO2-Emissionen pro Kilowattstunde Strom 2025 nur leicht gesunken'",
+      "quote": "Pro Kilowattstunde des in Deutschland verbrauchten Stroms wurden im Jahr 2025 bei der Erzeugung durchschnittlich 344 Gramm CO2 ausgestoßen. 2024 lag dieser Wert bei 353 und 2023 bei 379",
       "second_source": "S17 (Ember 336, andere Methodik)",
-      "note": "REVISION: die 2025 veröffentlichte Schätzung für 2024 lautete 363 g; aktueller vorläufiger Wert 353 g. 2023: 379 (revidiert von 386). 2025 geschätzt: 344"
+      "note": "REVISION: die 2025 veröffentlichte Schätzung für 2024 lautete 363 g; aktueller vorläufiger Wert 353 g. 2023: 379 (revidiert von 386). 2025 geschätzt: 344. 2024 vorläufig, 2025 geschätzt. Vorausgabe 13/2025 nannte 363 für 2024, revidiert.",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "grid-co2-uba-de-2025",
@@ -1995,10 +2016,11 @@
       "rating": "EINZELQUELLE",
       "confidence": 4,
       "source_id": "S18",
-      "locator": "Themenseite 2026",
-      "quote": "im Jahr 2025 bei der Erzeugung durchschnittlich 344 Gramm",
+      "locator": "UBA CLIMATE CHANGE 16/2026 (Icha/Lauf, 1990-2025) bzw. Themenseite 'CO2-Emissionen pro Kilowattstunde Strom 2025 nur leicht gesunken'",
+      "quote": "Pro Kilowattstunde des in Deutschland verbrauchten Stroms wurden im Jahr 2025 bei der Erzeugung durchschnittlich 344 Gramm CO2 ausgestoßen. 2024 lag dieser Wert bei 353 und 2023 bei 379",
       "second_source": "-",
-      "note": "Schätzwert, wird erfahrungsgemäß revidiert"
+      "note": "Schätzwert, wird erfahrungsgemäß revidiert. 2024 vorläufig, 2025 geschätzt. Vorausgabe 13/2025 nannte 363 für 2024, revidiert.",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "grid-co2-ema-sg-2024",
@@ -2128,7 +2150,8 @@
       "locator": "Executive Summary",
       "quote": "reaching 176 TWh by 2023, representing 4.4% of total U.S. electricity consumption",
       "second_source": "-",
-      "note": "Prognose 2028: 325-580 TWh"
+      "note": "Prognose 2028: 325-580 TWh",
+      "verified": "2026-09-07: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
     },
     {
       "id": "us-dc-direct-water-2023",
