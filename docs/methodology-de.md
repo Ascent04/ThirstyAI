@@ -42,6 +42,38 @@ Output-Token, optional ein Stichtag (`asOf`).
    Herstellung der Hardware (Scope 3) und Kaeltemittel (Scope 1) sind
    nicht enthalten, siehe offene Stelle 3.
 
+### CO2-Intensitaet nach Region
+
+`resolveCarbonIntensity` (`src/resolve.ts:CARBON_REGION_TABLE_BY_YEAR`)
+loest min/mid/max je Region fuer ein gegebenes Bezugsjahr auf (aktuell
+ist nur 2024 hinterlegt): **mid** ist die nationale Referenzquelle, wo
+es eine gibt (UBA fuer DE, RTE fuer FR, EMA fuer SG, eGRID fuer US),
+sonst Ember. **min/max** sind der kleinste/groesste Wert unter den
+anerkannten 2024-Quellen (EEA, Ember, die nationale Referenz)
+einschliesslich mid selbst - das Intervall bildet also die Spreizung
+*zwischen unabhaengigen Quellen-Methoden* ab, nicht Messunsicherheit
+innerhalb einer Quelle. Regionen ohne zweite, unabhaengige 2024-Quelle
+(IN, JP - hier liegt nur Ember vor) haben min = mid = max. Die
+2023-Ausgabe von eGRID (`grid-co2-egrid-us-2023`) dient als
+US-2024-Referenz, da sie weiterhin die aktuellste eGRID-Ausgabe ist.
+Google ist die eine Ausnahme: es nutzt Googles eigenen, flottenweiten,
+market-based Emissionsfaktor (`google-ef-mb-2024`) statt der
+Regionstabelle, da Gemini Apps ueber die globale Flotte bedient wird,
+nicht ueber eine feste Region.
+
+**referenceYear**: ein optionaler Parameter (`calculate`/
+`resolveCoefficients`, Default `DEFAULT_REFERENCE_YEAR` = 2024), der
+festlegt, welche Jahres-Regionstabelle verwendet wird; er wird zusaetzlich
+im Ergebnis zurueckgegeben, damit erkennbar bleibt, auf welchem
+Jahrgang der Netzdaten eine Zahl beruht. Ein unbekanntes Bezugsjahr
+(kein Eintrag in `CARBON_REGION_TABLE_BY_YEAR`) wirft einen Fehler,
+statt still zurueckzufallen. 2025er CO2-Intensitaets-Fakten (Ember 2025,
+siehe v0.3-Addendum) liegen bereits in `data/facts.json` vor, werden
+aber bewusst noch von keinem Regionstabellen-Eintrag referenziert: eine
+2025-Tabelle braeuchte die 2025-Ausgaben sowohl von EEA als auch eGRID,
+um die min/max-Methodenspreizungslogik konsistent zu halten, und keine
+von beiden ist bisher verfuegbar.
+
 Alle Schritte sind Multiplikation oder Division durch positive Werte,
 nie Subtraktion. Wendet man auf jeden Schritt konsequent die min- bzw.
 max-Auspraegung jedes Koeffizienten an (bei Division ueber Kreuz: der
@@ -104,7 +136,18 @@ Alle mit `rating: "ANNAHME"`, `confidence: 1`, `source_id:
   (Joule-Monte-Carlo-Schaetzung), hier als eigene, referenzierte ANNAHME
   herausgezogen, damit resolve.ts keine Zahlen-Literale enthaelt.
 - **pue-range-half-width** (0.1): eigene Bandbreite um den PUE-Punktwert,
-  da Anbieter PUE meist ohne Unsicherheitsangabe berichten.
+  da Anbieter PUE meist ohne Unsicherheitsangabe berichten. Seit Zyklus C
+  wird diese Bandbreite je nach Anbieter unterschiedlich verwendet: fuer
+  Google (`google-pue`) und Microsoft (`msft-pue-global-fy25`) gilt sie
+  weiterhin symmetrisch, ± dieser Wert um den jeweils berichteten
+  Punktwert. Fuer den Default-Anbieter (weder Google noch Microsoft) gibt
+  es keinen einzelnen Punktwert mehr - min ist der Fakt
+  `us-dc-pue-ai-2024` (1.145, PUE von US-Einrichtungen mit
+  KI-Ausruestung), mid ist `us-dc-pue-2024` (1.45, US-Landesdurchschnitt);
+  nur die Obergrenze bleibt eine Annahme, `mid + pue-range-half-width`
+  (1.55). Der aeltere Fakt `us-dc-pue-2023` (1.40) bleibt als
+  historischer Wert in `data/facts.json` erhalten, wird aber von
+  `resolvePue` nicht mehr referenziert.
 - **withdrawal-to-consumption-share** (0.8): aus der Notiz von
   `google-wue-cat2` ("Google verbraucht im Schnitt 80 % des entnommenen
   Wassers"), auf AWS und Meta uebertragen.

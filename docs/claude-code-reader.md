@@ -51,6 +51,28 @@ Fruehere Fassung dieses Werkzeugs zaehlte Cache-Reads im Maximum wie
 volle Input-Token (Faktor 1.0) - das ergab fuer stark gecachte Sitzungen
 (siehe unten) eine Obergrenze um den Faktor 10 zu hoch.
 
+## Messwerte (Wh pro 1.000 Output-Token)
+
+`examples/claude-code-session.ts`, ausgefuehrt gegen eine reale
+Claude-Code-Sitzung (Modell `claude-sonnet-5`), aggregiert je einmal mit
+Cache-Read-Compute-Share-Faktor 0 (min), 0.1 (mid) und 0.1 (max) (siehe
+"Cache-Read-Intervall" oben) und rechnet das Ergebnis auf Wh pro 1.000
+Output-Token um:
+
+- **Stand nach v0.3** (aktuelle Fakten, Bezugsjahr 2024, Default-PUE
+  asymmetrisch 1.145/1.45/1.55, siehe methodology.md): min=0.491
+  mid=5.099 max=6.935 Wh / 1.000 Output-Token.
+- **Stand vor v0.3** (alte, symmetrische Default-PUE 1.4 ± 0.1): min=0.557
+  mid=4.923 max=6.712 Wh / 1.000 Output-Token.
+
+Kernaussage unveraendert: die grosse Spanne zwischen min (~0.5) und max
+(~6.9, Faktor ~13-14) wird nicht vom PUE-Wechsel dominiert, sondern vom
+Cache-Read-Intervall (Faktor 0 vs. 0.1 auf `cacheReadTokens`, die bei
+Claude-Code-Sitzungen den weit groessten Anteil der Input-Token
+ausmachen) - die PUE-Aenderung verschiebt min/mid/max jeweils nur um
+niedrige zweistellige bzw. einstellige Prozentpunkte (min -12 %, mid
++3.6 %, max +3.3 %), nicht um eine Groessenordnung.
+
 ## Bekannte Einschraenkungen
 
 - **Cache-Read-Faktor ist ein Preis-Proxy, keine Energiemessung**:

@@ -42,6 +42,36 @@ output tokens, optionally a cutoff date (`asOf`).
    fact). Hardware manufacturing (Scope 3) and refrigerants (Scope 1)
    are not included, see open issue 3.
 
+### CO2 intensity by region
+
+`resolveCarbonIntensity` (`src/resolve.ts:CARBON_REGION_TABLE_BY_YEAR`)
+resolves min/mid/max per region for a given reference year (currently
+only 2024 is populated): **mid** is the national reference source where
+one exists (UBA for DE, RTE for FR, EMA for SG, eGRID for US), Ember
+otherwise. **min/max** are the smallest/largest value among the
+recognized 2024 sources (EEA, Ember, the national reference), including
+mid itself - so the interval reflects the spread *between independent
+sources' methodologies*, not measurement uncertainty within one source.
+Regions without a second, independent 2024 source (IN, JP - Ember is the
+only figure available) have min = mid = max. eGRID's 2023 edition
+(`grid-co2-egrid-us-2023`) is used as the US 2024 reference, since it is
+still the most recent eGRID release. Google is the one exception: it
+uses Google's own fleet-wide, market-based emission factor
+(`google-ef-mb-2024`) instead of the region table, since Gemini Apps is
+served from Google's global fleet, not a fixed region.
+
+**referenceYear**: an optional parameter (`calculate`/`resolveCoefficients`,
+default `DEFAULT_REFERENCE_YEAR` = 2024) that selects which year's
+region table is used; it is also echoed back in the result so a reader
+can see which vintage of grid data a number is based on. An unknown
+reference year (no entry in `CARBON_REGION_TABLE_BY_YEAR`) throws an
+error rather than silently falling back. 2025 carbon-intensity facts
+(Ember 2025, see the v0.3 addendum) already exist in `data/facts.json`
+but are deliberately not yet referenced by any region-table entry: a
+2025 table would need the 2025 editions of both EEA and eGRID to keep
+the min/max methodology-spread logic consistent, and neither is
+available yet.
+
 All steps are multiplication or division by positive values, never
 subtraction. Consistently applying each coefficient's min or max value
 at every step (for division, cross-wise: the smallest quotient comes
@@ -104,7 +134,17 @@ All with `rating: "ANNAHME"` (ASSUMPTION), `confidence: 1`, `source_id:
   contains no numeric literals.
 - **pue-range-half-width** (0.1): our own spread around the PUE point
   estimate, since providers usually report PUE without an uncertainty
-  range.
+  range. Since Zyklus C this spread is used differently depending on
+  provider: for Google (`google-pue`) and Microsoft
+  (`msft-pue-global-fy25`) it still applies symmetrically, ± this value
+  around their reported point estimate. For the default provider
+  (neither Google nor Microsoft) there is no longer a single point
+  estimate - min is the fact `us-dc-pue-ai-2024` (1.145, PUE of US
+  facilities equipped for AI) and mid is `us-dc-pue-2024` (1.45, US
+  national average); only the upper bound is still an assumption, `mid +
+  pue-range-half-width` (1.55). The older fact `us-dc-pue-2023` (1.40)
+  remains in `data/facts.json` as a historical figure but is no longer
+  referenced by `resolvePue`.
 - **withdrawal-to-consumption-share** (0.8): from the note on
   `google-wue-cat2` ("Google consumes on average 80% of the water it
   withdraws"), carried over to AWS and Meta.
