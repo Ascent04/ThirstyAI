@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { classifyModel } from "../src/models.js";
-import { loadFacts } from "../src/facts.js";
+import { loadFacts } from "../src/factsNode.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;

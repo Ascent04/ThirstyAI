@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadFacts } from "../src/facts.js";
+import { loadFacts } from "../src/factsNode.js";
 import { OUTPUT_TOKENS_FOR_ENERGY_FACT, resolveCoefficients } from "../src/resolve.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;

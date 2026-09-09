@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-import { loadFacts } from "../src/facts.js";
+import { loadFacts } from "../src/factsNode.js";
 import { readClaudeCodeUsage } from "../src/readers/claudeCode.js";
 import { aggregateByModel, measureSession } from "../src/session.js";
 

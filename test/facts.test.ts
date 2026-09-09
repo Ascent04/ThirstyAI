@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { FactValidationError, latest, loadFacts } from "../src/facts.js";
+import { FactValidationError, latest } from "../src/facts.js";
+import { loadFacts } from "../src/factsNode.js";
 
 const REAL_FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const BROKEN_DUPLICATE_ID = new URL(

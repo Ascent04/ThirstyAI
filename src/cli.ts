@@ -4,7 +4,8 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { calculate, DEFAULT_REFERENCE_YEAR } from "./calculate.js";
-import { loadFacts, type FactTable } from "./facts.js";
+import { type FactTable } from "./facts.js";
+import { loadFacts } from "./factsNode.js";
 import { classifyModel } from "./models.js";
 import { readClaudeCodeUsage } from "./readers/claudeCode.js";
 import { aggregateByModel, measureSession, type ModelMeasurement, type Range } from "./session.js";

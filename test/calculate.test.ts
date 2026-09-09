@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Fact, FactTable, Source } from "../src/facts.js";
-import { loadFacts } from "../src/facts.js";
+import { loadFacts } from "../src/factsNode.js";
 import { calculate } from "../src/calculate.js";
 
 const FACTS = new URL("../data/facts.json", import.meta.url).pathname;

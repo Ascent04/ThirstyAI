@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { calculate } from "../src/calculate.js";
-import { loadFacts } from "../src/facts.js";
+import { loadFacts } from "../src/factsNode.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
