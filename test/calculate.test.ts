@@ -160,4 +160,35 @@ describe("calculate", () => {
     expect(result.factIds).toContain("grid-co2-uba-de-2024");
     expect(result.factIds).not.toContain("grid-co2-uba-de-2025");
   });
+
+  it("Referenzfall claude-sonnet-5/1000 out/DE: dataConfidence 2, methodConfidence 1, confidence unveraendert 1", () => {
+    const result = calculate(
+      { model: "claude-sonnet-5", tokensIn: 0, tokensOut: 1000, region: "DE" },
+      table(),
+    );
+    expect(result.dataConfidence).toBe(2);
+    expect(result.methodConfidence).toBe(1);
+    expect(result.confidence).toBe(1);
+  });
+
+  it("dataConfidence/methodConfidence entsprechen einer unabhaengig gebildeten Minimum-Berechnung ueber factIds/rating", () => {
+    const t = table();
+    const result = calculate(
+      { model: "claude-sonnet-5", tokensIn: 0, tokensOut: 1000, region: "DE" },
+      t,
+    );
+
+    for (const id of result.factIds) {
+      if (t.byId.get(id)?.rating === "ANNAHME") {
+        expect(result.assumptions).toContain(id);
+      }
+    }
+
+    const nonAssumptionConfidences = result.factIds
+      .filter((id) => !result.assumptions.includes(id))
+      .map((id) => t.byId.get(id)!.confidence);
+    const expectedDataConfidence =
+      nonAssumptionConfidences.length > 0 ? Math.min(...nonAssumptionConfidences) : 5;
+    expect(result.dataConfidence).toBe(expectedDataConfidence);
+  });
 });

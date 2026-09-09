@@ -237,16 +237,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const confidence = document.createElement("p");
     confidence.className = "confidence";
-    confidence.textContent = `Confidence ${result.confidence}/5`;
+    confidence.textContent = `Data confidence ${result.dataConfidence}/5 · Method confidence ${result.methodConfidence}/5`;
     resultsEl.appendChild(confidence);
 
-    if (result.confidence === 1) {
+    if (result.methodConfidence === 1) {
       const confidenceNote = document.createElement("p");
       confidenceNote.className = "note";
       confidenceNote.textContent =
-        "Capped at 1/5 by the GPU-to-datacenter overhead factor — an unverified " +
-        "assumption, not a measurement. The individual source ratings below are " +
-        "mostly higher.";
+        "Method confidence is capped at 1/5 by unverified assumptions (see " +
+        "Assumptions below). Data confidence reflects the weakest measured " +
+        "source actually used.";
       resultsEl.appendChild(confidenceNote);
     }
 

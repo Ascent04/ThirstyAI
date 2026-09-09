@@ -24,6 +24,10 @@ export interface Result {
    */
   co2Scope2: ResultRange;
   confidence: number;
+  /** Minimum confidence over the non-ANNAHME facts in factIds; 5 if none. */
+  dataConfidence: number;
+  /** Minimum confidence over the ANNAHME facts in factIds; 5 if none. */
+  methodConfidence: number;
   factIds: string[];
   assumptions: string[];
   boundary: "fullstack" | "gpu-only";
@@ -142,12 +146,27 @@ export function calculate(input: CalculateInput, table: FactTable): Result {
 
   const assumptions = [...factIds].filter((id) => table.byId.get(id)?.rating === "ANNAHME");
 
+  // dataConfidence/methodConfidence are derived straight from factIds/rating,
+  // independent of how the individual resolve.ts functions build `confidence`
+  // (some of them leave a beteiligte ID out of their own Math.min or use a
+  // cap fact's value instead of its confidence) - so these two numbers can
+  // diverge from `confidence`, which stays unchanged for compatibility.
+  const assumptionIdSet = new Set(assumptions);
+  const dataConfidenceValues = [...factIds]
+    .filter((id) => !assumptionIdSet.has(id))
+    .map((id) => requireFact(table, id).confidence);
+  const methodConfidenceValues = assumptions.map((id) => requireFact(table, id).confidence);
+  const dataConfidence = dataConfidenceValues.length > 0 ? Math.min(...dataConfidenceValues) : 5;
+  const methodConfidence = methodConfidenceValues.length > 0 ? Math.min(...methodConfidenceValues) : 5;
+
   return {
     energyTotal,
     waterScope1,
     waterScope2,
     co2Scope2,
     confidence,
+    dataConfidence,
+    methodConfidence,
     factIds: [...factIds].sort(),
     assumptions: assumptions.sort(),
     boundary: coeffs.fullstack ? "fullstack" : "gpu-only",
