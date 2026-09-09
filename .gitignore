@@ -11,3 +11,4 @@ examples/*.js.map
 *.jsonl
 # test fixtures are synthetic placeholders and intentionally tracked
 !test/fixtures/*.jsonl
+# docs/calculator/bundle.js is committed on purpose: GitHub Pages serves docs/ without a build step. Rebuild with npm run build:web before release.

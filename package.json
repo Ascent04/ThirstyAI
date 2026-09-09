@@ -31,7 +31,7 @@
     "build": "tsc -p tsconfig.json",
     "pretest": "npm run build",
     "test": "vitest run",
-    "build:web": "esbuild web/browser-calc.ts --bundle --format=esm --minify --outfile=docs/calculator/bundle.js",
+    "build:web": "esbuild web/browser-dom.ts --bundle --format=esm --minify --outfile=docs/calculator/bundle.js",
     "check:web": "tsc -p web/tsconfig.json"
   },
   "devDependencies": {
