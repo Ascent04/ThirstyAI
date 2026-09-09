@@ -18,6 +18,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": "./dist/index.js",
+  "bin": {
+    "thirstyai": "dist/cli.js"
+  },
   "files": [
     "dist",
     "data",
@@ -26,6 +29,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
     "test": "vitest run"
   },
   "devDependencies": {
