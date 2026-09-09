@@ -79,6 +79,12 @@ export interface ModelMeasurement {
   confidenceMin: number;
   confidenceMid: number;
   confidenceMax: number;
+  dataConfidenceMin: number;
+  dataConfidenceMid: number;
+  dataConfidenceMax: number;
+  methodConfidenceMin: number;
+  methodConfidenceMid: number;
+  methodConfidenceMax: number;
   factIds: string[];
   assumptions: string[];
   boundary: Result["boundary"];
@@ -90,6 +96,8 @@ export interface SessionTotal {
   waterScope2: Range;
   co2Scope2: Range;
   confidence: number;
+  dataConfidence: number;
+  methodConfidence: number;
   factIds: string[];
   assumptions: string[];
 }
@@ -165,6 +173,12 @@ export function measureSession(
       confidenceMin: resultAtMin.confidence,
       confidenceMid: resultAtMid.confidence,
       confidenceMax: resultAtMax.confidence,
+      dataConfidenceMin: resultAtMin.dataConfidence,
+      dataConfidenceMid: resultAtMid.dataConfidence,
+      dataConfidenceMax: resultAtMax.dataConfidence,
+      methodConfidenceMin: resultAtMin.methodConfidence,
+      methodConfidenceMid: resultAtMid.methodConfidence,
+      methodConfidenceMax: resultAtMax.methodConfidence,
       factIds: resultAtMin.factIds,
       assumptions: resultAtMin.assumptions,
       boundary: resultAtMin.boundary,
@@ -178,6 +192,14 @@ export function measureSession(
     co2Scope2: sumRange(models.map((m) => m.co2Scope2)),
     confidence: Math.min(
       ...models.map((m) => Math.min(m.confidenceMin, m.confidenceMid, m.confidenceMax)),
+    ),
+    dataConfidence: Math.min(
+      ...models.map((m) => Math.min(m.dataConfidenceMin, m.dataConfidenceMid, m.dataConfidenceMax)),
+    ),
+    methodConfidence: Math.min(
+      ...models.map((m) =>
+        Math.min(m.methodConfidenceMin, m.methodConfidenceMid, m.methodConfidenceMax),
+      ),
     ),
     factIds: [...new Set(models.flatMap((m) => m.factIds))].sort(),
     assumptions: [...new Set(models.flatMap((m) => m.assumptions))].sort(),

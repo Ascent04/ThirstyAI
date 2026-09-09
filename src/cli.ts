@@ -165,7 +165,8 @@ function runCalc(args: string[]): void {
   ]);
 
   console.log();
-  console.log(`Confidence: ${result.confidence}/5`);
+  console.log(`Data confidence: ${result.dataConfidence}/5`);
+  console.log(`Method confidence: ${result.methodConfidence}/5`);
   console.log(`Boundary: ${result.boundary}`);
   console.log(`Facts: ${result.factIds.join(", ")}`);
   if (result.assumptions.length > 0) {
@@ -362,7 +363,8 @@ async function runSessionAsync(
   }
 
   const boundaries = [...new Set(measurement.models.map((m) => m.boundary))];
-  console.log(`Confidence: ${measurement.total.confidence}/5`);
+  console.log(`Data confidence: ${measurement.total.dataConfidence}/5`);
+  console.log(`Method confidence: ${measurement.total.methodConfidence}/5`);
   console.log(`Boundary: ${boundaries.join(" + ")}`);
   console.log(`Facts: ${measurement.total.factIds.join(", ")}`);
   if (measurement.total.assumptions.length > 0) {
