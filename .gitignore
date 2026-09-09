@@ -9,3 +9,5 @@ examples/*.js.map
 *.log
 .env
 *.jsonl
+# test fixtures are synthetic placeholders and intentionally tracked
+!test/fixtures/*.jsonl

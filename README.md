@@ -34,6 +34,75 @@ npm run build
 npm test        # expected: 39 tests passing
 ```
 
+## Command line
+
+```bash
+$ node dist/cli.js calc --model claude-sonnet-5 --out 1000 --region DE
+ThirstyAI — claude-sonnet-5 (class mid, recognized via class-claude-sonnet-5)
+Tokens: in=0 out=1000 · Region: DE · Reference year: 2024
+
+              min     mid     max
+energy Wh   0.216   0.773    1.05
+water ml    0.500    1.77    2.42
+co2 g      0.0628   0.273   0.371
+
+Confidence: 1/5
+Boundary: gpu-only
+Facts: …
+Assumptions: …
+```
+
+```bash
+$ node dist/cli.js session test/fixtures/claude-code-sample.jsonl --region DE
+ThirstyAI session — test/fixtures/claude-code-sample.jsonl
+Records: 2 (skipped unparsable: 1, skipped synthetic: 1)
+Tokens: input=35 output=190 cache-create=50 cache-read=200 · Region: DE · Reference year: 2024
+
+=== claude-sonnet-5 (class mid, recognized via class-claude-sonnet-5) ===
+              min     mid     max
+energy Wh  0.0428   0.155   0.211
+water ml   0.0993   0.355   0.485
+co2 g      0.0125  0.0547  0.0745
+
+Wh per 1,000 output tokens (all compute): 0.225/0.816/1.11
+
+Confidence: 1/5
+Boundary: gpu-only
+Facts: …
+Assumptions: …
+Cache-read compute share: 0/0.1/0.1 (assumption cache-read-compute-share-anthropic)
+```
+
+`calc` options:
+
+| Option | Meaning |
+| --- | --- |
+| `--model <name>` | model name (required) |
+| `--out <n>` | output token count (required) |
+| `--in <n>` | input token count (default 0) |
+| `--region <code>` | region code, e.g. `DE`, `US` |
+| `--provider <name>` | cloud provider, affects the PUE fact used |
+| `--year <yyyy>` | reference year for the CO2 region grid (default 2024) |
+| `--json` | print the `Result` object as JSON instead of a table |
+| `--help` | print usage |
+
+`session` options:
+
+| Option | Meaning |
+| --- | --- |
+| `<file>` | path to a Claude Code session log (JSONL, required) |
+| `--region <code>` | region code, applied to every model in the session |
+| `--year <yyyy>` | reference year for the CO2 region grid (default 2024) |
+| `--json` | print `{ file, records, skipped, tokens, region, referenceYear, models, total }` as JSON |
+
+Exit codes: `0` success, `1` usage error (missing/invalid argument, missing or unreadable file, or - for `session` - no recognized usage line in the file), `2` a library error (e.g. an unknown `--year`).
+
+Unknown model names fall back to class `frontier` (deliberately conservative — estimates high rather than low).
+
+Confidence is the minimum over all coefficients used; for gpu-only models it is currently capped at 1/5 by assumption facts (overhead factor, on-site water fallback). Read the Assumptions line rather than the score.
+
+`Wh per 1,000 output tokens (all compute)` weights input and cache tokens into an output-token-equivalent count and divides the total energy by it - it is therefore well above the plain `calc` per-output-token figure for sessions with long contexts.
+
 ## Usage
 
 ```typescript
