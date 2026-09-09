@@ -14,6 +14,11 @@
  * rechnerisch einem Cache-Faktor von 0.05, nicht dem dokumentierten
  * mid-Wert 0.1.
  *
+ * Die Aggregation je Modell und die Drei-Laeufe-Logik liegen seit A2 in
+ * src/session.ts (aggregateByModel, measureSession) - dieses Skript ist
+ * nur noch ein duenner Aufrufer davon, damit CLI und Beispielskript
+ * dieselbe Rechenlogik teilen.
+ *
  * Ausfuehrung: erst `npm run build`, dann diese Datei kompilieren und mit
  * node ausfuehren (siehe docs/claude-code-reader.md).
  */
@@ -22,9 +27,9 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { calculate, loadFacts } from "../dist/index.js";
-import { classifyModel } from "../dist/models.js";
 import { readClaudeCodeUsage, toInputTokenRange } from "../dist/readers/claudeCode.js";
-import type { ClaudeCodeUsageRecord } from "../dist/readers/claudeCode.js";
+import { aggregateByModel, measureSession } from "../dist/session.js";
+import type { Range } from "../dist/session.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -32,73 +37,10 @@ const ROOT = join(__dirname, "..");
 // Diese eine Sitzung (siehe Schritt 1/2 der Aufgabe). Kopie nach /tmp vor
 // dem Lesen, damit nie die live wachsende Originaldatei gelesen wird.
 const SESSION_SOURCE =
-  "~/.claude/projects/<project-dir>/<session-id>.jsonl";
+  process.argv[2] ?? "~/.claude/projects/<project-dir>/<session-id>.jsonl";
 const SESSION_COPY = "/tmp/thirstyai-session.jsonl";
 
-interface Aggregate {
-  model: string;
-  messageCount: number;
-  inputTokens: number;
-  outputTokens: number;
-  cacheCreationTokens: number;
-  cacheReadTokens: number;
-  tokensInAtMin: number;
-  tokensInAtMid: number;
-  tokensInAtMax: number;
-}
-
-/**
- * cache-read-compute-share-anthropic (data/assumptions.json) ist als
- * konzeptionelles Intervall min 0 / mid 0.1 / max 0.1 dokumentiert, aber
- * nur mit einem einzigen `value` (0.1, der mid/max-Wert) gespeichert - die
- * Untergrenze 0 ist laut Fakt-Note bewusst strukturell realisiert (kein
- * Rechenaufwand fuer einen reinen Cache-Treffer), nicht als zweiter Fakt.
- * Deshalb hier fest 0, der mid/max-Faktor kommt aus dem Fakt.
- */
-const CACHE_READ_COMPUTE_SHARE_MIN = 0;
-
-function aggregateByModel(
-  records: ClaudeCodeUsageRecord[],
-  cacheReadComputeShareMidMax: number,
-): Map<string, Aggregate> {
-  const byModel = new Map<string, Aggregate>();
-  for (const record of records) {
-    // toInputTokenRange(record, f).max = base + f * cacheReadTokens fuer
-    // jeden Faktor f (bei f=0 gleich .min/base) - je einmal pro Faktor
-    // aus dem min/mid/max-Tripel des Fakts aufgerufen, nicht gemittelt.
-    const atMin = toInputTokenRange(record, CACHE_READ_COMPUTE_SHARE_MIN).max;
-    const atMidMax = toInputTokenRange(record, cacheReadComputeShareMidMax).max;
-    const agg = byModel.get(record.model) ?? {
-      model: record.model,
-      messageCount: 0,
-      inputTokens: 0,
-      outputTokens: 0,
-      cacheCreationTokens: 0,
-      cacheReadTokens: 0,
-      tokensInAtMin: 0,
-      tokensInAtMid: 0,
-      tokensInAtMax: 0,
-    };
-    agg.messageCount += 1;
-    agg.inputTokens += record.inputTokens;
-    agg.outputTokens += record.outputTokens;
-    agg.cacheCreationTokens += record.cacheCreationTokens;
-    agg.cacheReadTokens += record.cacheReadTokens;
-    agg.tokensInAtMin += atMin;
-    agg.tokensInAtMid += atMidMax;
-    agg.tokensInAtMax += atMidMax;
-    byModel.set(record.model, agg);
-  }
-  return byModel;
-}
-
-interface ResultRangeLike {
-  min: number;
-  mid: number;
-  max: number;
-}
-
-function fmt(r: ResultRangeLike, digits: number): string {
+function fmt(r: Range, digits: number): string {
   return `${r.mid.toFixed(digits)} (${r.min.toFixed(digits)}-${r.max.toFixed(digits)})`;
 }
 
@@ -131,13 +73,21 @@ async function main(): Promise<void> {
     throw new Error("Fakt 'cache-read-compute-share-anthropic' fehlt in data/assumptions.json");
   }
   console.log(
-    `cacheReadComputeShare (aus data/assumptions.json): min=${CACHE_READ_COMPUTE_SHARE_MIN} ` +
+    `cacheReadComputeShare (aus data/assumptions.json): min=0 ` +
       `mid=${cacheReadComputeShareMidMax} max=${cacheReadComputeShareMidMax}`,
   );
   console.log();
 
   const byModel = aggregateByModel(records, cacheReadComputeShareMidMax);
 
+  // Je Region einmal vorab berechnet, damit die Reihenfolge von
+  // measurement.models exakt der Iterationsreihenfolge von byModel.values()
+  // entspricht (dieselbe Map-Instanz in beiden Aufrufen).
+  const measurementsByRegion = new Map(
+    ["US", "EU"].map((region) => [region, measureSession(table, byModel, region)]),
+  );
+
+  let modelIndex = 0;
   for (const agg of byModel.values()) {
     console.log(`=== Modell: ${agg.model} ===`);
     console.log(
@@ -149,7 +99,7 @@ async function main(): Promise<void> {
         `mid=${agg.tokensInAtMid} max=${agg.tokensInAtMax}`,
     );
 
-    const classification = classifyModel(agg.model, undefined, table);
+    const classification = measurementsByRegion.get("US")!.models[modelIndex].classification;
     console.log(
       `Klassifikationsweg: modelClass=${classification.modelClass} ` +
         `confidence=${classification.confidence} family=${classification.family} ` +
@@ -165,42 +115,12 @@ async function main(): Promise<void> {
       // nicht ueber zwei Extremlaeufe gemittelt - das ergab vorher
       // rechnerisch einen Cache-Faktor von 0.05 statt der dokumentierten
       // 0.1 fuer den mid-Fall.
-      const resultAtMin = calculate(
-        { model: agg.model, region, tokensIn: agg.tokensInAtMin, tokensOut: agg.outputTokens },
-        table,
-      );
-      const resultAtMid = calculate(
-        { model: agg.model, region, tokensIn: agg.tokensInAtMid, tokensOut: agg.outputTokens },
-        table,
-      );
-      const resultAtMax = calculate(
-        { model: agg.model, region, tokensIn: agg.tokensInAtMax, tokensOut: agg.outputTokens },
-        table,
-      );
+      const measurement = measurementsByRegion.get(region)!.models[modelIndex];
+      const { energyTotal, waterScope1, waterScope2, co2Scope2 } = measurement;
 
-      const energyTotal = {
-        min: resultAtMin.energyTotal.min,
-        mid: resultAtMid.energyTotal.mid,
-        max: resultAtMax.energyTotal.max,
-      };
-      const waterScope1 = {
-        min: resultAtMin.waterScope1.min,
-        mid: resultAtMid.waterScope1.mid,
-        max: resultAtMax.waterScope1.max,
-      };
-      const waterScope2 = {
-        min: resultAtMin.waterScope2.min,
-        mid: resultAtMid.waterScope2.mid,
-        max: resultAtMax.waterScope2.max,
-      };
-      const co2Scope2 = {
-        min: resultAtMin.co2Scope2.min,
-        mid: resultAtMid.co2Scope2.mid,
-        max: resultAtMax.co2Scope2.max,
-      };
       const waterTotal = {
-        min: resultAtMin.waterScope1.min + resultAtMin.waterScope2.min,
-        max: resultAtMax.waterScope1.max + resultAtMax.waterScope2.max,
+        min: waterScope1.min + waterScope2.min,
+        max: waterScope1.max + waterScope2.max,
       };
 
       console.log(`--- Region ${region} (ANNAHME fuer US: keine reale Standortkenntnis) ---`);
@@ -210,10 +130,10 @@ async function main(): Promise<void> {
       console.log(`Wasser gesamt (mL):   ${waterTotal.min.toFixed(3)}-${waterTotal.max.toFixed(3)}`);
       console.log(`CO2 Scope 2 (g):      ${fmt(co2Scope2, 4)}`);
       console.log(
-        `Konfidenz: ${resultAtMin.confidence} (min-Lauf) / ${resultAtMid.confidence} (mid-Lauf) / ` +
-          `${resultAtMax.confidence} (max-Lauf)`,
+        `Konfidenz: ${measurement.confidenceMin} (min-Lauf) / ${measurement.confidenceMid} (mid-Lauf) / ` +
+          `${measurement.confidenceMax} (max-Lauf)`,
       );
-      console.log(`factIds (min-Lauf): ${resultAtMin.factIds.join(", ")}`);
+      console.log(`factIds (min-Lauf): ${measurement.factIds.join(", ")}`);
       console.log();
 
       const per1k = agg.outputTokens / 1000;
@@ -224,6 +144,8 @@ async function main(): Promise<void> {
       );
       console.log();
     }
+
+    modelIndex++;
   }
 
   // Defekt-Pruefung pro einzelner Nachricht (nicht aggregiert): negative
