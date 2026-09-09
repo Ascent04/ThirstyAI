@@ -190,6 +190,17 @@
     margin: 8px 0;
   }
 
+  /* Same as .note for now - the two are split into separate classes so
+     confidence-specific styling can diverge later without touching
+     browser-dom.ts again. */
+  .confidence-note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    max-width: 62ch;
+    margin: 8px 0;
+  }
+
   .unknown-model-hint {
     margin: 12px 0;
     padding: 8px 12px;

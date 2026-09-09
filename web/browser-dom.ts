@@ -49,6 +49,13 @@ function buildBar(row: ResultRangeLike): HTMLElement {
   return wrap;
 }
 
+function boundaryText(fact: Fact): string {
+  for (const value of [fact.measurement_boundary, fact.functional_unit, fact.water_scope]) {
+    if (value && value !== "-") return value;
+  }
+  return "—";
+}
+
 function buildFactRow(id: string): HTMLElement {
   const row = document.createElement("tr");
   const fact: Fact | undefined = factById(id);
@@ -78,7 +85,7 @@ function buildFactRow(id: string): HTMLElement {
   row.appendChild(confidenceCell);
 
   const boundaryCell = document.createElement("td");
-  boundaryCell.textContent = fact.measurement_boundary;
+  boundaryCell.textContent = boundaryText(fact);
   row.appendChild(boundaryCell);
 
   const sourceCell = document.createElement("td");
@@ -242,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (result.methodConfidence === 1) {
       const confidenceNote = document.createElement("p");
-      confidenceNote.className = "note";
+      confidenceNote.className = "confidence-note";
       confidenceNote.textContent =
         "Method confidence is capped at 1/5 by unverified assumptions (see " +
         "Assumptions below). Data confidence reflects the weakest measured " +
