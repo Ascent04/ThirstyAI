@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { calculateEmbedded, MODELS, REGIONS, FACTS_GENERATED, FACT_COUNT, SOURCE_COUNT } from "../web/browser-calc.js";
+import { calculateEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED, FACT_COUNT, SOURCE_COUNT } from "../web/browser-calc.js";
 import { loadFacts } from "../src/factsNode.js";
 import { calculate } from "../src/calculate.js";
 
@@ -32,5 +32,15 @@ describe("browser-calc", () => {
     }
 
     expect(FACTS_GENERATED).toBe("2026-09-09");
+  });
+
+  it("factById liefert denselben Fakt wie table.byId.get(id)", () => {
+    const table = loadFacts([FACTS, ASSUMPTIONS, MODELS_JSON]);
+    expect(factById("class-claude-sonnet-5")).toEqual(table.byId.get("class-claude-sonnet-5"));
+  });
+
+  it("SOURCES ist deep equal zu table.sources", () => {
+    const table = loadFacts([FACTS, ASSUMPTIONS, MODELS_JSON]);
+    expect(SOURCES).toEqual(table.sources);
   });
 });

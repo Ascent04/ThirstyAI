@@ -3,7 +3,8 @@
  * not part of the public library API (src/index.ts). No network access,
  * no localStorage.
  */
-import { calculateEmbedded, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
+import { calculateEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
+import type { Fact } from "../src/facts.js";
 
 const UNKNOWN_MODEL_VALUE = "unknown-model";
 const WORDS_TO_TOKENS = 1.3;
@@ -46,6 +47,86 @@ function buildBar(row: ResultRangeLike): HTMLElement {
   wrap.appendChild(numbers);
 
   return wrap;
+}
+
+function buildFactRow(id: string): HTMLElement {
+  const row = document.createElement("tr");
+  const fact: Fact | undefined = factById(id);
+
+  if (!fact) {
+    const cell = document.createElement("td");
+    cell.colSpan = 6;
+    cell.textContent = id;
+    row.appendChild(cell);
+    return row;
+  }
+
+  const idCell = document.createElement("td");
+  idCell.textContent = fact.id;
+  row.appendChild(idCell);
+
+  const valueCell = document.createElement("td");
+  valueCell.textContent = `${fact.value} ${fact.unit}`;
+  row.appendChild(valueCell);
+
+  const ratingCell = document.createElement("td");
+  ratingCell.textContent = fact.rating;
+  row.appendChild(ratingCell);
+
+  const confidenceCell = document.createElement("td");
+  confidenceCell.textContent = `${fact.confidence}/5`;
+  row.appendChild(confidenceCell);
+
+  const boundaryCell = document.createElement("td");
+  boundaryCell.textContent = fact.measurement_boundary;
+  row.appendChild(boundaryCell);
+
+  const sourceCell = document.createElement("td");
+  const source = SOURCES[fact.source_id];
+  if (source) {
+    const link = document.createElement("a");
+    link.href = source.url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = source.title;
+    sourceCell.appendChild(link);
+  } else {
+    sourceCell.textContent = fact.source_id;
+  }
+  row.appendChild(sourceCell);
+
+  return row;
+}
+
+function buildFactsTable(title: string, ids: string[]): HTMLElement {
+  const section = document.createElement("div");
+  section.className = "facts-section";
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  section.appendChild(heading);
+
+  const table = document.createElement("table");
+  table.className = "facts-table";
+
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  for (const label of ["ID", "Value", "Rating", "Confidence", "Measurement boundary", "Source"]) {
+    const th = document.createElement("th");
+    th.textContent = label;
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  for (const id of ids) {
+    tbody.appendChild(buildFactRow(id));
+  }
+  table.appendChild(tbody);
+
+  section.appendChild(table);
+  return section;
 }
 
 function populateModelSelect(select: HTMLSelectElement): void {
@@ -164,6 +245,17 @@ document.addEventListener("DOMContentLoaded", () => {
       hint.className = "unknown-model-hint";
       hint.textContent = "Unknown model: conservative frontier-class estimate.";
       resultsEl.appendChild(hint);
+    }
+
+    const assumptionIds = new Set(result.assumptions);
+    const factsUsedIds = result.factIds.filter((id) => !assumptionIds.has(id));
+
+    resultsEl.appendChild(buildFactsTable("Facts used", factsUsedIds));
+
+    if (result.assumptions.length > 0) {
+      const assumptionsBox = buildFactsTable("Assumptions", result.assumptions);
+      assumptionsBox.className += " assumptions-box";
+      resultsEl.appendChild(assumptionsBox);
     }
   }
 
