@@ -50,7 +50,7 @@ export interface FactTable {
   byId: Map<string, Fact>;
 }
 
-interface RawFactFile {
+export interface RawFactFile {
   sources?: Record<string, Source>;
   facts?: Fact[];
 }
@@ -166,16 +166,10 @@ function validateFact(
 }
 
 /**
- * Lädt eine oder mehrere Faktendateien und führt sie zu einer Tabelle
- * zusammen. Quellenregister werden vereinigt (spätere Dateien überschreiben
- * gleiche Quellen-IDs), Fakten werden über alle Dateien geprüft: Pflichtfelder
- * gefüllt, IDs eindeutig, source_id im Quellenregister, confidence 1-5,
- * value numerisch, optionale Aliase (Groß-/Kleinschreibung ignorierend)
- * eindeutig über die ganze Tabelle.
+ * Merge and validate already-parsed fact files. No filesystem access;
+ * usable in browsers.
  */
-export function loadFacts(paths: string[]): FactTable {
-  const rawFiles = paths.map(readJsonFile);
-
+export function buildFactTable(rawFiles: RawFactFile[]): FactTable {
   const sources: Record<string, Source> = {};
   for (const raw of rawFiles) {
     Object.assign(sources, raw.sources ?? {});
@@ -193,6 +187,18 @@ export function loadFacts(paths: string[]): FactTable {
   }
 
   return { sources, facts, byId };
+}
+
+/**
+ * Lädt eine oder mehrere Faktendateien und führt sie zu einer Tabelle
+ * zusammen. Quellenregister werden vereinigt (spätere Dateien überschreiben
+ * gleiche Quellen-IDs), Fakten werden über alle Dateien geprüft: Pflichtfelder
+ * gefüllt, IDs eindeutig, source_id im Quellenregister, confidence 1-5,
+ * value numerisch, optionale Aliase (Groß-/Kleinschreibung ignorierend)
+ * eindeutig über die ganze Tabelle.
+ */
+export function loadFacts(paths: string[]): FactTable {
+  return buildFactTable(paths.map(readJsonFile));
 }
 
 export interface FactFilter {
