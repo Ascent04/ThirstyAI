@@ -240,6 +240,16 @@ document.addEventListener("DOMContentLoaded", () => {
     confidence.textContent = `Confidence ${result.confidence}/5`;
     resultsEl.appendChild(confidence);
 
+    if (result.confidence === 1) {
+      const confidenceNote = document.createElement("p");
+      confidenceNote.className = "note";
+      confidenceNote.textContent =
+        "Capped at 1/5 by the GPU-to-datacenter overhead factor — an unverified " +
+        "assumption, not a measurement. The individual source ratings below are " +
+        "mostly higher.";
+      resultsEl.appendChild(confidenceNote);
+    }
+
     if (isUnknownModel(model)) {
       const hint = document.createElement("p");
       hint.className = "unknown-model-hint";
