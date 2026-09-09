@@ -28,11 +28,17 @@ Not yet published to npm. Until then, use it from source:
 
 ```bash
 git clone https://github.com/Ascent04/ThirstyAI.git
-cd thirstyai
+cd ThirstyAI
 npm install
 npm run build
-npm test        # expected: 39 tests passing
+npm test
 ```
+
+> **Note on `npm audit`:** the reported advisories affect development
+> dependencies only (vitest/vite and vite's bundled esbuild). They
+> concern the local development server and test runner, not the
+> published library or the static calculator page. A vitest 5 upgrade
+> is planned as a separate step.
 
 ## Command line
 
@@ -46,7 +52,8 @@ energy Wh   0.216   0.773    1.05
 water ml    0.500    1.77    2.42
 co2 g      0.0628   0.273   0.371
 
-Confidence: 1/5
+Data confidence: 2/5
+Method confidence: 1/5
 Boundary: gpu-only
 Facts: …
 Assumptions: …
@@ -66,7 +73,8 @@ co2 g      0.0125  0.0547  0.0745
 
 Wh per 1,000 output tokens (all compute): 0.225/0.816/1.11
 
-Confidence: 1/5
+Data confidence: 2/5
+Method confidence: 1/5
 Boundary: gpu-only
 Facts: …
 Assumptions: …
@@ -102,6 +110,21 @@ Unknown model names fall back to class `frontier` (deliberately conservative —
 Confidence is the minimum over all coefficients used; for gpu-only models it is currently capped at 1/5 by assumption facts (overhead factor, on-site water fallback). Read the Assumptions line rather than the score.
 
 `Wh per 1,000 output tokens (all compute)` weights input and cache tokens into an output-token-equivalent count and divides the total energy by it - it is therefore well above the plain `calc` per-output-token figure for sessions with long contexts.
+
+## Web calculator
+
+A single static page runs the same calculation in the browser — no
+build step, no external requests. It lists every fact and assumption
+used, with source links.
+
+The page will be published via GitHub Pages once the repository is
+public. Until then it can be served locally:
+
+```bash
+npm run build:web
+python3 -m http.server 8080 --directory docs
+```
+Then open http://localhost:8080/calculator/
 
 ## Usage
 
@@ -200,6 +223,11 @@ labeled assumptions live separately in `data/assumptions.json`.
 How the facts carried over from the research addendum were later
 checked against their primary sources is documented (German only) in
 [docs/verification-v0.2.md](docs/verification-v0.2.md).
+
+## FAQ
+
+Longer answers on method, data sourcing and known gaps:
+[English](docs/faq.md) · [Deutsch](docs/faq-de.md)
 
 ## Contributing
 

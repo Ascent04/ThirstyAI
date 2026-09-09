@@ -18,6 +18,25 @@ Die Bibliothek trifft keine Netzwerkzugriffe zur Laufzeit und hat keine
 Laufzeit-Abhängigkeiten. Alle Fakten liegen offline in `data/facts.json`
 und sind einzeln mit Quelle, Fundstelle und Wortzitat belegt.
 
+## Installation
+
+Noch nicht auf npm veröffentlicht. Bis dahin aus dem Quellcode nutzen:
+
+```bash
+git clone https://github.com/Ascent04/ThirstyAI.git
+cd ThirstyAI
+npm install
+npm run build
+npm test
+```
+
+> **Hinweis zu `npm audit`:** Die gemeldeten Advisories betreffen
+> ausschließlich Entwicklungs-Abhängigkeiten (vitest/vite sowie das in
+> vite gebündelte esbuild). Sie betreffen den lokalen Entwicklungsserver
+> und den Test-Runner, nicht die veröffentlichte Bibliothek oder die
+> statische Rechner-Seite. Ein Upgrade auf vitest 5 ist als separater
+> Schritt geplant.
+
 ## Kommandozeile
 
 ```bash
@@ -30,7 +49,8 @@ energy Wh   0.216   0.773    1.05
 water ml    0.500    1.77    2.42
 co2 g      0.0628   0.273   0.371
 
-Confidence: 1/5
+Data confidence: 2/5
+Method confidence: 1/5
 Boundary: gpu-only
 Facts: …
 Assumptions: …
@@ -50,7 +70,8 @@ co2 g      0.0125  0.0547  0.0745
 
 Wh per 1,000 output tokens (all compute): 0.225/0.816/1.11
 
-Confidence: 1/5
+Data confidence: 2/5
+Method confidence: 1/5
 Boundary: gpu-only
 Facts: …
 Assumptions: …
@@ -86,6 +107,21 @@ Unbekannte Modellnamen fallen auf die Klasse `frontier` zurueck (bewusst konserv
 Confidence ist das Minimum ueber alle verwendeten Koeffizienten; bei gpu-only-Modellen ist sie derzeit durch ANNAHME-Fakten (Overhead-Faktor, Wasser-Fallback am Standort) auf 1/5 gedeckelt. Die Assumptions-Zeile sagt mehr als der Zahlenwert.
 
 „Wh per 1,000 output tokens (all compute)" gewichtet Input- und Cache-Token in ein Output-Token-Aequivalent ein und teilt die Gesamtenergie dadurch - deshalb liegt der Wert bei Sitzungen mit langen Kontexten deutlich ueber dem reinen `calc`-Wert pro Output-Token.
+
+## Web-Rechner
+
+Eine einzelne statische Seite führt dieselbe Berechnung im Browser aus —
+kein Build-Schritt, keine externen Anfragen. Sie listet jeden
+verwendeten Fakt und jede Annahme mit Quellenlinks auf.
+
+Die Seite wird über GitHub Pages veröffentlicht, sobald das Repository
+öffentlich ist. Bis dahin kann sie lokal bereitgestellt werden:
+
+```bash
+npm run build:web
+python3 -m http.server 8080 --directory docs
+```
+Dann http://localhost:8080/calculator/ öffnen.
 
 ## Nutzung
 
@@ -150,6 +186,17 @@ Fehler zur fehlenden Fakt-ID ab.
   zurueckgefallen wurde. `factIds` und `assumptions` im Ergebnis zeigen,
   welche Fakten und eigenen Annahmen konkret eingeflossen sind.
 
+## Abgleich mit EcoLogits
+
+Die Ergebnisse von ThirstyAI wurden offline mit
+[EcoLogits](https://ecologits.ai/) (Python, GenAI Impact, JOSS 2025) für
+zehn Fälle über fünf Modellfamilien verglichen. Bei Modellen mit
+öffentlich bekannter Größe stimmen beide Werkzeuge auf ±30% überein;
+bei proprietären Modellen weichen sie um den Faktor 3-6 voneinander ab,
+weil beide die Modellgröße schätzen müssen. Vollständige Tabellen und
+die Begründung für jede Abweichung:
+[docs/crosscheck/results.md](docs/crosscheck/results.md).
+
 ## Verwandte Projekte
 
 - **EcoLogits** (Python, [JOSS 2025](https://joss.theoj.org/)): schätzt
@@ -173,6 +220,11 @@ verändert. Eigene, klar gekennzeichnete Annahmen liegen separat in
 Wie die aus dem Recherche-Addendum übernommenen Fakten nachträglich
 gegen ihre Primärquellen geprüft wurden, steht in
 [docs/verification-v0.2.md](docs/verification-v0.2.md).
+
+## FAQ
+
+Ausführlichere Antworten zu Methode, Datenherkunft und bekannten Lücken:
+[English](docs/faq.md) · [Deutsch](docs/faq-de.md)
 
 ## Mitarbeit
 
