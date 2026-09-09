@@ -9,7 +9,7 @@
  * Rueckfallklasse ausgewichen ist (siehe Schritt 2 der Aufgabe).
  *
  * Ausfuehrung: erst `npm run build`, dann diese Datei kompilieren und mit
- * node ausfuehren (siehe scripts/README.md).
+ * node ausfuehren (siehe docs/crosscheck/README.md).
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

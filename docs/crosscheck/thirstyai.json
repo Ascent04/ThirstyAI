@@ -13,29 +13,29 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.022836666666666665,
-        "mid": 0.08607666666666668,
-        "max": 0.18414000000000003
+        "min": 0.02011383333333333,
+        "mid": 0.08915083333333333,
+        "max": 0.190278
       },
       "co2G": {
-        "min": 0.007992833333333333,
-        "mid": 0.03012683333333334,
-        "max": 0.06444900000000002
+        "min": 0.007039841666666666,
+        "mid": 0.031202791666666667,
+        "max": 0.07302489084
       },
       "waterMl": {
-        "min": 0.07737414,
-        "mid": 0.29258688666666666,
-        "max": 0.6276718800000001
+        "min": 0.06881899766666666,
+        "mid": 0.3022459183333333,
+        "max": 0.646957476
       },
       "waterScope1Ml": {
-        "min": 0.005621333333333334,
+        "min": 0.005621333333333332,
         "mid": 0.022134,
-        "max": 0.04910400000000001
+        "max": 0.049104
       },
       "waterScope2Ml": {
-        "min": 0.07175280666666665,
-        "mid": 0.27045288666666667,
-        "max": 0.57856788
+        "min": 0.06319766433333332,
+        "mid": 0.2801119183333333,
+        "max": 0.5978534759999999
       },
       "confidence": 1,
       "boundary": "gpu-only",
@@ -44,13 +44,15 @@
         "energy-small-lower-bound",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
+        "oviedo-typical-output-tokens",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
@@ -62,7 +64,6 @@
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -80,29 +81,29 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.12523333333333334,
-        "mid": 0.47203333333333336,
-        "max": 1.0098
+        "min": 0.11030166666666666,
+        "mid": 0.48889166666666667,
+        "max": 1.04346
       },
       "co2G": {
-        "min": 0.04383166666666667,
-        "mid": 0.16521166666666667,
-        "max": 0.35343
+        "min": 0.03860558333333333,
+        "mid": 0.17111208333333336,
+        "max": 0.4004590788
       },
       "waterMl": {
-        "min": 0.4243098,
-        "mid": 1.6045087333333334,
-        "max": 3.4420716000000002
+        "min": 0.3773945033333333,
+        "mid": 1.6574776166666667,
+        "max": 3.5478313200000002
       },
       "waterScope1Ml": {
-        "min": 0.03082666666666667,
-        "mid": 0.12138000000000002,
+        "min": 0.030826666666666665,
+        "mid": 0.12138,
         "max": 0.26928
       },
       "waterScope2Ml": {
-        "min": 0.39348313333333335,
-        "mid": 1.4831287333333334,
-        "max": 3.1727916
+        "min": 0.34656783666666663,
+        "mid": 1.5360976166666667,
+        "max": 3.27855132
       },
       "confidence": 1,
       "boundary": "gpu-only",
@@ -111,13 +112,15 @@
         "energy-small-lower-bound",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
+        "oviedo-typical-output-tokens",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
@@ -129,7 +132,6 @@
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -147,57 +149,59 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.09134666666666666,
-        "mid": 0.14466666666666667,
-        "max": 0.40920000000000006
+        "min": 0.06686038781163435,
+        "mid": 0.23973333333333333,
+        "max": 0.3260976863753214
       },
       "co2G": {
-        "min": 0.03197133333333333,
-        "mid": 0.050633333333333336,
-        "max": 0.14322000000000004
+        "min": 0.023401135734072022,
+        "mid": 0.08390666666666667,
+        "max": 0.12514977007712083
       },
       "waterMl": {
-        "min": 0.30949656,
-        "mid": 0.49174266666666666,
-        "max": 1.3948264000000004
+        "min": 0.22876121108033243,
+        "mid": 0.8127621333333334,
+        "max": 1.108753172236504
       },
       "waterScope1Ml": {
-        "min": 0.022485333333333336,
-        "mid": 0.037200000000000004,
-        "max": 0.10912000000000002
+        "min": 0.01868587257617729,
+        "mid": 0.059519999999999997,
+        "max": 0.08415424164524422
       },
       "waterScope2Ml": {
-        "min": 0.2870112266666666,
-        "mid": 0.45454266666666665,
-        "max": 1.2857064000000002
+        "min": 0.21007533850415513,
+        "mid": 0.7532421333333333,
+        "max": 1.0245989305912597
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
+        "caravaca-llama31-70b-measured",
+        "caravaca-output-tokens",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-70b-inf-energy",
-        "mid-class-caravaca-energy",
         "mixtral-8x22b-inf-energy",
+        "mlenergy-llama31-70b-output-tokens",
+        "mlenergy-mixtral-8x22b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ],
       "assumptions": [
         "input-token-cost-share",
-        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -215,57 +219,59 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.5009333333333333,
-        "mid": 0.7933333333333334,
-        "max": 2.244
+        "min": 0.36665373961218833,
+        "mid": 1.3146666666666667,
+        "max": 1.7882776349614395
       },
       "co2G": {
-        "min": 0.1753266666666667,
-        "mid": 0.2776666666666667,
-        "max": 0.7854000000000001
+        "min": 0.12832880886426593,
+        "mid": 0.46013333333333334,
+        "max": 0.6863051907455012
       },
       "waterMl": {
-        "min": 1.6972392,
-        "mid": 2.696653333333334,
-        "max": 7.6490480000000005
+        "min": 1.2544969639889196,
+        "mid": 4.457082666666666,
+        "max": 6.080259331619537
       },
       "waterScope1Ml": {
-        "min": 0.12330666666666668,
-        "mid": 0.20400000000000001,
-        "max": 0.5984000000000002
+        "min": 0.10247091412742382,
+        "mid": 0.32639999999999997,
+        "max": 0.4614910025706941
       },
       "waterScope2Ml": {
-        "min": 1.5739325333333334,
-        "mid": 2.4926533333333336,
-        "max": 7.050648000000001
+        "min": 1.1520260498614958,
+        "mid": 4.130682666666666,
+        "max": 5.618768329048843
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
+        "caravaca-llama31-70b-measured",
+        "caravaca-output-tokens",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-70b-inf-energy",
-        "mid-class-caravaca-energy",
         "mixtral-8x22b-inf-energy",
+        "mlenergy-llama31-70b-output-tokens",
+        "mlenergy-mixtral-8x22b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ],
       "assumptions": [
         "input-token-cost-share",
-        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -283,29 +289,29 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.47957,
-        "mid": 1.1284,
-        "max": 2.5296000000000003
+        "min": 0.3452783378746594,
+        "mid": 1.1687,
+        "max": 2.61392
       },
       "co2G": {
-        "min": 0.1678495,
-        "mid": 0.39494,
-        "max": 0.8853600000000001
+        "min": 0.12084741825613078,
+        "mid": 0.40904500000000005,
+        "max": 1.0031702176
       },
       "waterMl": {
-        "min": 1.62485694,
-        "mid": 3.8355928,
-        "max": 8.6225632
+        "min": 1.1813615403269753,
+        "mid": 3.9622154000000003,
+        "max": 8.887496639999998
       },
       "waterScope1Ml": {
-        "min": 0.11804800000000003,
+        "min": 0.09649700272479564,
         "mid": 0.29016000000000003,
         "max": 0.67456
       },
       "waterScope2Ml": {
-        "min": 1.50680894,
-        "mid": 3.5454328,
-        "max": 7.9480032000000005
+        "min": 1.0848645376021797,
+        "mid": 3.6720554,
+        "max": 8.212936639999999
       },
       "confidence": 1,
       "boundary": "gpu-only",
@@ -314,14 +320,17 @@
         "frontier-class-joule-iqr-max",
         "frontier-class-joule-median",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-405b-inf-energy",
+        "mlenergy-llama31-405b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
+        "oviedo-typical-output-tokens",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
@@ -334,7 +343,6 @@
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -352,29 +360,29 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 2.6298999999999992,
-        "mid": 6.188000000000001,
-        "max": 13.872000000000002
+        "min": 1.8934618528610354,
+        "mid": 6.409,
+        "max": 14.334399999999999
       },
       "co2G": {
-        "min": 0.9204649999999998,
-        "mid": 2.1658000000000004,
-        "max": 4.855200000000001
+        "min": 0.6627116485013624,
+        "mid": 2.24315,
+        "max": 5.501256032
       },
       "waterMl": {
-        "min": 8.910505799999996,
-        "mid": 21.033896000000002,
-        "max": 47.285024
+        "min": 6.478434253405995,
+        "mid": 21.728278,
+        "max": 48.73788479999999
       },
       "waterScope1Ml": {
-        "min": 0.6473599999999999,
-        "mid": 1.5912000000000002,
-        "max": 3.6992000000000007
+        "min": 0.5291771117166213,
+        "mid": 1.5912,
+        "max": 3.6992
       },
       "waterScope2Ml": {
-        "min": 8.263145799999997,
-        "mid": 19.442696,
-        "max": 43.585824
+        "min": 5.949257141689373,
+        "mid": 20.137078,
+        "max": 45.03868479999999
       },
       "confidence": 1,
       "boundary": "gpu-only",
@@ -383,14 +391,17 @@
         "frontier-class-joule-iqr-max",
         "frontier-class-joule-median",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-405b-inf-energy",
+        "mlenergy-llama31-405b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
+        "oviedo-typical-output-tokens",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
@@ -403,7 +414,6 @@
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -421,57 +431,59 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.09134666666666666,
-        "mid": 0.14466666666666667,
-        "max": 0.40920000000000006
+        "min": 0.06686038781163435,
+        "mid": 0.23973333333333333,
+        "max": 0.3260976863753214
       },
       "co2G": {
-        "min": 0.03197133333333333,
-        "mid": 0.050633333333333336,
-        "max": 0.14322000000000004
+        "min": 0.023401135734072022,
+        "mid": 0.08390666666666667,
+        "max": 0.12514977007712083
       },
       "waterMl": {
-        "min": 0.30949656,
-        "mid": 0.49174266666666666,
-        "max": 1.3948264000000004
+        "min": 0.22876121108033243,
+        "mid": 0.8127621333333334,
+        "max": 1.108753172236504
       },
       "waterScope1Ml": {
-        "min": 0.022485333333333336,
-        "mid": 0.037200000000000004,
-        "max": 0.10912000000000002
+        "min": 0.01868587257617729,
+        "mid": 0.059519999999999997,
+        "max": 0.08415424164524422
       },
       "waterScope2Ml": {
-        "min": 0.2870112266666666,
-        "mid": 0.45454266666666665,
-        "max": 1.2857064000000002
+        "min": 0.21007533850415513,
+        "mid": 0.7532421333333333,
+        "max": 1.0245989305912597
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
+        "caravaca-llama31-70b-measured",
+        "caravaca-output-tokens",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-70b-inf-energy",
-        "mid-class-caravaca-energy",
         "mixtral-8x22b-inf-energy",
+        "mlenergy-llama31-70b-output-tokens",
+        "mlenergy-mixtral-8x22b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ],
       "assumptions": [
         "input-token-cost-share",
-        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -489,57 +501,59 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.5009333333333333,
-        "mid": 0.7933333333333334,
-        "max": 2.244
+        "min": 0.36665373961218833,
+        "mid": 1.3146666666666667,
+        "max": 1.7882776349614395
       },
       "co2G": {
-        "min": 0.1753266666666667,
-        "mid": 0.2776666666666667,
-        "max": 0.7854000000000001
+        "min": 0.12832880886426593,
+        "mid": 0.46013333333333334,
+        "max": 0.6863051907455012
       },
       "waterMl": {
-        "min": 1.6972392,
-        "mid": 2.696653333333334,
-        "max": 7.6490480000000005
+        "min": 1.2544969639889196,
+        "mid": 4.457082666666666,
+        "max": 6.080259331619537
       },
       "waterScope1Ml": {
-        "min": 0.12330666666666668,
-        "mid": 0.20400000000000001,
-        "max": 0.5984000000000002
+        "min": 0.10247091412742382,
+        "mid": 0.32639999999999997,
+        "max": 0.4614910025706941
       },
       "waterScope2Ml": {
-        "min": 1.5739325333333334,
-        "mid": 2.4926533333333336,
-        "max": 7.050648000000001
+        "min": 1.1520260498614958,
+        "mid": 4.130682666666666,
+        "max": 5.618768329048843
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
+        "caravaca-llama31-70b-measured",
+        "caravaca-output-tokens",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-70b-inf-energy",
-        "mid-class-caravaca-energy",
         "mixtral-8x22b-inf-energy",
+        "mlenergy-llama31-70b-output-tokens",
+        "mlenergy-mixtral-8x22b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ],
       "assumptions": [
         "input-token-cost-share",
-        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -558,57 +572,59 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.09134666666666666,
-        "mid": 0.14466666666666667,
-        "max": 0.40920000000000006
+        "min": 0.06686038781163435,
+        "mid": 0.23973333333333333,
+        "max": 0.3260976863753214
       },
       "co2G": {
-        "min": 0.03197133333333333,
-        "mid": 0.050633333333333336,
-        "max": 0.14322000000000004
+        "min": 0.023401135734072022,
+        "mid": 0.08390666666666667,
+        "max": 0.12514977007712083
       },
       "waterMl": {
-        "min": 0.30949656,
-        "mid": 0.49174266666666666,
-        "max": 1.3948264000000004
+        "min": 0.22876121108033243,
+        "mid": 0.8127621333333334,
+        "max": 1.108753172236504
       },
       "waterScope1Ml": {
-        "min": 0.022485333333333336,
-        "mid": 0.037200000000000004,
-        "max": 0.10912000000000002
+        "min": 0.01868587257617729,
+        "mid": 0.059519999999999997,
+        "max": 0.08415424164524422
       },
       "waterScope2Ml": {
-        "min": 0.2870112266666666,
-        "mid": 0.45454266666666665,
-        "max": 1.2857064000000002
+        "min": 0.21007533850415513,
+        "mid": 0.7532421333333333,
+        "max": 1.0245989305912597
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
+        "caravaca-llama31-70b-measured",
+        "caravaca-output-tokens",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-70b-inf-energy",
-        "mid-class-caravaca-energy",
         "mixtral-8x22b-inf-energy",
+        "mlenergy-llama31-70b-output-tokens",
+        "mlenergy-mixtral-8x22b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ],
       "assumptions": [
         "input-token-cost-share",
-        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
@@ -627,57 +643,59 @@
       },
       "recognized": true,
       "energyWh": {
-        "min": 0.5009333333333333,
-        "mid": 0.7933333333333334,
-        "max": 2.244
+        "min": 0.36665373961218833,
+        "mid": 1.3146666666666667,
+        "max": 1.7882776349614395
       },
       "co2G": {
-        "min": 0.1753266666666667,
-        "mid": 0.2776666666666667,
-        "max": 0.7854000000000001
+        "min": 0.12832880886426593,
+        "mid": 0.46013333333333334,
+        "max": 0.6863051907455012
       },
       "waterMl": {
-        "min": 1.6972392,
-        "mid": 2.696653333333334,
-        "max": 7.6490480000000005
+        "min": 1.2544969639889196,
+        "mid": 4.457082666666666,
+        "max": 6.080259331619537
       },
       "waterScope1Ml": {
-        "min": 0.12330666666666668,
-        "mid": 0.20400000000000001,
-        "max": 0.5984000000000002
+        "min": 0.10247091412742382,
+        "mid": 0.32639999999999997,
+        "max": 0.4614910025706941
       },
       "waterScope2Ml": {
-        "min": 1.5739325333333334,
-        "mid": 2.4926533333333336,
-        "max": 7.050648000000001
+        "min": 1.1520260498614958,
+        "mid": 4.130682666666666,
+        "max": 5.618768329048843
       },
       "confidence": 1,
       "boundary": "gpu-only",
       "factIds": [
+        "caravaca-llama31-70b-measured",
+        "caravaca-output-tokens",
         "ewif-us-average",
         "grid-co2-egrid-us-2023",
+        "grid-co2-ember-usa",
         "input-token-cost-share",
         "llama31-70b-inf-energy",
-        "mid-class-caravaca-energy",
         "mixtral-8x22b-inf-energy",
+        "mlenergy-llama31-70b-output-tokens",
+        "mlenergy-mixtral-8x22b-output-tokens",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
-        "us-dc-pue-2023",
+        "us-dc-pue-2024",
+        "us-dc-pue-ai-2024",
         "us-dc-wue-site-2023",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ],
       "assumptions": [
         "input-token-cost-share",
-        "mid-class-caravaca-energy",
         "overhead-factor-max",
         "overhead-factor-mid",
         "overhead-factor-min",
         "pue-range-half-width",
-        "reference-output-tokens",
         "wue-site-fallback-max",
         "wue-site-fallback-min"
       ]
