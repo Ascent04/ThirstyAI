@@ -27,7 +27,7 @@ backed by a source, a locator, and a direct quote.
 Not yet published to npm. Until then, use it from source:
 
 ```bash
-git clone https://github.com/Ascent04/thirstyai.git
+git clone https://github.com/Ascent04/ThirstyAI.git
 cd thirstyai
 npm install
 npm run build

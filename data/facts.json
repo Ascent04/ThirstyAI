@@ -1,13 +1,20 @@
 {
-  "schema_version": "0.2",
-  "generated": "2026-09-03",
-  "generated_by": "Claude: Merge aus v0.1 + geprüftem Addendum (Claude Deep Research) + eigener Verifikation",
+  "schema_version": "0.3",
+  "generated": "2026-09-09",
+  "generated_by": "Claude: v0.2 + Addendum v0.3 (LBNL 2025, Ember 2025, EEA 2024); Recherche und Quellenprüfung claude.ai, Übertragung Claude Code, Review Mathias Jung",
   "changes_from_v0.1": [
     "+7 gemessene Inferenzwerte offener Modelle (GPU-only)",
     "+16 Strommix-CO2-Faktoren (Ember verifiziert, UBA, EMA, RTE, eGRID)",
     "+4 LBNL-Branchendurchschnitte",
     "Negativbefund-Register ergänzt",
     "v0.1-Zeilen unverändert"
+  ],
+  "changes_from_v0.2": [
+    "+3 LBNL-2025-Fakten: us-dc-energy-2024, us-dc-pue-2024, us-dc-pue-ai-2024 (Quelle S25)",
+    "+11 Ember-Strommix-CO2-Faktoren Bezugsjahr 2025: grid-co2-ember-{usa,eu-27,deutschland,irland,niederlande,schweden,frankreich,finnland,singapur,indien,japan}-2025",
+    "+7 EEA-Strommix-CO2-Faktoren Bezugsjahr 2024: grid-co2-eea-{eu-27,schweden,finnland,frankreich,irland,niederlande,deutschland}-2024 (Quelle S26)",
+    "+2 Quellen S25 (LBNL 2025 Update), S26 (EEA 2024)",
+    "v0.2-Zeilen unverändert, keine value-Aenderung"
   ],
   "units_note": "Wasser: mL pro Anfrage bzw. L/kWh; Strom: Wh; CO2: gCO2e. water_scope unterscheidet Verbrauch (consumption, verdunstet) und Entnahme (withdrawal, größtenteils zurückgeführt). measurement_boundary ist entscheidend: GPU-only-Benchmarks (Llama, Mixtral, AI Energy Score) sind NICHT mit Vollstack-Werten (Gemini, S1) vergleichbar; Faktor grob 1.7-2.4 plus PUE.",
   "rating_legend": {
