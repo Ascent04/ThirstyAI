@@ -451,6 +451,11 @@ const CARBON_REGION_TABLE_BY_YEAR: Record<number, Record<string, RegionCarbonFac
   },
 };
 
+/** Region codes available in the CO2 grid for a reference year (empty if year unknown). */
+export function supportedRegions(referenceYear: number): string[] {
+  return Object.keys(CARBON_REGION_TABLE_BY_YEAR[referenceYear] ?? {});
+}
+
 function resolveCarbonRangeFact(ids: string[], table: FactTable, asOf: Date | undefined): Fact {
   return latest(table, { ids }, asOf)[0] ?? requireFact(table, ids[0]);
 }
