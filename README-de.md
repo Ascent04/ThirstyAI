@@ -30,13 +30,6 @@ npm run build
 npm test
 ```
 
-> **Hinweis zu `npm audit`:** Die gemeldeten Advisories betreffen
-> ausschließlich Entwicklungs-Abhängigkeiten (vitest/vite sowie das in
-> vite gebündelte esbuild). Sie betreffen den lokalen Entwicklungsserver
-> und den Test-Runner, nicht die veröffentlichte Bibliothek oder die
-> statische Rechner-Seite. Ein Upgrade auf vitest 5 ist als separater
-> Schritt geplant.
-
 ## Kommandozeile
 
 ```bash

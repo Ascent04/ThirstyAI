@@ -34,12 +34,6 @@ npm run build
 npm test
 ```
 
-> **Note on `npm audit`:** the reported advisories affect development
-> dependencies only (vitest/vite and vite's bundled esbuild). They
-> concern the local development server and test runner, not the
-> published library or the static calculator page. A vitest 5 upgrade
-> is planned as a separate step.
-
 ## Command line
 
 ```bash
