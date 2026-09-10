@@ -19,9 +19,11 @@ function round3(v: number): number {
   return Number(v.toPrecision(3)); // 3 significant digits, same as CLI
 }
 
-function buildBar(row: ResultRangeLike): HTMLElement {
+type BarKind = "energy" | "water" | "carbon";
+
+function buildBar(row: ResultRangeLike, kind: BarKind): HTMLElement {
   const wrap = document.createElement("div");
-  wrap.className = "bar-wrap";
+  wrap.className = `bar-wrap ${kind}`;
 
   const track = document.createElement("div");
   track.className = "bar-track";
@@ -172,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const regionSelect = document.getElementById("region") as HTMLSelectElement;
   const factsGeneratedEl = document.getElementById("facts-generated") as HTMLElement;
   const resultsEl = document.getElementById("results") as HTMLElement;
+  const calculateButton = document.getElementById("calculate") as HTMLButtonElement;
 
   populateModelSelect(modelSelect);
   populateRegionSelect(regionSelect);
@@ -194,7 +197,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return model === UNKNOWN_MODEL_VALUE;
   }
 
+  function markStale(): void {
+    resultsEl.classList.add("stale");
+    calculateButton.classList.add("needs-attention");
+  }
+
   function recalculate(): void {
+    resultsEl.classList.remove("stale");
+    calculateButton.classList.remove("needs-attention");
     resultsEl.innerHTML = "";
 
     const model = modelSelect.value;
@@ -213,8 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const rows: { label: string; row: ResultRangeLike }[] = [
-      { label: "Energy (Wh)", row: result.energyTotal },
+    const rows: { label: string; row: ResultRangeLike; kind: BarKind }[] = [
+      { label: "Energy (Wh)", row: result.energyTotal, kind: "energy" },
       {
         label: "Water (ml)",
         row: {
@@ -222,18 +232,19 @@ document.addEventListener("DOMContentLoaded", () => {
           mid: result.waterScope1.mid + result.waterScope2.mid,
           max: result.waterScope1.max + result.waterScope2.max,
         },
+        kind: "water",
       },
-      { label: "CO2 (g)", row: result.co2Scope2 },
+      { label: "CO2 (g)", row: result.co2Scope2, kind: "carbon" },
     ];
 
-    for (const { label, row } of rows) {
+    for (const { label, row, kind } of rows) {
       const rowEl = document.createElement("div");
       rowEl.className = "result-row";
       const labelEl = document.createElement("div");
       labelEl.className = "result-label";
       labelEl.textContent = label;
       rowEl.appendChild(labelEl);
-      rowEl.appendChild(buildBar(row));
+      rowEl.appendChild(buildBar(row, kind));
       resultsEl.appendChild(rowEl);
     }
 
@@ -315,9 +326,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   for (const el of [modelSelect, amountInput, amountUnitOutputTokens, amountUnitWords, tokensInInput, regionSelect]) {
-    el.addEventListener("input", recalculate);
-    el.addEventListener("change", recalculate);
+    el.addEventListener("input", markStale);
+    el.addEventListener("change", markStale);
   }
+
+  calculateButton.addEventListener("click", recalculate);
 
   recalculate();
 });

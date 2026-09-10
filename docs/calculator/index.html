@@ -19,6 +19,10 @@
     --accent: #1f7f79;
     --water: #2e9a94;
     --water-soft: #bfddd9;
+    --energy: #b8781c;
+    --energy-soft: #ecdcc0;
+    --carbon: #4a7c46;
+    --carbon-soft: #cfdcc9;
     --brass: #a8801f;
     --brass-soft: #f0e4c4;
     --error: #a3402a;
@@ -34,6 +38,10 @@
       --accent: #63c8bf;
       --water: #3fb8b0;
       --water-soft: #26403f;
+      --energy: #d9a252;
+      --energy-soft: #3a2f1c;
+      --carbon: #6faa68;
+      --carbon-soft: #22301f;
       --brass: #d9ae52;
       --brass-soft: #2a2718;
       --error: #e08b72;
@@ -107,6 +115,7 @@
   select:focus-visible,
   input:focus-visible,
   summary:focus-visible,
+  button:focus-visible,
   a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 1px;
@@ -122,9 +131,33 @@
   summary { cursor: pointer; font-weight: 600; }
   details[open] > .field { margin-top: 8px; }
 
+  #calculate {
+    justify-self: start;
+    padding: 10px 20px;
+    border: 1px solid var(--accent);
+    border-radius: 0;
+    background: var(--accent);
+    color: var(--bg);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Stays visible but quiet - no blinking, no motion, just a border colour
+     swap - once an input has changed since the last calculation. */
+  #calculate.needs-attention {
+    border-color: var(--brass);
+  }
+
   /* --- results: three ranges ------------------------------------------ */
 
   #results { margin-top: 32px; }
+
+  /* Dims the previous result once an input has changed but Calculate has
+     not been pressed yet - the numbers on screen no longer match the
+     form. No motion, just a fixed lower opacity. */
+  #results.stale { opacity: 0.45; }
 
   .result-row { margin-bottom: 20px; }
 
@@ -138,15 +171,12 @@
 
   /* The hatched band is the span the sources disagree over; the solid fill
      is the floor every source clears. Hard-edged stripes on purpose - the
-     picture language has facets and clean edges, no soft gradients. */
+     picture language has facets and clean edges, no soft gradients. Colour
+     itself (background/hatching) is set per metric below - .bar-wrap.energy,
+     .bar-wrap.water, .bar-wrap.carbon. */
   .bar-track {
     position: relative;
     height: 14px;
-    background: repeating-linear-gradient(
-      135deg,
-      var(--water-soft) 0 6px,
-      var(--bg-sunk) 6px 12px
-    );
     border-right: 2px solid var(--fg);
     overflow: visible;
   }
@@ -156,7 +186,7 @@
     left: 0;
     top: 0;
     bottom: 0;
-    background: var(--water);
+    z-index: 2;
   }
 
   .bar-mid-marker {
@@ -165,6 +195,49 @@
     bottom: -4px;
     width: 2px;
     background: var(--brass);
+    z-index: 3;
+  }
+
+  .bar-wrap.energy .bar-min { background: var(--energy); }
+  .bar-wrap.energy .bar-track {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--energy-soft) 0 6px,
+      var(--bg-sunk) 6px 12px
+    );
+  }
+
+  .bar-wrap.water .bar-min { background: var(--water); }
+  .bar-wrap.water .bar-track {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--water-soft) 0 6px,
+      var(--bg-sunk) 6px 12px
+    );
+  }
+
+  .bar-wrap.carbon .bar-min { background: var(--carbon); }
+  .bar-wrap.carbon .bar-track {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--carbon-soft) 0 6px,
+      var(--bg-sunk) 6px 12px
+    );
+  }
+
+  /* Fades the hatched band toward the page background as it approaches the
+     maximum - the far end of the range is the least certain part of the
+     estimate. bar-min and the mid marker sit above this layer (z-index) so
+     the fade softens only the track's hatching, never the min fill or the
+     mid marker itself. */
+  .bar-track::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to right,
+      transparent 0%, transparent 35%, var(--bg) 100%);
+    pointer-events: none;
   }
 
   /* min, mid and max carry equal weight on purpose: the spread is the
@@ -343,6 +416,8 @@
         <input type="number" id="tokens-in" value="0" min="0" step="1">
       </div>
     </details>
+
+    <button type="button" id="calculate">Calculate</button>
   </form>
 
   <section id="results" aria-live="polite"></section>
