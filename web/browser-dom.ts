@@ -9,6 +9,23 @@ import type { Fact } from "../src/facts.js";
 const UNKNOWN_MODEL_VALUE = "unknown-model";
 const WORDS_TO_TOKENS = 1.3;
 
+/**
+ * 100 billion tokens. Not a physical limit but a numeric one: JavaScript only
+ * represents whole numbers exactly up to about 9e15, and a calculator whose
+ * arithmetic silently loses precision is worse than one that says no.
+ */
+const AMOUNT_MAX = 100_000_000_000;
+
+/** Narrow no-break space: groups digits without a dot or comma, which mean
+ *  opposite things either side of the Atlantic. */
+const DIGIT_GROUP_SEPARATOR = "\u202F";
+
+function groupDigits(value: number): string {
+  const [whole, fraction] = String(value).split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, DIGIT_GROUP_SEPARATOR);
+  return fraction === undefined ? grouped : `${grouped}.${fraction}`;
+}
+
 interface ResultRangeLike {
   min: number;
   mid: number;
@@ -55,6 +72,28 @@ function infoTip(text: string): HTMLElement {
 }
 
 type BarKind = "energy" | "water" | "carbon";
+
+/** Base unit, thousand, million - in that order, per metric. */
+const UNIT_STEPS: Record<BarKind, [string, string, string]> = {
+  energy: ["Wh", "kWh", "MWh"],
+  water: ["ml", "l", "m3"],
+  carbon: ["g", "kg", "t"],
+};
+
+/**
+ * Picks the unit for a whole result row from its max, so that min, mid and
+ * max all carry the same unit and stay comparable at a glance. Applies to the
+ * three result rows only - the facts table shows source values as recorded.
+ */
+function scaleRow(row: ResultRangeLike, kind: BarKind): { row: ResultRangeLike; unit: string } {
+  const [base, thousand, million] = UNIT_STEPS[kind];
+  const divisor = row.max < 1000 ? 1 : row.max < 1e6 ? 1000 : 1e6;
+  const unit = row.max < 1000 ? base : row.max < 1e6 ? thousand : million;
+  return {
+    row: { min: row.min / divisor, mid: row.mid / divisor, max: row.max / divisor },
+    unit,
+  };
+}
 
 /** Start offset per metric, matching the transition-delay values in the CSS. */
 const BAR_STAGGER_MS: Record<BarKind, number> = { energy: 0, water: 80, carbon: 160 };
@@ -276,22 +315,49 @@ document.addEventListener("DOMContentLoaded", () => {
   const factsGeneratedEl = document.getElementById("facts-generated") as HTMLElement;
   const resultsEl = document.getElementById("results") as HTMLElement;
   const calculateButton = document.getElementById("calculate") as HTMLButtonElement;
+  const amountEcho = document.getElementById("amount-echo") as HTMLElement;
 
   populateModelSelect(modelSelect);
   populateRegionSelect(regionSelect);
   factsGeneratedEl.textContent = FACTS_GENERATED;
 
+  function amountIsTooLarge(): boolean {
+    return Number(amountInput.value) > AMOUNT_MAX;
+  }
+
   function currentTokensOut(): number {
     const amount = Number(amountInput.value);
+    return amountUnitWords.checked ? Math.round(amount * WORDS_TO_TOKENS) : amount;
+  }
+
+  /**
+   * Echoes the entered amount back with grouped digits, so a figure like
+   * 1 300 000 000 can be read without counting zeroes. Runs on every input,
+   * independently of the Calculate button.
+   */
+  function updateAmountEcho(): void {
+    if (amountIsTooLarge()) {
+      amountEcho.textContent =
+        "Value too large — the calculator is meant for up to 100 billion tokens.";
+      derivedTokens.hidden = true;
+      derivedTokens.textContent = "";
+      return;
+    }
+
+    const amount = Number(amountInput.value);
+    amountEcho.textContent = `${groupDigits(amount)} ${
+      amountUnitWords.checked ? "words" : "output tokens"
+    }`;
+
     if (amountUnitWords.checked) {
       const tokens = Math.round(amount * WORDS_TO_TOKENS);
-      derivedTokens.textContent = `≈ ${tokens} output tokens, ×${WORDS_TO_TOKENS} assumption`;
+      derivedTokens.textContent =
+        `≈ ${groupDigits(tokens)} output tokens, ×${WORDS_TO_TOKENS} assumption`;
       derivedTokens.hidden = false;
-      return tokens;
+      return;
     }
     derivedTokens.hidden = true;
     derivedTokens.textContent = "";
-    return amount;
   }
 
   function isUnknownModel(model: string): boolean {
@@ -304,6 +370,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function recalculate(): void {
+    // Over the limit there is nothing sensible to compute. Bail out before
+    // anything is cleared, so the stale state and the previous result stay as
+    // they are - the echo line already says why nothing happened.
+    if (amountIsTooLarge()) return;
+
     resultsEl.classList.remove("stale");
     calculateButton.classList.remove("needs-attention");
     resultsEl.innerHTML = "";
@@ -326,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const rows: { label: string; tip: string; row: ResultRangeLike; kind: BarKind }[] = [
       {
-        label: "Energy (Wh)",
+        label: "Energy",
         // Carries the bar legend for all three rows: energy is the top bar,
         // and repeating it on water and CO2 would only add noise.
         tip:
@@ -339,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
         kind: "energy",
       },
       {
-        label: "Water (ml)",
+        label: "Water",
         tip:
           "Water evaporated for one request — cooling at the data centre " +
           "plus cooling at the power plants that supplied the electricity.",
@@ -351,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
         kind: "water",
       },
       {
-        label: "CO2 (g)",
+        label: "CO2",
         tip:
           "Carbon dioxide from generating the electricity for one request. " +
           "Location-based: the actual grid mix of the region, not green " +
@@ -362,13 +433,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     for (const { label, tip, row, kind } of rows) {
+      const scaled = scaleRow(row, kind);
       const rowEl = document.createElement("div");
       rowEl.className = "result-row";
       const labelEl = document.createElement("div");
       labelEl.className = "result-label";
-      labelEl.append(label, infoTip(tip));
+      labelEl.append(`${label} (${scaled.unit})`, infoTip(tip));
       rowEl.appendChild(labelEl);
-      rowEl.appendChild(buildBar(row, kind));
+      rowEl.appendChild(buildBar(scaled.row, kind));
       resultsEl.appendChild(rowEl);
     }
 
@@ -480,10 +552,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  for (const el of [modelSelect, amountInput, amountUnitOutputTokens, amountUnitWords, tokensInInput, regionSelect]) {
-    el.addEventListener("input", markStale);
-    el.addEventListener("change", markStale);
+  function onFormInput(): void {
+    updateAmountEcho();
+    markStale();
   }
 
+  for (const el of [modelSelect, amountInput, amountUnitOutputTokens, amountUnitWords, tokensInInput, regionSelect]) {
+    el.addEventListener("input", onFormInput);
+    el.addEventListener("change", onFormInput);
+  }
+
+  // A preset fills the field in and marks the result stale; running the
+  // calculation stays the user's decision, same as any other input.
+  document.querySelectorAll<HTMLButtonElement>(".preset").forEach((button) => {
+    button.addEventListener("click", () => {
+      amountInput.value = button.dataset.amount ?? "";
+      amountUnitOutputTokens.checked = true;
+      onFormInput();
+    });
+  });
+
   calculateButton.addEventListener("click", recalculate);
+
+  updateAmountEcho();
 });

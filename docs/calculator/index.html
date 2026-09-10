@@ -132,8 +132,26 @@
   .radio-group { display: flex; gap: 16px; align-items: center; }
   .radio-group label { font-weight: 400; display: flex; align-items: center; gap: 4px; }
 
-  #derived-tokens { color: var(--muted); font-size: 0.85rem; }
+  #derived-tokens, #amount-echo { color: var(--muted); font-size: 0.85rem; }
   .region-note { color: var(--muted); font-size: 0.85rem; }
+
+  /* Quick picks for the amount. Same shape as the Calculate button, but an
+     outline instead of a filled block - they set a value, they do not run
+     the calculation. */
+  .preset-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .preset {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .preset:hover { border-color: var(--accent); }
 
   /* Toggletip: a small "?" circle that reveals one sentence of explanation
      on click. The circle is the one rounded shape on the page - it is a
@@ -498,7 +516,7 @@
             <span class="info-text" popover id="tip-amount">How much text the model generates. This is what drives the energy use — reading the input costs far less.</span>
           </span>
         </div>
-        <input type="number" id="amount" value="1000" min="0" step="1">
+        <input type="number" id="amount" value="1000" min="0" max="100000000000" step="1">
         <div class="radio-group">
           <label><input type="radio" name="unit" id="unit-output-tokens" value="output-tokens" checked> output tokens</label>
           <span class="info">
@@ -511,6 +529,13 @@
             <span class="info-text" popover id="tip-words">Enter a word count instead; it is converted at 1.3 tokens per word.</span>
           </span>
         </div>
+        <div class="preset-row">
+          <button type="button" class="preset" data-amount="500">One answer</button>
+          <button type="button" class="preset" data-amount="10000">One user, one day</button>
+          <button type="button" class="preset" data-amount="2600000">One user, one year</button>
+          <button type="button" class="preset" data-amount="1300000000">500 users, one year</button>
+        </div>
+        <div id="amount-echo"></div>
         <div id="derived-tokens" hidden></div>
       </div>
 
