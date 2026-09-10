@@ -347,7 +347,7 @@ interface EwifRegionFacts {
  * dort umgekehrte Zuordnung (min = WRI, max = Lohrmann).
  */
 const EWIF_REGION_TABLE: Record<string, EwifRegionFacts> = {
-  DE: { minIds: ["eu-grid-water-germany"], midIds: ["eu-grid-water-germany"], maxIds: ["eu-grid-water-germany"] },
+  DE: { minIds: ["ewif-germany"], midIds: ["eu-grid-water-germany"], maxIds: ["eu-grid-water-germany"] },
   IE: { minIds: ["eu-grid-water-ireland"], midIds: ["eu-grid-water-ireland"], maxIds: ["ewif-ireland"] },
   NL: { minIds: ["eu-grid-water-netherlands"], midIds: ["eu-grid-water-netherlands"], maxIds: ["ewif-netherlands"] },
   SE: { minIds: ["ewif-sweden"], midIds: ["eu-grid-water-sweden"], maxIds: ["eu-grid-water-sweden"] },

@@ -232,6 +232,14 @@
       "url": "https://www.eea.europa.eu/en/analysis/indicators/greenhouse-gas-emission-intensity-of-1",
       "type": "Behördenindikator (EEA); National emissions reported to UNFCCC / EU Governance Regulation; Eurostat complete energy balances (nrg_bal_c)",
       "verified": "2026-09-08: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1). Daten-Endpunkt der Indikatorseite abgerufen (JSON, Jahre 1990-2024, 27 Laender + EU-Ebene)."
+    },
+    "S27": {
+      "title": "Reig, Luo, Christensen, Sinistore: Guidance for Calculating Water Use Embedded in Purchased Electricity — Appendices 1 to 7",
+      "publisher": "World Resources Institute (Working Paper)",
+      "year": 2020,
+      "url": "https://files.wri.org/d8/s3fs-public/guidance-calculating-water-use-embedded-purchased-electricity-appendices-1-to-7.xlsx",
+      "type": "Arbeitspapier, Anhangsdatensatz",
+      "verified": "2026-09-10, Anhangsdatei im Original geoeffnet und Zeile Germany gelesen"
     }
   },
   "facts": [
@@ -802,6 +810,27 @@
       "quote": "EWIF (L/kWh)",
       "second_source": "S8 für EU-Länder",
       "note": "Microsoft-Standort-Annahme; PUE 1.12, WUE on-site 0.01"
+    },
+    {
+      "id": "ewif-germany",
+      "category": "grid",
+      "phase": "-",
+      "model_or_object": "Stromerzeugung Germany",
+      "value": 1.947,
+      "unit": "L/kWh",
+      "functional_unit": "Wasserverbrauch je erzeugter kWh (EWIF)",
+      "measurement_boundary": "Netz-durchschnittlicher Wasserverbrauch (Verdunstung) je verbrauchter kWh, Strommix-Bezugsjahr 2016, Wasserkraft-Stausee-Verdunstung zu 100 Prozent eingeschlossen, Meerwasser eingeschlossen; ohne Brennstoffvorkette, ohne Uebertragung und Verteilung, Luftkuehlung nicht modelliert. Technologiefaktoren aus der proprietaeren GaBi/thinkstep-Datenbank, daher nicht unabhaengig nachrechenbar. Originalwerte in US-Gallonen je kWh, hier umgerechnet mit 3,785 L/gal.",
+      "water_scope": "scope2_consumption",
+      "carbon_accounting": "-",
+      "region": "Germany",
+      "year": 2023,
+      "rating": "EINZELQUELLE",
+      "confidence": 3,
+      "source_id": "S27",
+      "locator": "Blatt 'Appendix 1 & 2', Spalte 'Water Consumption Factor (gal/kWh)', Zeile Germany",
+      "quote": "Water Consumption Factor (gal/kWh)",
+      "second_source": "-",
+      "note": "Originalwert 0,5143 gal/kWh aus WRI Anhang 2, umgerechnet mit 3,785 L/gal. Abweichend von den Geschwister-Fakten dieser Familie, die ueber Li et al. 2025 uebernommen wurden und dort auf zwei Nachkommastellen gerundet vorlagen; dieser Wert stammt direkt aus der WRI-Anhangsdatei."
     },
     {
       "id": "gpt3-inf-water-india",
