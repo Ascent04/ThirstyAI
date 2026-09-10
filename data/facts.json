@@ -2850,6 +2850,27 @@
       "second_source": "UBA 353; Ember 336.38",
       "note": "origin: addendum-v0.3/F060; 2023: 316. Niedrigster der drei DE-Werte, weil nur oeffentliche Erzeugung. Rating UMSTRITTEN wegen Methodenkonflikt mit Ember, nicht wegen Zweifel am EEA-Wert.",
       "verified": "2026-09-08: Primärquelle geöffnet und geprüft durch Claude in claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne eigene Quellenprüfung. Befund im Projekt-Chatverlauf."
+    },
+    {
+      "id": "mistral-l2-materials",
+      "category": "carbon",
+      "phase": "inference",
+      "model_or_object": "Mistral Large 2 (Le Chat)",
+      "value": 0.16,
+      "unit": "mg Sb eq",
+      "functional_unit": "Antwort mit 400 Output-Tokens",
+      "measurement_boundary": "marginale LCA",
+      "water_scope": "-",
+      "carbon_accounting": "LCA",
+      "region": "nicht offengelegt",
+      "year": 2025,
+      "rating": "BESTÄTIGT",
+      "confidence": 4,
+      "source_id": "S3",
+      "locator": "Inference metric",
+      "quote": "-",
+      "second_source": "S1 §2.1; ADEME",
+      "note": "Ressourcenverschleiß (ADP), standardisiert auf Antimon-Äquivalent. Ergänzt mistral-l2-co2 und mistral-l2-water aus derselben Quelle."
     }
   ],
   "rejected": [
