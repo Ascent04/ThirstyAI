@@ -50,6 +50,20 @@ When you continue a long conversation, the model does not have to reprocess the 
 5. **Electricity → CO₂.** Regional grid mix: France (nuclear) very low, Germany medium, India high. For 2024 there are three values per region (min/mid/max) from different databases (UBA, Ember, EEA, eGRID).
 6. **Output** as a range with reference year, fact IDs and confidence ratings.
 
+### What is not included?
+The calculation covers the **running cost of a single request**: electricity at the chip, the data centre overhead, on-site cooling water, power plant water, and the CO₂ of the grid mix. It explicitly does **not** include:
+
+- **Training the model.** It happens once and would have to be spread across every request the model ever serves. Nobody outside the provider knows how many that is.
+- **Manufacturing the hardware** (chips, servers, networking).
+- **Building the data centre.**
+- **The user's own device** and the network connection to it.
+
+This omission is not small. In 2025 Mistral became the only provider so far to publish a peer-reviewed life cycle assessment for a specific model (Mistral Large 2, with the French agency ADEME and Carbone 4). It reports 45 millilitres of water and 1.14 grams of CO₂e for a 400-token response — across the full life cycle, including amortised training. Scaled to 1,000 tokens that is roughly 112 millilitres. ThirstyAI arrives at a few millilitres for the same amount, because only operation is counted.
+
+Almost all of the difference is training: the same study attributes 91 percent of water use to training and inference combined, leaving only the remainder to construction and manufacturing.
+
+For a Scope 3 inventory this means: the figures from ThirstyAI are the operational share, not the total footprint. Anyone needing the full life cycle has to go to a life cycle assessment of the specific model — and so far exactly one exists.
+
 ### What is the "overhead factor"?
 Most published measurements cover only the graphics chip (GPU), not the whole server with its CPU, memory, networking and storage. The overhead factor converts from one boundary to the other; it lies between 1.7 and 2.4. It is an assumption, not a measurement – and because it appears in nearly every calculation, it is what caps the method confidence (see below).
 
@@ -106,6 +120,8 @@ Grid mix: annually, when the agencies publish (spring to autumn of the following
 ### What is the EcoLogits cross-check?
 EcoLogits is a French open-source project attempting the same thing as ThirstyAI, with a different method. The cross-check runs the same examples through both and compares. If the orders of magnitude agree, that is independent corroboration; if they diverge, you learn where the methods part ways. The most recent run is out of date, because the token unit and the PUE/CO₂ intervals have changed since.
 
+A second comparison is possible, but only for one model: Mistral's life cycle assessment of Mistral Large 2. Because it covers the full life cycle while ThirstyAI covers operation only, this is not a comparison of like figures but a measure of how much the system boundary accounts for.
+
 ---
 
 ## Part 4 – Use in a company
@@ -123,7 +139,13 @@ Usage volumes per person are personal data too. So: obtain clearance before the 
 Estimate it, yes – with two caveats. OpenAI publishes nothing, so ThirstyAI calculates via proxy models of similar size. And the ChatGPT interface shows no token counts; you estimate from the word count (× 1.3) or export the conversation. Order of magnitude: a 300-word answer sits at roughly 0.3–3 Wh of electricity (charging a phone: 10–15 Wh) and a few millilitres of water. The width of that range is the point.
 
 ### What happens when providers eventually publish real figures?
-California (SB 253) requires large companies to disclose from late 2026. At that point the provider's figure is entered as a new fact (BESTÄTIGT or EINZELQUELLE), the code points to it, and the proxy facts remain as history. The method does not change – only the range gets narrower.
+Two regimes apply, but neither produces per-request figures:
+
+**California, SB 253.** Requires Scope 1, 2 and 3 at **company level** — total emissions, not consumption per request or per token. The California Air Resources Board's first deadline falls on 10 November 2026, with Scope 3 following in 2027. A legal challenge is pending and could still strike the law down. What matters for ThirstyAI: even if it takes effect as planned, it produces no per-request figure. And the obligation falls on the corporations operating data centres — not necessarily on the model providers renting capacity in them.
+
+**EU AI Act, Annex XI.** Requires providers of general-purpose AI models to document known or estimated energy consumption — for training and development, not for serving, and to the regulator rather than publicly.
+
+If a provider voluntarily publishes a defensible figure, it is entered as a new fact (BESTÄTIGT or EINZELQUELLE), the code points to it, and the proxy facts remain as history. The method does not change — only the range gets narrower. So far exactly one provider has done this: Mistral, with a life cycle assessment rather than an operational figure.
 
 ---
 
@@ -137,3 +159,5 @@ California (SB 253) requires large companies to disclose from late 2026. At that
 - **India, Japan**: only one CO₂ source each, so min = mid = max.
 - **Provider negative findings** need re-checking periodically.
 - **No calendar** for source updates.
+- **Training is not included.** The calculation covers operation only. The one available life cycle assessment of a model suggests that amortised training may dominate the total.
+- **Power plant water: two datasets with different geography.** For Ireland, the Netherlands, Sweden and Finland two sources give diverging values; they are carried as a range. For the Netherlands and Ireland one of the two is a multi-country regional value rather than a national one. For Denmark the two sources differ by a factor of 5.8, with no reconstructible cause — the underlying database is not publicly inspectable.

@@ -50,6 +50,20 @@ Wenn du in einem langen Gespräch weiterschreibst, muss das Modell den bisherige
 5. **Strom → CO₂.** Strommix der Region: Frankreich (Atom) sehr niedrig, Deutschland mittel, Indien hoch. Für 2024 gibt es pro Region drei Werte (min/mid/max) aus verschiedenen Datenbanken (UBA, Ember, EEA, eGRID).
 6. **Ausgabe** als Spanne mit Bezugsjahr, Fakt-IDs und Vertrauensnoten.
 
+### Was ist nicht enthalten?
+Die Rechnung deckt den **laufenden Betrieb einer einzelnen Anfrage** ab: Strom am Chip, Aufschlag fürs Rechenzentrum, Kühlwasser vor Ort, Kraftwerkswasser und CO₂ des Strommixes. Ausdrücklich **nicht** enthalten sind:
+
+- **Das Training des Modells.** Es fällt einmal an und müsste anteilig auf alle jemals gestellten Anfragen umgelegt werden. Wie viele das sind, weiß außer dem Anbieter niemand.
+- **Die Herstellung der Hardware** (Chips, Server, Netzwerk).
+- **Der Bau des Rechenzentrums.**
+- **Das Gerät des Nutzers** und die Netzverbindung dorthin.
+
+Diese Auslassung ist nicht klein. Mistral hat 2025 als bisher einziger Anbieter eine begutachtete Ökobilanz für ein konkretes Modell veröffentlicht (Mistral Large 2, gemeinsam mit ADEME und Carbone 4). Dort werden für eine Antwort von 400 Token 45 Milliliter Wasser und 1,14 Gramm CO₂e angegeben — über den gesamten Lebenszyklus, also inklusive anteiligem Training. Auf 1.000 Token hochgerechnet wären das rund 112 Milliliter. ThirstyAI kommt für dieselbe Menge auf wenige Milliliter, weil nur der Betrieb gezählt wird.
+
+Der Unterschied liegt fast vollständig im Training: Laut derselben Studie entfallen 91 Prozent des Wasserverbrauchs auf Training und Inferenz zusammen, nur der Rest auf Bau und Herstellung.
+
+Für eine Scope-3-Bilanz heißt das: Die Zahlen aus ThirstyAI sind der Betriebsanteil, nicht der Gesamtfußabdruck. Wer den vollständigen Lebenszyklus braucht, kommt an einer Ökobilanz des jeweiligen Modells nicht vorbei — und die gibt es bisher für genau ein Modell.
+
 ### Was ist der „Overhead-Faktor"?
 Die meisten veröffentlichten Messungen erfassen nur den Grafikchip (GPU), nicht den ganzen Server mit Prozessor, Arbeitsspeicher, Netzwerk und Speicher. Der Overhead-Faktor rechnet von der einen Grenze auf die andere um; er liegt zwischen 1,7 und 2,4. Er ist eine Annahme, keine Messung – und weil er in fast jeder Rechnung steckt, begrenzt er die Methoden-Vertrauensnote (siehe unten) nach unten.
 
@@ -106,6 +120,8 @@ Strommix: jährlich, wenn die Behörden ihre Werte veröffentlichen (Frühjahr b
 ### Was ist der EcoLogits-Crosscheck?
 EcoLogits ist ein französisches Open-Source-Projekt, das dasselbe versucht wie ThirstyAI, mit anderer Methode. Der Crosscheck rechnet dieselben Beispiele mit beiden und vergleicht. Stimmen die Größenordnungen, ist das eine unabhängige Bestätigung; weichen sie ab, weiß man, wo die Methoden auseinandergehen. Der letzte Lauf ist veraltet, weil sich seither die Token-Einheit und die PUE/CO₂-Intervalle geändert haben.
 
+Ein zweiter Abgleich ist möglich, aber nur für ein Modell: Mistrals Ökobilanz für Mistral Large 2. Weil sie den gesamten Lebenszyklus umfasst und ThirstyAI nur den Betrieb, ist das kein Vergleich gleicher Zahlen, sondern ein Maß dafür, wie viel die Systemgrenze ausmacht.
+
 ---
 
 ## Teil 4 – Anwendung in der Firma
@@ -123,7 +139,13 @@ Auch Nutzungsmengen pro Person sind personenbezogen. Deshalb: vor der ersten Aus
 Schätzen, ja – mit zwei Einschränkungen. OpenAI veröffentlicht nichts, also rechnet ThirstyAI über Stellvertretermodelle ähnlicher Größe. Und die ChatGPT-Oberfläche zeigt keine Token; man schätzt aus der Wortzahl (× 1,3) oder exportiert den Chat. Größenordnung: eine 300-Wort-Antwort liegt bei grob 0,3–3 Wh Strom (Handy-Ladung: 10–15 Wh) und einigen Millilitern Wasser. Die Breite ist die Aussage.
 
 ### Was passiert, wenn Anbieter irgendwann echte Zahlen liefern?
-Kalifornien (SB 253) zwingt große Firmen ab Ende 2026 zur Offenlegung. Dann wird der Anbieterwert als neuer Fakt angelegt (BESTÄTIGT oder EINZELQUELLE), der Code verweist darauf, die Stellvertreter-Fakten bleiben als Historie. Die Methode ändert sich nicht – nur die Spanne wird schmaler.
+Zwei Regelwerke greifen, aber keines liefert Werte pro Anfrage:
+
+**Kalifornien, SB 253.** Verlangt Scope 1, 2 und 3 auf **Unternehmensebene** — Gesamtemissionen, nicht Verbrauch je Anfrage oder Token. Die erste Frist der kalifornischen Umweltbehörde liegt beim 10. November 2026, Scope 3 folgt 2027. Gegen das Gesetz läuft eine Klage; ein Urteil könnte es noch kippen. Wichtig für ThirstyAI: Auch wenn alles wie geplant in Kraft tritt, entsteht daraus kein Wert pro Anfrage. Und die Pflicht trifft die Konzerne, die Rechenzentren betreiben — nicht zwangsläufig die Modellanbieter, die dort einmieten.
+
+**EU AI Act, Anhang XI.** Verlangt von Anbietern allgemeiner KI-Modelle die Dokumentation des bekannten oder geschätzten Energieverbrauchs — bezogen auf Training und Entwicklung, nicht auf den Betrieb, und gegenüber der Behörde, nicht öffentlich.
+
+Wenn ein Anbieter freiwillig einen belastbaren Wert veröffentlicht, wird er als neuer Fakt angelegt (BESTÄTIGT oder EINZELQUELLE), der Code verweist darauf, die Stellvertreter-Fakten bleiben als Historie. Die Methode ändert sich nicht — nur die Spanne wird schmaler. Bisher hat genau ein Anbieter das getan: Mistral, mit einer Ökobilanz statt einer Betriebszahl.
 
 ---
 
@@ -137,3 +159,5 @@ Kalifornien (SB 253) zwingt große Firmen ab Ende 2026 zur Offenlegung. Dann wir
 - **Indien, Japan**: nur eine CO₂-Quelle, also min = mid = max.
 - **Anbieter-Negativbefunde** müssen regelmäßig neu geprüft werden.
 - **Kein Kalender** für Quellen-Aktualisierung.
+- **Training nicht enthalten.** Die Rechnung deckt nur den Betrieb ab. Die einzige verfügbare Ökobilanz eines Modells legt nahe, dass anteiliges Training die Größenordnung dominieren kann.
+- **Kraftwerkswasser: zwei Datensätze mit unterschiedlicher Geografie.** Für Irland, die Niederlande, Schweden und Finnland liegen zwei Quellen mit abweichenden Werten vor; sie werden als Spanne geführt. Bei den Niederlanden und Irland ist der eine Wert zudem ein Mehrländer-Regionswert, kein Landeswert. Für Dänemark unterscheiden sich beide Quellen um Faktor 5,8, ohne dass sich die Ursache rekonstruieren ließe — die zugrundeliegende Datenbank ist nicht einsehbar.
