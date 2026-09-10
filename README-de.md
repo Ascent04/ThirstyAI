@@ -218,6 +218,7 @@ gegen ihre Primärquellen geprüft wurden, steht in
 
 Ausführlichere Antworten zu Methode, Datenherkunft und bekannten Lücken:
 [English](docs/faq.md) · [Deutsch](docs/faq-de.md)
+Begriffe zum Nachschlagen: [English](docs/glossary.md) · [Deutsch](docs/glossary-de.md)
 
 ## Mitarbeit
 

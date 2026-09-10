@@ -222,6 +222,7 @@ checked against their primary sources is documented (German only) in
 
 Longer answers on method, data sourcing and known gaps:
 [English](docs/faq.md) · [Deutsch](docs/faq-de.md)
+Term reference: [English](docs/glossary.md) · [Deutsch](docs/glossary-de.md)
 
 ## Contributing
 
