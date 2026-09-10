@@ -223,7 +223,10 @@
   details[open] > .field { margin-top: 8px; }
 
   #calculate {
-    justify-self: start;
+    /* Grid item in the form: justify-self is the inline axis, so this is the
+       whole change. The other fields keep their default stretch and stay
+       left-aligned. */
+    justify-self: center;
     padding: 10px 20px;
     border: 1px solid var(--accent);
     border-radius: 0;
