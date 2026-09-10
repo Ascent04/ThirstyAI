@@ -163,4 +163,13 @@ describe("resolveCoefficients", () => {
       ).toBeLessThanOrEqual(result.carbonIntensity.max);
     }
   });
+
+  it("region NL liefert EWIF als Spanne aus Lohrmann (min/mid) und WRI (max)", () => {
+    const result = resolveCoefficients({ model: "llama-3.1-70b", region: "NL" }, table());
+    expect(result.ewif.min).toBeCloseTo(1.31, 5);
+    expect(result.ewif.mid).toBeCloseTo(1.31, 5);
+    expect(result.ewif.max).toBeCloseTo(3.445, 5);
+    expect(result.ewif.factIds).toContain("eu-grid-water-netherlands");
+    expect(result.ewif.factIds).toContain("ewif-netherlands");
+  });
 });

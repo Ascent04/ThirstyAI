@@ -334,21 +334,30 @@ function resolveWueSite(
 // --- e) ewif nach Region ---
 
 interface EwifRegionFacts {
-  ewifIds: string[];
+  minIds: string[];
+  midIds: string[];
+  maxIds: string[];
 }
 
+/**
+ * min/mid/max je Region aus konkurrierenden Quellen (Lohrmann vs. WRI).
+ * Lohrmann ist fuer europaeische Regionen begutachtet, kraftwerksscharf und
+ * reproduzierbar und bildet daher mid; WRI (ewif-*) ist ein Arbeitspapier auf
+ * einer nicht einsehbaren Datenbank. Bei SE liegt Lohrmann ueber WRI, daher
+ * dort umgekehrte Zuordnung (min = WRI, max = Lohrmann).
+ */
 const EWIF_REGION_TABLE: Record<string, EwifRegionFacts> = {
-  DE: { ewifIds: ["eu-grid-water-germany"] },
-  IE: { ewifIds: ["eu-grid-water-ireland"] },
-  NL: { ewifIds: ["eu-grid-water-netherlands"] },
-  SE: { ewifIds: ["eu-grid-water-sweden"] },
-  FI: { ewifIds: ["eu-grid-water-finland"] },
-  FR: { ewifIds: ["eu-grid-water-france"] },
-  US: { ewifIds: ["ewif-us-average"] },
-  SG: { ewifIds: [] },
-  IN: { ewifIds: ["ewif-india"] },
-  JP: { ewifIds: [] },
-  EU: { ewifIds: [] },
+  DE: { minIds: ["eu-grid-water-germany"], midIds: ["eu-grid-water-germany"], maxIds: ["eu-grid-water-germany"] },
+  IE: { minIds: ["eu-grid-water-ireland"], midIds: ["eu-grid-water-ireland"], maxIds: ["ewif-ireland"] },
+  NL: { minIds: ["eu-grid-water-netherlands"], midIds: ["eu-grid-water-netherlands"], maxIds: ["ewif-netherlands"] },
+  SE: { minIds: ["ewif-sweden"], midIds: ["eu-grid-water-sweden"], maxIds: ["eu-grid-water-sweden"] },
+  FI: { minIds: ["eu-grid-water-finland"], midIds: ["eu-grid-water-finland"], maxIds: ["ewif-finland"] },
+  FR: { minIds: ["eu-grid-water-france"], midIds: ["eu-grid-water-france"], maxIds: ["eu-grid-water-france"] },
+  US: { minIds: ["ewif-us-average"], midIds: ["ewif-us-average"], maxIds: ["ewif-us-average"] },
+  SG: { minIds: [], midIds: [], maxIds: [] },
+  IN: { minIds: ["ewif-india"], midIds: ["ewif-india"], maxIds: ["ewif-india"] },
+  JP: { minIds: [], midIds: [], maxIds: [] },
+  EU: { minIds: [], midIds: [], maxIds: [] },
 };
 
 const FALLBACK_EWIF_IDS = ["ewif-us-average"];
@@ -360,10 +369,17 @@ function resolveEwif(
   asOf: Date | undefined,
 ): CoefficientRange {
   const entry = region ? EWIF_REGION_TABLE[region.toUpperCase()] : undefined;
-  if (entry && entry.ewifIds.length > 0) {
-    const fact =
-      latest(table, { ids: entry.ewifIds }, asOf)[0] ?? requireFact(table, entry.ewifIds[0]);
-    return pointRange(fact);
+  if (entry && entry.minIds.length > 0) {
+    const minFact = resolveCarbonRangeFact(entry.minIds, table, asOf);
+    const midFact = resolveCarbonRangeFact(entry.midIds, table, asOf);
+    const maxFact = resolveCarbonRangeFact(entry.maxIds, table, asOf);
+    return {
+      min: minFact.value,
+      mid: midFact.value,
+      max: maxFact.value,
+      confidence: Math.min(minFact.confidence, midFact.confidence, maxFact.confidence),
+      factIds: [...new Set([minFact.id, midFact.id, maxFact.id])],
+    };
   }
   const fallback =
     latest(table, { ids: FALLBACK_EWIF_IDS }, asOf)[0] ?? requireFact(table, FALLBACK_EWIF_IDS[0]);
