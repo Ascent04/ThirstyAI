@@ -19,6 +19,61 @@ function round3(v: number): number {
   return Number(v.toPrecision(3)); // 3 significant digits, same as CLI
 }
 
+/**
+ * Toggletip: a "?" button that reveals one sentence of explanation on
+ * click. Built once here and reused everywhere a tip is generated from
+ * JS (the results area); static tips in index.html write the same three
+ * elements directly in markup so they exist without JS. Either way, the
+ * open/close behaviour below is a single delegated listener on `document`,
+ * so it covers both origins alike.
+ */
+function infoTip(text: string): HTMLElement {
+  const wrap = document.createElement("span");
+  wrap.className = "info";
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "info-btn";
+  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-label", "Explanation");
+  button.textContent = "?";
+  wrap.appendChild(button);
+
+  const textEl = document.createElement("span");
+  textEl.className = "info-text";
+  textEl.hidden = true;
+  textEl.textContent = text;
+  wrap.appendChild(textEl);
+
+  return wrap;
+}
+
+function closeAllInfoTips(): void {
+  document
+    .querySelectorAll<HTMLButtonElement>('.info-btn[aria-expanded="true"]')
+    .forEach((button) => {
+      button.setAttribute("aria-expanded", "false");
+      const textEl = button.nextElementSibling as HTMLElement | null;
+      if (textEl) textEl.hidden = true;
+    });
+}
+
+document.addEventListener("click", (event) => {
+  const button = (event.target as HTMLElement).closest(".info-btn") as HTMLButtonElement | null;
+  if (!button) return;
+  const wasOpen = button.getAttribute("aria-expanded") === "true";
+  closeAllInfoTips();
+  if (!wasOpen) {
+    button.setAttribute("aria-expanded", "true");
+    const textEl = button.nextElementSibling as HTMLElement | null;
+    if (textEl) textEl.hidden = false;
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeAllInfoTips();
+});
+
 type BarKind = "energy" | "water" | "carbon";
 
 function buildBar(row: ResultRangeLike, kind: BarKind): HTMLElement {
@@ -107,12 +162,27 @@ function buildFactRow(id: string): HTMLElement {
   return row;
 }
 
-function buildFactsTable(title: string, ids: string[]): HTMLElement {
+const COLUMN_TIPS: Record<string, string> = {
+  ID: "The identifier of this fact in data/facts.json.",
+  Value: "The number as recorded, with its unit.",
+  Rating:
+    "Strength of evidence. BESTÄTIGT = confirmed by a second independent " +
+    "source. EINZELQUELLE = one credible source. UMSTRITTEN = credible " +
+    "sources disagree. ANNAHME = no source, set by the project.",
+  Confidence: "How dependable this single value is, from 1 to 5.",
+  "Measurement boundary":
+    "What this value includes and leaves out. Two figures with the same " +
+    "unit are not comparable if their boundaries differ.",
+  Source: "The publication the value was taken from. The link goes to the original.",
+};
+
+function buildFactsTable(title: string, ids: string[], tipText: string): HTMLElement {
   const section = document.createElement("div");
   section.className = "facts-section";
 
   const heading = document.createElement("h3");
   heading.textContent = title;
+  heading.appendChild(infoTip(tipText));
   section.appendChild(heading);
 
   const table = document.createElement("table");
@@ -123,6 +193,7 @@ function buildFactsTable(title: string, ids: string[]): HTMLElement {
   for (const label of ["ID", "Value", "Rating", "Confidence", "Measurement boundary", "Source"]) {
     const th = document.createElement("th");
     th.textContent = label;
+    th.appendChild(infoTip(COLUMN_TIPS[label]));
     headRow.appendChild(th);
   }
   thead.appendChild(headRow);
@@ -223,10 +294,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const rows: { label: string; row: ResultRangeLike; kind: BarKind }[] = [
-      { label: "Energy (Wh)", row: result.energyTotal, kind: "energy" },
+    const rows: { label: string; tip: string; row: ResultRangeLike; kind: BarKind }[] = [
+      {
+        label: "Energy (Wh)",
+        tip:
+          "Electricity for one request, from the chip through the data " +
+          "centre. Watt-hours: a 40-watt laptop running for one minute " +
+          "uses about 0.7 Wh.",
+        row: result.energyTotal,
+        kind: "energy",
+      },
       {
         label: "Water (ml)",
+        tip:
+          "Water evaporated for one request — cooling at the data centre " +
+          "plus cooling at the power plants that supplied the electricity.",
         row: {
           min: result.waterScope1.min + result.waterScope2.min,
           mid: result.waterScope1.mid + result.waterScope2.mid,
@@ -234,15 +316,23 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         kind: "water",
       },
-      { label: "CO2 (g)", row: result.co2Scope2, kind: "carbon" },
+      {
+        label: "CO2 (g)",
+        tip:
+          "Carbon dioxide from generating the electricity for one request. " +
+          "Location-based: the actual grid mix of the region, not green " +
+          "power contracts.",
+        row: result.co2Scope2,
+        kind: "carbon",
+      },
     ];
 
-    for (const { label, row, kind } of rows) {
+    for (const { label, tip, row, kind } of rows) {
       const rowEl = document.createElement("div");
       rowEl.className = "result-row";
       const labelEl = document.createElement("div");
       labelEl.className = "result-label";
-      labelEl.textContent = label;
+      labelEl.append(label, infoTip(tip));
       rowEl.appendChild(labelEl);
       rowEl.appendChild(buildBar(row, kind));
       resultsEl.appendChild(rowEl);
@@ -255,12 +345,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const confidence = document.createElement("p");
     confidence.className = "confidence";
-    confidence.textContent = `Data confidence ${result.dataConfidence}/5 · Method confidence ${result.methodConfidence}/5`;
+    confidence.append(
+      `Data confidence ${result.dataConfidence}/5`,
+      infoTip(
+        "The weakest evidenced source that went into this result, from 1 " +
+          "to 5. It says how good the data is.",
+      ),
+      " · ",
+      `Method confidence ${result.methodConfidence}/5`,
+      infoTip(
+        "The weakest assumption that went into this result, from 1 to 5. " +
+          "It says how sound the calculation is where no source exists.",
+      ),
+    );
     resultsEl.appendChild(confidence);
 
     const boundaryLine = document.createElement("p");
     boundaryLine.className = "confidence";
-    boundaryLine.textContent = `Measurement boundary: ${result.boundary}`;
+    boundaryLine.append(
+      `Measurement boundary: ${result.boundary}`,
+      infoTip(
+        "How much of the system is counted. gpu-only means the figure " +
+          "covers the chip and is scaled up to the data centre; fullstack " +
+          "means it was measured across the whole stack.",
+      ),
+    );
     resultsEl.appendChild(boundaryLine);
 
     const boundaryNote = document.createElement("p");
@@ -316,10 +425,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const assumptionIds = new Set(result.assumptions);
     const factsUsedIds = result.factIds.filter((id) => !assumptionIds.has(id));
 
-    resultsEl.appendChild(buildFactsTable("Facts used", factsUsedIds));
+    resultsEl.appendChild(
+      buildFactsTable(
+        "Facts used",
+        factsUsedIds,
+        "Every source that went into this result. Ratings and boundaries " +
+          "are shown so the numbers can be checked.",
+      ),
+    );
 
     if (result.assumptions.length > 0) {
-      const assumptionsBox = buildFactsTable("Assumptions", result.assumptions);
+      const assumptionsBox = buildFactsTable(
+        "Assumptions",
+        result.assumptions,
+        "Values the project had to set itself because no source exists. " +
+          "They are kept separate from evidenced facts on purpose.",
+      );
       assumptionsBox.className += " assumptions-box";
       resultsEl.appendChild(assumptionsBox);
     }
@@ -331,6 +452,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   calculateButton.addEventListener("click", recalculate);
-
-  recalculate();
 });
