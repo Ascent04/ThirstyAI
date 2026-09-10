@@ -82,8 +82,8 @@ Scientific publications (arXiv preprints and peer-reviewed papers), government d
 
 ### How many facts are there?
 Two numbers that need to be kept apart:
-- **`facts.json` alone**: 122 facts from 26 sources – everything that appears in an external source.
-- **The assembled table** actually used for calculation: 142 facts from 34 sources. The difference is the assumptions from `assumptions.json` and the model classifications from `models.json`.
+- **`facts.json` alone**: 124 facts from 27 sources – everything that appears in an external source.
+- **The assembled table** actually used for calculation: 144 facts from 35 sources. The difference is the assumptions from `assumptions.json` and the model classifications from `models.json`.
 
 The web calculator shows the second number, because that is the table doing the arithmetic.
 
@@ -91,7 +91,7 @@ The web calculator shows the second number, because that is the table doing the 
 That is the right question, and the answer is a procedure, not a promise:
 
 1. **Primary sources only.** No value comes from a blog post, a summary or a headline. If a value appears in an article, the original source cited there is opened and the value looked up in it. If it isn't there, it doesn't enter the table.
-2. **Every source was actually opened.** Not "is well known", but: PDF downloaded, page read, table located, value transcribed. Each fact's `verified` field records when and by whom. A fact without that field is invalid.
+2. **Every source was actually opened.** Not "is well known", but: PDF downloaded, page read, table located, value transcribed. Where a fact has been checked against its primary source in a documented verification round, its `verified` field records when and by whom. Not every fact carries the field; `docs/verification-v0.2.md` and `docs/verification-v0.3.md` record which facts were checked and how.
 3. **Rating by strength of evidence.** Every fact carries one of three ratings: BESTÄTIGT (confirmed – primary source plus an independent second source), EINZELQUELLE (single source – one credible source, no confirmation), UMSTRITTEN (disputed – credible sources contradict each other). Plus a confidence rating from 1 to 5. Anything merely estimated is labelled ANNAHME (assumption) and lives in a separate file.
 4. **Context is recorded alongside.** A measurement without its boundary is worthless: "GPU-only" (the chip alone) and "full stack" (the whole data centre) differ by a factor of 1.7 to 2.4. Every fact carries its measurement boundary so that nothing gets compared across incompatible boundaries.
 5. **Negative findings are recorded.** When a provider publishes nothing, that is entered as a fact in the table, with the date it was checked. This makes visible what was looked for and not found – and when it is worth checking again.
@@ -160,4 +160,4 @@ If a provider voluntarily publishes a defensible figure, it is entered as a new 
 - **Provider negative findings** need re-checking periodically.
 - **No calendar** for source updates.
 - **Training is not included.** The calculation covers operation only. The one available life cycle assessment of a model suggests that amortised training may dominate the total.
-- **Power plant water: two datasets with different geography.** For Ireland, the Netherlands, Sweden and Finland two sources give diverging values; they are carried as a range. For the Netherlands and Ireland one of the two is a multi-country regional value rather than a national one. For Denmark the two sources differ by a factor of 5.8, with no reconstructible cause — the underlying database is not publicly inspectable.
+- **Power plant water: two datasets with different geography.** For Germany, Ireland, the Netherlands, Sweden and Finland two sources give diverging values; they are carried as a range. For the Netherlands and Ireland one of the two is a multi-country regional value rather than a national one. For Germany the two values (WRI Appendix 2: 1.947 L/kWh, Lohrmann: 2.04 L/kWh) sit only about 5 per cent apart, unlike the other cases. For Denmark the two sources differ by a factor of 5.8, with no reconstructible cause — the underlying database is not publicly inspectable.

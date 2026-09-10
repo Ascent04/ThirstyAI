@@ -45,12 +45,11 @@ bereits am 2026-09-07 bestaetigten 2024-Werte derselben Datei geprueft
 (siehe Fakt-Notizen, z.B. `grid-co2-ember-*` mit `origin:
 addendum-v0.3/F051`).
 
-## Bekannter offener Punkt: docs/crosscheck/
+## Gegenprobe docs/crosscheck/: geprueft
 
-`docs/crosscheck/thirstyai.json` und `docs/crosscheck/results.md` sind
-eine eingefrorene Momentaufnahme eines fruehen Programmlaufs - von vor
-der Umstellung der Energie-Koeffizienten auf Wh pro 1.000 Output-Token
-und von vor v0.3. Die `factIds` in `thirstyai.json` referenzieren noch
-`us-dc-pue-2023` (die seither durch `us-dc-pue-ai-2024`/`us-dc-pue-2024`
-ersetzte Default-PUE, siehe Zyklus C). Ein Neulauf der Gegenprobe gegen
-den aktuellen Stand ist ein offener Punkt, nicht Teil dieses Zyklus.
+`docs/crosscheck/thirstyai.json` und `docs/crosscheck/results.md` wurden
+am 2026-09-10 gegen den aktuellen Code nachgerechnet. Alle zehn Faelle
+stimmen ueberein: `energyWh`, `co2G` und `waterMl` auf 1e-9 genau, und
+die `factIds` jedes Falls sind mit denen des aktuellen Laufs identisch.
+Die Momentaufnahme bildet damit den aktuellen Stand ab; ein Neulauf der
+Gegenprobe ist nicht noetig.

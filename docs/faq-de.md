@@ -82,8 +82,8 @@ Aus wissenschaftlichen Veröffentlichungen (arXiv-Preprints und begutachtete Pap
 
 ### Wie viele Fakten sind es?
 Zwei Zahlen, die man auseinanderhalten muss:
-- **`facts.json` allein**: 122 Fakten aus 26 Quellen – alles, was in einer externen Quelle steht.
-- **Die zusammengesetzte Tabelle**, mit der gerechnet wird: 142 Fakten aus 34 Quellen. Der Unterschied sind die Annahmen aus `assumptions.json` und die Modell-Einordnungen aus `models.json`.
+- **`facts.json` allein**: 124 Fakten aus 27 Quellen – alles, was in einer externen Quelle steht.
+- **Die zusammengesetzte Tabelle**, mit der gerechnet wird: 144 Fakten aus 35 Quellen. Der Unterschied sind die Annahmen aus `assumptions.json` und die Modell-Einordnungen aus `models.json`.
 
 Der Web-Rechner zeigt die zweite Zahl an, weil das die Tabelle ist, die tatsächlich rechnet.
 
@@ -91,7 +91,7 @@ Der Web-Rechner zeigt die zweite Zahl an, weil das die Tabelle ist, die tatsäch
 Das ist die richtige Frage, und die Antwort ist ein Verfahren, kein Versprechen:
 
 1. **Nur Primärquellen.** Kein Wert kommt aus einem Blogartikel, einer Zusammenfassung oder einer Schlagzeile. Wenn ein Wert in einem Artikel steht, wird die dort zitierte Originalquelle geöffnet und der Wert dort nachgeschlagen. Steht er dort nicht, kommt er nicht in die Tabelle.
-2. **Jede Quelle wurde tatsächlich geöffnet.** Nicht „ist bekannt", sondern: PDF heruntergeladen, Seite gelesen, Tabelle gefunden, Wert abgeschrieben. Das `verified`-Feld jedes Fakts sagt, wann und von wem. Ein Fakt ohne dieses Feld ist ungültig.
+2. **Jede Quelle wurde tatsächlich geöffnet.** Nicht „ist bekannt", sondern: PDF heruntergeladen, Seite gelesen, Tabelle gefunden, Wert abgeschrieben. Wo ein Fakt in einer dokumentierten Prüfrunde gegen seine Primärquelle geprüft wurde, hält das `verified`-Feld fest, wann und von wem. Nicht jeder Fakt trägt das Feld; `docs/verification-v0.2.md` und `docs/verification-v0.3.md` halten fest, welche Fakten geprüft wurden und wie.
 3. **Rating nach Belegstärke.** Jeder Fakt trägt eine von drei Noten: BESTÄTIGT (Primärquelle plus unabhängige Zweitquelle), EINZELQUELLE (eine seriöse Quelle, keine Bestätigung), UMSTRITTEN (seriöse Quellen widersprechen sich). Zusätzlich eine Vertrauensnote 1–5. Was nur geschätzt ist, heißt ANNAHME und liegt in einer eigenen Datei.
 4. **Kontext wird mitgeschrieben.** Ein Messwert ohne Messgrenze ist wertlos: „GPU-only" (nur der Chip) und „Vollstack" (ganzes Rechenzentrum) unterscheiden sich um Faktor 1,7 bis 2,4. Jeder Fakt trägt seine Messgrenze, damit man nicht Äpfel mit Birnen rechnet.
 5. **Negativbefunde werden festgehalten.** Wenn ein Anbieter nichts veröffentlicht, steht das als Fakt in der Tabelle, mit Prüfdatum. So sieht man, was gesucht und nicht gefunden wurde – und wann man nachschauen sollte.
@@ -160,4 +160,4 @@ Wenn ein Anbieter freiwillig einen belastbaren Wert veröffentlicht, wird er als
 - **Anbieter-Negativbefunde** müssen regelmäßig neu geprüft werden.
 - **Kein Kalender** für Quellen-Aktualisierung.
 - **Training nicht enthalten.** Die Rechnung deckt nur den Betrieb ab. Die einzige verfügbare Ökobilanz eines Modells legt nahe, dass anteiliges Training die Größenordnung dominieren kann.
-- **Kraftwerkswasser: zwei Datensätze mit unterschiedlicher Geografie.** Für Irland, die Niederlande, Schweden und Finnland liegen zwei Quellen mit abweichenden Werten vor; sie werden als Spanne geführt. Bei den Niederlanden und Irland ist der eine Wert zudem ein Mehrländer-Regionswert, kein Landeswert. Für Dänemark unterscheiden sich beide Quellen um Faktor 5,8, ohne dass sich die Ursache rekonstruieren ließe — die zugrundeliegende Datenbank ist nicht einsehbar.
+- **Kraftwerkswasser: zwei Datensätze mit unterschiedlicher Geografie.** Für Deutschland, Irland, die Niederlande, Schweden und Finnland liegen zwei Quellen mit abweichenden Werten vor; sie werden als Spanne geführt. Bei den Niederlanden und Irland ist der eine Wert zudem ein Mehrländer-Regionswert, kein Landeswert. Für Deutschland liegen die beiden Werte (WRI Anhang 2: 1,947 L/kWh, Lohrmann: 2,04 L/kWh) nur rund 5 Prozent auseinander, anders als in den übrigen Fällen. Für Dänemark unterscheiden sich beide Quellen um Faktor 5,8, ohne dass sich die Ursache rekonstruieren ließe — die zugrundeliegende Datenbank ist nicht einsehbar.

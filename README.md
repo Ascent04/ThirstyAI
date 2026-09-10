@@ -43,7 +43,7 @@ Tokens: in=0 out=1000 · Region: DE · Reference year: 2024
 
               min     mid     max
 energy Wh   0.216   0.773    1.05
-water ml    0.500    1.77    2.42
+water ml    0.480    1.77    2.42
 co2 g      0.0628   0.273   0.371
 
 Data confidence: 2/5
@@ -62,7 +62,7 @@ Tokens: input=35 output=190 cache-create=50 cache-read=200 · Region: DE · Refe
 === claude-sonnet-5 (class mid, recognized via class-claude-sonnet-5) ===
               min     mid     max
 energy Wh  0.0428   0.155   0.211
-water ml   0.0993   0.355   0.485
+water ml   0.0953   0.355   0.485
 co2 g      0.0125  0.0547  0.0745
 
 Wh per 1,000 output tokens (all compute): 0.225/0.816/1.11
