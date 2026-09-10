@@ -61,6 +61,10 @@ function closeAllInfoTips(): void {
 document.addEventListener("click", (event) => {
   const button = (event.target as HTMLElement).closest(".info-btn") as HTMLButtonElement | null;
   if (!button) return;
+  // The "Advanced" tip sits inside its <summary>, the only way to get it onto
+  // the same line as the label. Without this the click would toggle the
+  // <details> as well. The button is type="button", so nothing else is lost.
+  event.preventDefault();
   const wasOpen = button.getAttribute("aria-expanded") === "true";
   closeAllInfoTips();
   if (!wasOpen) {
@@ -76,6 +80,45 @@ document.addEventListener("keydown", (event) => {
 
 type BarKind = "energy" | "water" | "carbon";
 
+/** Start offset per metric, matching the transition-delay values in the CSS. */
+const BAR_STAGGER_MS: Record<BarKind, number> = { energy: 0, water: 80, carbon: 160 };
+const COUNT_UP_MS = 400;
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function barNumbersText(row: ResultRangeLike): string {
+  return `min ${round3(row.min)} · mid ${round3(row.mid)} · max ${round3(row.max)}`;
+}
+
+/**
+ * Counts the three figures up from zero over COUNT_UP_MS, after `delayMs`.
+ * The closing frame writes the untouched `row` rather than an interpolated
+ * value, so what stays on screen is bit-for-bit what the CLI prints.
+ */
+function countUpNumbers(el: HTMLElement, row: ResultRangeLike, delayMs: number): void {
+  const start = performance.now() + delayMs;
+
+  function frame(now: number): void {
+    const progress = (now - start) / COUNT_UP_MS;
+    if (progress >= 1) {
+      el.textContent = barNumbersText(row);
+      return;
+    }
+    if (progress > 0) {
+      el.textContent = barNumbersText({
+        min: row.min * progress,
+        mid: row.mid * progress,
+        max: row.max * progress,
+      });
+    }
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+
 function buildBar(row: ResultRangeLike, kind: BarKind): HTMLElement {
   const wrap = document.createElement("div");
   wrap.className = `bar-wrap ${kind}`;
@@ -88,20 +131,36 @@ function buildBar(row: ResultRangeLike, kind: BarKind): HTMLElement {
 
   const minSegment = document.createElement("div");
   minSegment.className = "bar-min";
-  minSegment.style.width = `${minPct}%`;
   track.appendChild(minSegment);
 
   const midMarker = document.createElement("div");
   midMarker.className = "bar-mid-marker";
-  midMarker.style.left = `${midPct}%`;
+  midMarker.style.left = `${midPct}%`; // set once, never animated
   track.appendChild(midMarker);
 
   wrap.appendChild(track);
 
   const numbers = document.createElement("div");
   numbers.className = "bar-numbers";
-  numbers.textContent = `min ${round3(row.min)} · mid ${round3(row.mid)} · max ${round3(row.max)}`;
   wrap.appendChild(numbers);
+
+  if (prefersReducedMotion()) {
+    minSegment.style.width = `${minPct}%`;
+    midMarker.style.opacity = "1";
+    numbers.textContent = barNumbersText(row);
+    return wrap;
+  }
+
+  // Width has to be a settled 0 for one frame, otherwise the change to the
+  // target width is coalesced into the same style recalculation and the bar
+  // jumps instead of growing.
+  minSegment.style.width = "0%";
+  numbers.textContent = barNumbersText({ min: 0, mid: 0, max: 0 });
+  requestAnimationFrame(() => {
+    minSegment.style.width = `${minPct}%`;
+    midMarker.style.opacity = "1";
+  });
+  countUpNumbers(numbers, row, BAR_STAGGER_MS[kind]);
 
   return wrap;
 }

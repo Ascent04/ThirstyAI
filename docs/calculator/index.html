@@ -103,6 +103,13 @@
 
   label { font-weight: 600; font-size: 0.9rem; }
 
+  /* .field stacks its children in a column, so a bare .info span next to a
+     label lands on its own line. Label and tip share one flex row instead.
+     The button's own margin is dropped here so the 0.4em gap is the whole
+     spacing - inside .radio-group the margin still applies, unchanged. */
+  .label-row { display: flex; align-items: center; gap: 0.4em; }
+  .label-row .info-btn { margin-left: 0; }
+
   select, input[type="number"] {
     padding: 8px;
     border: 1px solid var(--border);
@@ -165,7 +172,9 @@
     z-index: 20;
     margin-top: 4px;
     padding: 8px 10px;
-    max-width: 32em;
+    /* Never wider than the viewport minus the body's 16px side padding, so
+       the box stays readable on a phone as well. */
+    max-width: min(32em, calc(100vw - 32px));
     background: var(--bg-sunk);
     border: 1px solid var(--border);
     color: var(--fg);
@@ -173,6 +182,13 @@
     font-weight: 400;
     line-height: 1.4;
   }
+
+  /* .facts-section scrolls horizontally (overflow-x: auto), which clips any
+     tip that reaches past the table. Narrower boxes, and the last three
+     columns anchored to their right edge so they open inwards. Counted from
+     the end, so adding a column at the front does not break it. */
+  .facts-table .info-text { max-width: 20em; }
+  .facts-table th:nth-last-child(-n+3) .info-text { left: auto; right: 0; }
 
   details { color: var(--muted); font-size: 0.9rem; }
   summary { cursor: pointer; font-weight: 600; }
@@ -234,8 +250,11 @@
     top: 0;
     bottom: 0;
     z-index: 2;
+    transition: width 600ms ease-out;
   }
 
+  /* The marker snaps in once its bar has finished growing: its left position
+     is set straight away and never animated, only the opacity is. */
   .bar-mid-marker {
     position: absolute;
     top: -4px;
@@ -243,6 +262,22 @@
     width: 2px;
     background: var(--brass);
     z-index: 3;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
+  /* Staggered start per metric: energy first, then water, then CO2. The
+     marker waits out the full 600ms growth plus its own offset. */
+  .bar-wrap.energy .bar-min { transition-delay: 0ms; }
+  .bar-wrap.water .bar-min { transition-delay: 80ms; }
+  .bar-wrap.carbon .bar-min { transition-delay: 160ms; }
+
+  .bar-wrap.energy .bar-mid-marker { transition-delay: 600ms; }
+  .bar-wrap.water .bar-mid-marker { transition-delay: 680ms; }
+  .bar-wrap.carbon .bar-mid-marker { transition-delay: 760ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-min, .bar-mid-marker { transition: none; }
   }
 
   .bar-wrap.energy .bar-min { background: var(--energy); }
@@ -433,22 +468,26 @@
 
   <form>
     <div class="field">
-      <label for="model">Model</label>
-      <span class="info">
-        <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
-        <span class="info-text" hidden>Which AI model the request goes to. Models are grouped by size class, so models of similar size share the same energy estimate.</span>
-      </span>
+      <div class="label-row">
+        <label for="model">Model</label>
+        <span class="info">
+          <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
+          <span class="info-text" hidden>Which AI model the request goes to. Models are grouped by size class, so models of similar size share the same energy estimate.</span>
+        </span>
+      </div>
       <select id="model"></select>
       <span class="region-note">Models are grouped by size class. Models of similar size share the same energy estimate; closed models are represented by open models of comparable size.</span>
     </div>
 
     <div class="field-row">
       <div class="field">
-        <label for="amount">Amount</label>
-        <span class="info">
-          <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
-          <span class="info-text" hidden>How much text the model generates. This is what drives the energy use — reading the input costs far less.</span>
-        </span>
+        <div class="label-row">
+          <label for="amount">Amount</label>
+          <span class="info">
+            <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
+            <span class="info-text" hidden>How much text the model generates. This is what drives the energy use — reading the input costs far less.</span>
+          </span>
+        </div>
         <input type="number" id="amount" value="1000" min="0" step="1">
         <div class="radio-group">
           <label><input type="radio" name="unit" id="unit-output-tokens" value="output-tokens" checked> output tokens</label>
@@ -466,28 +505,31 @@
       </div>
 
       <div class="field">
-        <label for="region">Region</label>
-        <span class="info">
-          <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
-          <span class="info-text" hidden>Where the data centre runs. The region decides the grid mix, and with it both the CO2 content of the electricity and the water used at power plants.</span>
-        </span>
+        <div class="label-row">
+          <label for="region">Region</label>
+          <span class="info">
+            <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
+            <span class="info-text" hidden>Where the data centre runs. The region decides the grid mix, and with it both the CO2 content of the electricity and the water used at power plants.</span>
+          </span>
+        </div>
         <select id="region"></select>
         <span class="region-note">reference year 2024</span>
       </div>
     </div>
 
     <details>
-      <summary>Advanced</summary>
-      <span class="info">
+      <summary>Advanced<span class="info">
         <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
         <span class="info-text" hidden>Optional. Input tokens are counted at a share of 0.1 against output tokens — an assumption, not a measurement.</span>
-      </span>
+      </span></summary>
       <div class="field">
-        <label for="tokens-in">Input tokens</label>
-        <span class="info">
-          <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
-          <span class="info-text" hidden>The text the model reads before answering. Cheaper than generating, but not free.</span>
-        </span>
+        <div class="label-row">
+          <label for="tokens-in">Input tokens</label>
+          <span class="info">
+            <button type="button" class="info-btn" aria-expanded="false" aria-label="Explanation">?</button>
+            <span class="info-text" hidden>The text the model reads before answering. Cheaper than generating, but not free.</span>
+          </span>
+        </div>
         <input type="number" id="tokens-in" value="0" min="0" step="1">
       </div>
     </details>
