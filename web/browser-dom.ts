@@ -247,6 +247,18 @@ document.addEventListener("DOMContentLoaded", () => {
     confidence.textContent = `Data confidence ${result.dataConfidence}/5 · Method confidence ${result.methodConfidence}/5`;
     resultsEl.appendChild(confidence);
 
+    const boundaryLine = document.createElement("p");
+    boundaryLine.className = "confidence";
+    boundaryLine.textContent = `Measurement boundary: ${result.boundary}`;
+    resultsEl.appendChild(boundaryLine);
+
+    const boundaryNote = document.createElement("p");
+    boundaryNote.className = "confidence-note";
+    boundaryNote.textContent =
+      "Operation only. Training, hardware manufacturing and data centre " +
+      "construction are not included — see the FAQ on system boundary.";
+    resultsEl.appendChild(boundaryNote);
+
     if (result.methodConfidence === 1) {
       const confidenceNote = document.createElement("p");
       confidenceNote.className = "confidence-note";
@@ -255,6 +267,32 @@ document.addEventListener("DOMContentLoaded", () => {
         "Assumptions below). Data confidence reflects the weakest measured " +
         "source actually used.";
       resultsEl.appendChild(confidenceNote);
+    }
+
+    const factIdSet = new Set(result.factIds);
+    if (
+      region !== "US" &&
+      factIdSet.has("region-fallback-confidence-cap") &&
+      factIdSet.has("ewif-us-average")
+    ) {
+      const waterFallbackNote = document.createElement("p");
+      waterFallbackNote.className = "confidence-note";
+      waterFallbackNote.textContent =
+        "No grid water factor available for this region — the US average " +
+        "is used as a fallback, and confidence is capped accordingly.";
+      resultsEl.appendChild(waterFallbackNote);
+    }
+    if (
+      region !== "US" &&
+      factIdSet.has("region-fallback-confidence-cap") &&
+      factIdSet.has("grid-co2-egrid-us-2023")
+    ) {
+      const carbonFallbackNote = document.createElement("p");
+      carbonFallbackNote.className = "confidence-note";
+      carbonFallbackNote.textContent =
+        "No regional grid carbon factor available — the US average is " +
+        "used as a fallback.";
+      resultsEl.appendChild(carbonFallbackNote);
     }
 
     if (isUnknownModel(model)) {
