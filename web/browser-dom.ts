@@ -398,14 +398,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const rows: { label: string; tip: string; row: ResultRangeLike; kind: BarKind }[] = [
       {
         label: "Energy",
-        // Carries the bar legend for all three rows: energy is the top bar,
-        // and repeating it on water and CO2 would only add noise.
+        // Just the metric here - how to read a bar is shown by the annotated
+        // example in the empty state (index.html), not repeated per row.
         tip:
           "Electricity for one request, from the chip through the data " +
           "centre. Watt-hours: a 40-watt laptop running for one minute " +
-          "uses about 0.7 Wh. The filled bar ends at the minimum; the gold " +
-          "line marks the best-evidenced value; the white edge is the " +
-          "maximum. The hatched area is the range the sources disagree over.",
+          "uses about 0.7 Wh.",
         row: result.energyTotal,
         kind: "energy",
       },

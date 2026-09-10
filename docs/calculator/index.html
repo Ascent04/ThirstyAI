@@ -250,6 +250,30 @@
      form. No motion, just a fixed lower opacity. */
   #results.stale { opacity: 0.45; }
 
+  /* Annotated example bar in the empty state. Every colour comes from a
+     variable, so both modes are covered without a second rule set. */
+  .example-bar { display: block; max-width: 100%; height: auto; margin-bottom: 20px; }
+
+  .example-bar text { fill: var(--muted); font-size: 11px; }
+  .example-bar .ex-leader { fill: none; stroke: var(--muted); stroke-width: 1; }
+  .example-bar .ex-fill { fill: var(--water); }
+  .example-bar .ex-hatch-bg { fill: var(--bg-sunk); }
+  .example-bar .ex-hatch-stripe { fill: var(--water-soft); }
+  .example-bar .ex-marker { fill: var(--brass); }
+  .example-bar .ex-edge { fill: var(--fg); }
+
+  .example-bar-narrow { display: none; }
+
+  /* Below roughly 600px the wide variant (560 units plus the body's 32px of
+     padding) stops fitting, so the labels move underneath the bar. Two SVGs
+     rather than one: viewBox is an attribute, not a CSS property, so a layout
+     that needs a different aspect ratio cannot be switched in CSS alone - and
+     scaling the wide one down would shrink its label text with it. */
+  @media (max-width: 600px) {
+    .example-bar-wide { display: none; }
+    .example-bar-narrow { display: block; }
+  }
+
   .result-row { margin-bottom: 20px; }
 
   .result-label {
@@ -573,6 +597,50 @@
   </form>
 
   <section id="results" aria-live="polite">
+    <div class="result-label">How to read the bars</div>
+
+    <svg class="example-bar example-bar-wide" viewBox="0 0 560 100" width="560" height="100"
+         role="img" aria-label="Example bar: the solid area ends at the minimum, a brass line marks the best-evidenced value, the edge at the far right is the maximum, and the hatched area in between is the range the sources disagree over.">
+      <defs>
+        <pattern id="ex-hatch-wide" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect class="ex-hatch-bg" width="12" height="12"/>
+          <rect class="ex-hatch-stripe" width="6" height="12"/>
+        </pattern>
+      </defs>
+      <rect x="110" y="30" width="250" height="14" fill="url(#ex-hatch-wide)"/>
+      <rect class="ex-fill" x="110" y="30" width="50" height="14"/>
+      <rect class="ex-marker" x="284" y="26" width="2" height="22"/>
+      <rect class="ex-edge" x="360" y="30" width="2" height="14"/>
+      <polyline class="ex-leader" points="100,62 160,62 160,44"/>
+      <polyline class="ex-leader" points="285,26 285,14 370,14"/>
+      <polyline class="ex-leader" points="361,44 361,62 370,62"/>
+      <text x="96" y="66" text-anchor="end">minimum</text>
+      <text x="374" y="18">best-evidenced value</text>
+      <text x="374" y="66">maximum</text>
+      <text x="110" y="92">the hatched area is the range the sources disagree over</text>
+    </svg>
+
+    <svg class="example-bar example-bar-narrow" viewBox="0 0 320 145" width="320" height="145"
+         role="img" aria-label="Example bar: the solid area ends at the minimum, a brass line marks the best-evidenced value, the edge at the far right is the maximum, and the hatched area in between is the range the sources disagree over.">
+      <defs>
+        <pattern id="ex-hatch-narrow" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect class="ex-hatch-bg" width="12" height="12"/>
+          <rect class="ex-hatch-stripe" width="6" height="12"/>
+        </pattern>
+      </defs>
+      <rect x="10" y="20" width="280" height="14" fill="url(#ex-hatch-narrow)"/>
+      <rect class="ex-fill" x="10" y="20" width="56" height="14"/>
+      <rect class="ex-marker" x="205" y="16" width="2" height="22"/>
+      <rect class="ex-edge" x="290" y="20" width="2" height="14"/>
+      <polyline class="ex-leader" points="66,34 66,50 74,50"/>
+      <polyline class="ex-leader" points="206,34 206,70 198,70"/>
+      <polyline class="ex-leader" points="291,34 291,90 283,90"/>
+      <text x="78" y="54">minimum</text>
+      <text x="194" y="74" text-anchor="end">best-evidenced value</text>
+      <text x="279" y="94" text-anchor="end">maximum</text>
+      <text x="10" y="120">the hatched area is the range<tspan x="10" dy="14">the sources disagree over</tspan></text>
+    </svg>
+
     <p class="note">Choose a model, an amount and a region, then press Calculate.</p>
   </section>
 
