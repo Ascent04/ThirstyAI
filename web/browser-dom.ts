@@ -19,64 +19,40 @@ function round3(v: number): number {
   return Number(v.toPrecision(3)); // 3 significant digits, same as CLI
 }
 
+let infoTipCounter = 0;
+
 /**
- * Toggletip: a "?" button that reveals one sentence of explanation on
- * click. Built once here and reused everywhere a tip is generated from
- * JS (the results area); static tips in index.html write the same three
- * elements directly in markup so they exist without JS. Either way, the
- * open/close behaviour below is a single delegated listener on `document`,
- * so it covers both origins alike.
+ * Toggletip: a "?" button that reveals one sentence of explanation. Opening,
+ * closing on an outside click, Escape and "only one open at a time" are all
+ * handled by the browser through popover="auto" plus popovertarget - there is
+ * no JS behind it. Static tips in index.html write the same two elements
+ * directly in markup and behave identically. The ids only have to be unique;
+ * the static ones are named after their field, so these numbered ones cannot
+ * collide with them.
  */
 function infoTip(text: string): HTMLElement {
+  const id = `tip-${(infoTipCounter += 1)}`;
+
   const wrap = document.createElement("span");
   wrap.className = "info";
 
   const button = document.createElement("button");
   button.type = "button";
   button.className = "info-btn";
-  button.setAttribute("aria-expanded", "false");
+  button.setAttribute("popovertarget", id);
   button.setAttribute("aria-label", "Explanation");
   button.textContent = "?";
   wrap.appendChild(button);
 
   const textEl = document.createElement("span");
   textEl.className = "info-text";
-  textEl.hidden = true;
+  textEl.setAttribute("popover", "");
+  textEl.id = id;
   textEl.textContent = text;
   wrap.appendChild(textEl);
 
   return wrap;
 }
-
-function closeAllInfoTips(): void {
-  document
-    .querySelectorAll<HTMLButtonElement>('.info-btn[aria-expanded="true"]')
-    .forEach((button) => {
-      button.setAttribute("aria-expanded", "false");
-      const textEl = button.nextElementSibling as HTMLElement | null;
-      if (textEl) textEl.hidden = true;
-    });
-}
-
-document.addEventListener("click", (event) => {
-  const button = (event.target as HTMLElement).closest(".info-btn") as HTMLButtonElement | null;
-  if (!button) return;
-  // The "Advanced" tip sits inside its <summary>, the only way to get it onto
-  // the same line as the label. Without this the click would toggle the
-  // <details> as well. The button is type="button", so nothing else is lost.
-  event.preventDefault();
-  const wasOpen = button.getAttribute("aria-expanded") === "true";
-  closeAllInfoTips();
-  if (!wasOpen) {
-    button.setAttribute("aria-expanded", "true");
-    const textEl = button.nextElementSibling as HTMLElement | null;
-    if (textEl) textEl.hidden = false;
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeAllInfoTips();
-});
 
 type BarKind = "energy" | "water" | "carbon";
 
@@ -222,17 +198,12 @@ function buildFactRow(id: string): HTMLElement {
 }
 
 const COLUMN_TIPS: Record<string, string> = {
-  ID: "The identifier of this fact in data/facts.json.",
+  ID: "Identifier in data/facts.json.",
   Value: "The number as recorded, with its unit.",
-  Rating:
-    "Strength of evidence. BESTÄTIGT = confirmed by a second independent " +
-    "source. EINZELQUELLE = one credible source. UMSTRITTEN = credible " +
-    "sources disagree. ANNAHME = no source, set by the project.",
-  Confidence: "How dependable this single value is, from 1 to 5.",
-  "Measurement boundary":
-    "What this value includes and leaves out. Two figures with the same " +
-    "unit are not comparable if their boundaries differ.",
-  Source: "The publication the value was taken from. The link goes to the original.",
+  Rating: "Strength of evidence — see glossary.",
+  Confidence: "How dependable this value is, 1 to 5.",
+  "Measurement boundary": "What this value includes and leaves out.",
+  Source: "Where the value comes from.",
 };
 
 function buildFactsTable(title: string, ids: string[], tipText: string): HTMLElement {
@@ -356,10 +327,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const rows: { label: string; tip: string; row: ResultRangeLike; kind: BarKind }[] = [
       {
         label: "Energy (Wh)",
+        // Carries the bar legend for all three rows: energy is the top bar,
+        // and repeating it on water and CO2 would only add noise.
         tip:
           "Electricity for one request, from the chip through the data " +
           "centre. Watt-hours: a 40-watt laptop running for one minute " +
-          "uses about 0.7 Wh.",
+          "uses about 0.7 Wh. The filled bar ends at the minimum; the gold " +
+          "line marks the best-evidenced value; the white edge is the " +
+          "maximum. The hatched area is the range the sources disagree over.",
         row: result.energyTotal,
         kind: "energy",
       },
