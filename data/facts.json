@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "generated": "2026-09-09",
+  "generated": "2026-09-10",
   "generated_by": "Claude: v0.2 + Addendum v0.3 (LBNL 2025, Ember 2025, EEA 2024); Recherche und Quellenprüfung claude.ai, Übertragung Claude Code, Review Mathias Jung",
   "changes_from_v0.1": [
     "+7 gemessene Inferenzwerte offener Modelle (GPU-only)",

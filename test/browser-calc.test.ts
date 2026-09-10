@@ -31,7 +31,7 @@ describe("browser-calc", () => {
       }
     }
 
-    expect(FACTS_GENERATED).toBe("2026-09-09");
+    expect(FACTS_GENERATED).toBe("2026-09-10");
   });
 
   it("factById liefert denselben Fakt wie table.byId.get(id)", () => {
