@@ -927,7 +927,7 @@
       "locator": "Inference metric",
       "quote": "45 milliliters (mL) of water consumed",
       "second_source": "S1 §2.1; ADEME",
-      "note": "extern geprüft; funktionale Einheit nicht mit Gemini-Median vergleichbar"
+      "note": "extern geprüft; funktionale Einheit nicht mit Gemini-Median vergleichbar; CROSSCHECK — geht nicht in die Rechnung ein, wird von resolve.ts nicht referenziert. Grund: andere Systemgrenze. Dieser Wert umfasst den gesamten Lebenszyklus inklusive anteiligem Training und Hardware-Herstellung; ThirstyAI rechnet nur den laufenden Betrieb einer Anfrage. Ein Vergleich der beiden Zahlen misst den Unterschied der Systemgrenzen, nicht den Unterschied der Modelle."
     },
     {
       "id": "mistral-l2-co2",
@@ -948,7 +948,7 @@
       "locator": "Inference metric",
       "quote": "marginal impact of 1.14 grams of CO2e",
       "second_source": "S1 §2.1; ADEME",
-      "note": "-"
+      "note": "CROSSCHECK — geht nicht in die Rechnung ein, wird von resolve.ts nicht referenziert. Grund: andere Systemgrenze. Dieser Wert umfasst den gesamten Lebenszyklus inklusive anteiligem Training und Hardware-Herstellung; ThirstyAI rechnet nur den laufenden Betrieb einer Anfrage. Ein Vergleich der beiden Zahlen misst den Unterschied der Systemgrenzen, nicht den Unterschied der Modelle."
     },
     {
       "id": "mistral-l2-lifecycle-water",
@@ -969,7 +969,7 @@
       "locator": "-",
       "quote": "281 000 m3 of water consumed",
       "second_source": "-",
-      "note": "aggregiert, nicht auf Training allein trennbar"
+      "note": "aggregiert, nicht auf Training allein trennbar; CROSSCHECK — geht nicht in die Rechnung ein, wird von resolve.ts nicht referenziert. Grund: andere Systemgrenze. Dieser Wert umfasst den gesamten Lebenszyklus inklusive anteiligem Training und Hardware-Herstellung; ThirstyAI rechnet nur den laufenden Betrieb einer Anfrage. Ein Vergleich der beiden Zahlen misst den Unterschied der Systemgrenzen, nicht den Unterschied der Modelle. Absolutwert über 18 Monate Training und Nutzung, nicht je Anfrage."
     },
     {
       "id": "mistral-l2-lifecycle-co2",
@@ -990,7 +990,7 @@
       "locator": "-",
       "quote": "20,4 ktCO2e",
       "second_source": "-",
-      "note": "-"
+      "note": "CROSSCHECK — geht nicht in die Rechnung ein, wird von resolve.ts nicht referenziert. Grund: andere Systemgrenze. Dieser Wert umfasst den gesamten Lebenszyklus inklusive anteiligem Training und Hardware-Herstellung; ThirstyAI rechnet nur den laufenden Betrieb einer Anfrage. Ein Vergleich der beiden Zahlen misst den Unterschied der Systemgrenzen, nicht den Unterschied der Modelle. Absolutwert über 18 Monate Training und Nutzung, nicht je Anfrage."
     },
     {
       "id": "msft-wue-global-fy25",
@@ -2870,7 +2870,7 @@
       "locator": "Inference metric",
       "quote": "-",
       "second_source": "S1 §2.1; ADEME",
-      "note": "Ressourcenverschleiß (ADP), standardisiert auf Antimon-Äquivalent. Ergänzt mistral-l2-co2 und mistral-l2-water aus derselben Quelle."
+      "note": "Ressourcenverschleiß (ADP), standardisiert auf Antimon-Äquivalent. Ergänzt mistral-l2-co2 und mistral-l2-water aus derselben Quelle; CROSSCHECK — geht nicht in die Rechnung ein, wird von resolve.ts nicht referenziert. Grund: andere Systemgrenze. Dieser Wert umfasst den gesamten Lebenszyklus inklusive anteiligem Training und Hardware-Herstellung; ThirstyAI rechnet nur den laufenden Betrieb einer Anfrage. Ein Vergleich der beiden Zahlen misst den Unterschied der Systemgrenzen, nicht den Unterschied der Modelle."
     }
   ],
   "rejected": [
