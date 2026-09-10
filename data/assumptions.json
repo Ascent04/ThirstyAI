@@ -1,6 +1,6 @@
 {
   "schema_version": "0.2",
-  "generated": "2026-09-03",
+  "generated": "2026-09-10",
   "generated_by": "ThirstyAI: eigene Annahmen fuer Luecken in der Faktendatei v0.2",
   "sources": {
     "A-THIRSTYAI": {
@@ -293,6 +293,28 @@
       "quote": "Cache reads: 0.1x the base input tokens price",
       "second_source": "-",
       "note": "Preis als Proxy fuer Rechenanteil, keine Energiemessung; anbieterspezifisch (nur direkt anwendbar auf Anthropic-Modelle). Ersetzt die fruehere Annahme, cache reads wie volle Input-Token zu zaehlen (Faktor 1.0), die fuer stark gecachte Sitzungen unrealistisch hohe Werte ergab. Siehe docs/claude-code-reader.md."
+    },
+    {
+      "id": "class-claude-sonnet-5",
+      "category": "parameters",
+      "phase": "-",
+      "model_or_object": "Claude Sonnet 5",
+      "value": 50,
+      "unit": "Mrd. Parameter (Platzhalter)",
+      "functional_unit": "Groessenklassen-Zuordnung, keine echte Parameterzahl",
+      "measurement_boundary": "Anthropic veroeffentlicht keine Parameterzahlen fuer Claude-Modelle. Der Wert 50 ist kein Schaetzwert der tatsaechlichen Groesse, sondern nur so gewaehlt, dass er in ThirstyAIs eigener Bucket-Grenze (bucketBySize: 10 < value <= 200) sicher in die Klasse 'mid' faellt - dieselbe Klasse, die die Namensheuristik (Familie 'claude' + Marker 'sonnet') ohnehin liefert.",
+      "water_scope": "-",
+      "carbon_accounting": "-",
+      "region": "-",
+      "year": 2026,
+      "rating": "ANNAHME",
+      "confidence": 2,
+      "source_id": "A-THIRSTYAI",
+      "locator": "-",
+      "quote": "-",
+      "second_source": "-",
+      "note": "Parameterzahl nicht veroeffentlicht, Zuordnung nach Namensschema, ANNAHME.",
+      "aliases": ["claude-sonnet-5"]
     }
   ]
 }

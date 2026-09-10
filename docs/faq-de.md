@@ -83,7 +83,7 @@ Aus wissenschaftlichen Veröffentlichungen (arXiv-Preprints und begutachtete Pap
 ### Wie viele Fakten sind es?
 Zwei Zahlen, die man auseinanderhalten muss:
 - **`facts.json` allein**: 124 Fakten aus 27 Quellen – alles, was in einer externen Quelle steht.
-- **Die zusammengesetzte Tabelle**, mit der gerechnet wird: 144 Fakten aus 35 Quellen. Der Unterschied sind die Annahmen aus `assumptions.json` und die Modell-Einordnungen aus `models.json`.
+- **Die zusammengesetzte Tabelle**, mit der gerechnet wird: 144 Fakten aus 35 Quellen. Der Unterschied sind die Annahmen aus `assumptions.json` und die Modell-Parameterzahlen aus `models.json`.
 
 Der Web-Rechner zeigt die zweite Zahl an, weil das die Tabelle ist, die tatsächlich rechnet.
 

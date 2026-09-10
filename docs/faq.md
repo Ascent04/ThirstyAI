@@ -83,7 +83,7 @@ Scientific publications (arXiv preprints and peer-reviewed papers), government d
 ### How many facts are there?
 Two numbers that need to be kept apart:
 - **`facts.json` alone**: 124 facts from 27 sources – everything that appears in an external source.
-- **The assembled table** actually used for calculation: 144 facts from 35 sources. The difference is the assumptions from `assumptions.json` and the model classifications from `models.json`.
+- **The assembled table** actually used for calculation: 144 facts from 35 sources. The difference is the assumptions from `assumptions.json` and the model parameter counts from `models.json`.
 
 The web calculator shows the second number, because that is the table doing the arithmetic.
 

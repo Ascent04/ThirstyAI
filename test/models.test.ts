@@ -7,8 +7,11 @@ const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathnam
 const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
 function tableWithModels() {
-  // assumptions.json muss mitgeladen werden, weil class-claude-sonnet-5
-  // (data/models.json) auf die dort registrierte Quelle "A-THIRSTYAI" verweist.
+  // Dieselbe Ladeliste und -reihenfolge wie loadTable() in src/cli.ts. Seit
+  // class-claude-sonnet-5 in data/assumptions.json liegt (Regel "Datei folgt
+  // Rating"), liegen Fakt und Quelle "A-THIRSTYAI" in derselben Datei;
+  // assumptions.json ist fuer die Assertions hier damit nicht mehr zwingend,
+  // die Liste bleibt aber bewusst die der Produktion.
   return loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 }
 

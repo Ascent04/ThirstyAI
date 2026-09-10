@@ -14,6 +14,10 @@
 - Mistral LCA facts marked as cross-check only (different system
   boundary); +1 fact `mistral-l2-materials` (ADP, source S3).
 - New web calculator under `docs/calculator/`.
+- `class-claude-sonnet-5` moved from `models.json` to
+  `assumptions.json`: it is rated ANNAHME, and the rule is file
+  follows rating. Entry unchanged field for field; `models.json`
+  now holds measured parameter counts only.
 
 **Effect on results**: water min for region DE moves from 0.500 to
 0.480 ml per 1,000 output tokens. This is the only change in this
