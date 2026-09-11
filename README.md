@@ -111,8 +111,8 @@ A single static page runs the same calculation in the browser — no
 build step, no external requests. It lists every fact and assumption
 used, with source links.
 
-The page will be published via GitHub Pages once the repository is
-public. Until then it can be served locally:
+The page is live at <https://ascent04.github.io/ThirstyAI/calculator/>.
+It can also be served locally:
 
 ```bash
 npm run build:web

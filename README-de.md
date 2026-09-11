@@ -107,8 +107,8 @@ Eine einzelne statische Seite führt dieselbe Berechnung im Browser aus —
 kein Build-Schritt, keine externen Anfragen. Sie listet jeden
 verwendeten Fakt und jede Annahme mit Quellenlinks auf.
 
-Die Seite wird über GitHub Pages veröffentlicht, sobald das Repository
-öffentlich ist. Bis dahin kann sie lokal bereitgestellt werden:
+Die Seite ist erreichbar unter <https://ascent04.github.io/ThirstyAI/calculator/>.
+Sie kann auch lokal bereitgestellt werden:
 
 ```bash
 npm run build:web
