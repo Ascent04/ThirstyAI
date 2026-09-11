@@ -30,7 +30,7 @@
     <a href="{{ site.baseurl }}/glossary.html">Glossary</a>
   </nav>
   <div class="site-controls">
-    {% assign base = page.basename %}
+    {% assign base = page.name | remove: ".md" %}
     {% if base %}
       {% if base contains "-de" %}
         {% assign alt_base = base | remove: "-de" %}
