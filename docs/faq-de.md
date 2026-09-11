@@ -1,3 +1,6 @@
+---
+title: FAQ
+---
 # ThirstyAI – Fragen und Antworten
 
 Stand 2026-09-09.

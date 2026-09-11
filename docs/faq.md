@@ -1,3 +1,6 @@
+---
+title: FAQ
+---
 # ThirstyAI – Frequently Asked Questions
 
 Last updated 2026-09-09.

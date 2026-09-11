@@ -1,3 +1,6 @@
+---
+title: Glossar
+---
 # Glossar
 
 Nachschlagewerk für die Begriffe, die in ThirstyAI, in der Faktentabelle und auf der Rechner-Seite vorkommen. Zum Springen gedacht, nicht zum Lesen von vorn.

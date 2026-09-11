@@ -1,3 +1,6 @@
+---
+title: Glossary
+---
 # Glossary
 
 A reference for the terms used in ThirstyAI, in the fact table and on the calculator page. Meant for jumping into, not for reading front to back.

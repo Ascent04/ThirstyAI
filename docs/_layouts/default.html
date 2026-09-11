@@ -44,9 +44,6 @@
       {% for p in site.pages %}
         {% if p.name == alt_name %}{% assign alt_exists = true %}{% endif %}
       {% endfor %}
-      {% for f in site.static_files %}
-        {% if f.name == alt_name %}{% assign alt_exists = true %}{% endif %}
-      {% endfor %}
       {% if alt_exists %}
         <a class="lang-switch" href="{{ site.baseurl }}/{{ alt_base }}.html">{{ alt_label }}</a>
       {% endif %}
