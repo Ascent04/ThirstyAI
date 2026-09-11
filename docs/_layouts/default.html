@@ -31,15 +31,25 @@
   </nav>
   <div class="site-controls">
     {% assign base = page.basename %}
-    {% if base == "faq" or base == "faq-de" or base == "glossary" or base == "glossary-de" %}
+    {% if base %}
       {% if base contains "-de" %}
-        {% assign alt_page = base | remove: "-de" %}
+        {% assign alt_base = base | remove: "-de" %}
         {% assign alt_label = "English" %}
       {% else %}
-        {% assign alt_page = base | append: "-de" %}
+        {% assign alt_base = base | append: "-de" %}
         {% assign alt_label = "Deutsch" %}
       {% endif %}
-      <a class="lang-switch" href="{{ site.baseurl }}/{{ alt_page }}.html">{{ alt_label }}</a>
+      {% assign alt_name = alt_base | append: ".md" %}
+      {% assign alt_exists = false %}
+      {% for p in site.pages %}
+        {% if p.name == alt_name %}{% assign alt_exists = true %}{% endif %}
+      {% endfor %}
+      {% for f in site.static_files %}
+        {% if f.name == alt_name %}{% assign alt_exists = true %}{% endif %}
+      {% endfor %}
+      {% if alt_exists %}
+        <a class="lang-switch" href="{{ site.baseurl }}/{{ alt_base }}.html">{{ alt_label }}</a>
+      {% endif %}
     {% endif %}
     <button type="button" id="theme-toggle" aria-label="Toggle dark mode">&#9680;</button>
   </div>
