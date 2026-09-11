@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="{{ page.lang | default: 'en' }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.title | default: site.title }}</title>
+<script>
+  // Read a stored theme choice before the stylesheet loads, so the page
+  // never flashes light and then flips to dark once CSS parses.
+  (function () {
+    try {
+      var stored = localStorage.getItem("thirstyai-theme");
+      if (stored === "light" || stored === "dark") {
+        document.documentElement.setAttribute("data-theme", stored);
+      }
+    } catch (e) {
+      // localStorage unavailable (private mode, disabled) - fall back to
+      // the system preference, handled entirely in CSS.
+    }
+  })();
+</script>
+<link rel="stylesheet" href="{{ site.baseurl }}/assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <nav class="site-nav">
+    <a href="{{ site.baseurl }}/">Home</a>
+    <a href="{{ site.baseurl }}/calculator/">Calculator</a>
+    <a href="{{ site.baseurl }}/faq.html">FAQ</a>
+    <a href="{{ site.baseurl }}/glossary.html">Glossary</a>
+  </nav>
+  <div class="site-controls">
+    {% assign base = page.basename %}
+    {% if base == "faq" or base == "faq-de" or base == "glossary" or base == "glossary-de" %}
+      {% if base contains "-de" %}
+        {% assign alt_page = base | remove: "-de" %}
+        {% assign alt_label = "English" %}
+      {% else %}
+        {% assign alt_page = base | append: "-de" %}
+        {% assign alt_label = "Deutsch" %}
+      {% endif %}
+      <a class="lang-switch" href="{{ site.baseurl }}/{{ alt_page }}.html">{{ alt_label }}</a>
+    {% endif %}
+    <button type="button" id="theme-toggle" aria-label="Toggle dark mode">&#9680;</button>
+  </div>
+  <input type="search" id="site-search" placeholder="Search this page…" aria-label="Search this page">
+</header>
+<main id="page-content">
+{{ content }}
+</main>
+<script src="{{ site.baseurl }}/assets/search.js"></script>
+<script>
+  (function () {
+    var btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", function () {
+      var current = document.documentElement.getAttribute("data-theme");
+      var systemDark = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+      var effectiveDark = current === "dark" || (current !== "light" && systemDark);
+      var next = effectiveDark ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem("thirstyai-theme", next);
+      } catch (e) {
+        // no persistence available - the toggle still works for this load
+      }
+    });
+  })();
+</script>
+</body>
+</html>

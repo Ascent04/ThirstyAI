@@ -1,0 +1,275 @@
+/* Palette read off docs/assets/banner.jpg: turquoise lake, sand shore,
+   paper white mountains, and the brass sign - the only object in the
+   scene that is not paper, which is why it marks the single emphasised
+   value (the mid estimate) and the assumptions we made ourselves.
+   This block is an unmodified copy of the one in docs/calculator/index.html -
+   the calculator keeps its own copy, this file is for the rest of the site. */
+:root {
+  color-scheme: light dark;
+  --bg: #faf6ec;
+  --bg-sunk: #f2ebda;
+  --fg: #241f18;
+  --muted: #6e6557;
+  --border: #dcd2bc;
+  --accent: #1f7f79;
+  --water: #2e9a94;
+  --water-soft: #bfddd9;
+  --energy: #b8781c;
+  --energy-soft: #ecdcc0;
+  --carbon: #4a7c46;
+  --carbon-soft: #cfdcc9;
+  --brass: #a8801f;
+  --brass-soft: #f0e4c4;
+  --error: #a3402a;
+  --hero-filter: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141b1c;
+    --bg-sunk: #1b2426;
+    --fg: #ece5d6;
+    --muted: #98a29e;
+    --border: #2c3a3b;
+    --accent: #63c8bf;
+    --water: #3fb8b0;
+    --water-soft: #26403f;
+    --energy: #d9a252;
+    --energy-soft: #3a2f1c;
+    --carbon: #6faa68;
+    --carbon-soft: #22301f;
+    --brass: #d9ae52;
+    --brass-soft: #2a2718;
+    --error: #e08b72;
+    --hero-filter: brightness(0.9) saturate(0.95);
+  }
+}
+
+/* Second condition on top of the media query above: system preference is
+   the starting point, the header toggle (docs/_layouts/default.html)
+   overrides it either way via the data-theme attribute on <html>. An
+   attribute selector on :root outranks the plain :root inside the media
+   query above regardless of source order, so this works in both
+   directions without touching the media block itself. */
+:root[data-theme="dark"] {
+  --bg: #141b1c;
+  --bg-sunk: #1b2426;
+  --fg: #ece5d6;
+  --muted: #98a29e;
+  --border: #2c3a3b;
+  --accent: #63c8bf;
+  --water: #3fb8b0;
+  --water-soft: #26403f;
+  --energy: #d9a252;
+  --energy-soft: #3a2f1c;
+  --carbon: #6faa68;
+  --carbon-soft: #22301f;
+  --brass: #d9ae52;
+  --brass-soft: #2a2718;
+  --error: #e08b72;
+  --hero-filter: brightness(0.9) saturate(0.95);
+}
+
+:root[data-theme="light"] {
+  --bg: #faf6ec;
+  --bg-sunk: #f2ebda;
+  --fg: #241f18;
+  --muted: #6e6557;
+  --border: #dcd2bc;
+  --accent: #1f7f79;
+  --water: #2e9a94;
+  --water-soft: #bfddd9;
+  --energy: #b8781c;
+  --energy-soft: #ecdcc0;
+  --carbon: #4a7c46;
+  --carbon-soft: #cfdcc9;
+  --brass: #a8801f;
+  --brass-soft: #f0e4c4;
+  --error: #a3402a;
+  --hero-filter: none;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 16px 48px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+a { color: var(--accent); text-underline-offset: 2px; }
+
+/* --- site header ------------------------------------------------------ */
+
+.site-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.site-nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.site-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.lang-switch {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+#theme-toggle {
+  width: 2em;
+  height: 2em;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg-sunk);
+  color: var(--fg);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#theme-toggle:hover,
+#theme-toggle:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+#site-search {
+  flex-basis: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+#site-search:focus-visible,
+.site-nav a:focus-visible,
+.lang-switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* --- page content: typography for prose, headings, tables, code ------- */
+
+#page-content {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+#page-content h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+#page-content h2 {
+  margin: 40px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.2rem;
+}
+
+#page-content h2:first-of-type {
+  margin-top: 24px;
+}
+
+#page-content h3 {
+  margin: 24px 0 8px;
+  font-size: 1.02rem;
+}
+
+#page-content p,
+#page-content li {
+  font-size: 0.98rem;
+}
+
+#page-content p { margin: 0 0 14px; }
+
+#page-content ul,
+#page-content ol {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+#page-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+#page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+}
+
+#page-content th,
+#page-content td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+#page-content th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+#page-content code {
+  padding: 0.1em 0.35em;
+  background: var(--bg-sunk);
+  border: 1px solid var(--border);
+  font-size: 0.9em;
+}
+
+#page-content pre {
+  padding: 12px;
+  background: var(--bg-sunk);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+#page-content pre code {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+#page-content blockquote {
+  margin: 0 0 14px;
+  padding: 8px 14px;
+  border-left: 3px solid var(--brass);
+  background: var(--brass-soft);
+  color: var(--fg);
+}
+
+@media (max-width: 600px) {
+  .site-header { flex-direction: column; align-items: stretch; }
+  .site-controls { margin-left: 0; }
+}

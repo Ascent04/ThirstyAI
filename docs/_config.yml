@@ -1,0 +1,3 @@
+title: ThirstyAI
+description: Estimates the water, electricity, and CO2 footprint of an AI request as a range, with a source and confidence rating for every result.
+baseurl: /ThirstyAI
