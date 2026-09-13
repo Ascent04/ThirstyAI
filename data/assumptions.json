@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2",
-  "generated": "2026-09-10",
-  "generated_by": "ThirstyAI: eigene Annahmen fuer Luecken in der Faktendatei v0.2",
+  "generated": "2026-09-13",
+  "generated_by": "ThirstyAI: eigene Annahmen für Lücken in der Faktendatei v0.2",
   "sources": {
     "A-THIRSTYAI": {
       "title": "Eigene Annahme des ThirstyAI-Projekts, ohne externe Quelle",
@@ -29,7 +29,7 @@
       "value": 0.01,
       "unit": "Wh",
       "functional_unit": "pro Anfrage, GPU-only",
-      "measurement_boundary": "ANNAHME, keine Messung; dsr1-distill-70b-noreason (0.0495 Wh) dient als konservative Obergrenze fuer kleine Modelle",
+      "measurement_boundary": "ANNAHME, keine Messung; dsr1-distill-70b-noreason (0.0495 Wh) dient als konservative Obergrenze für kleine Modelle",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -40,7 +40,7 @@
       "locator": "-",
       "quote": "-",
       "second_source": "-",
-      "note": "Kleinere Modelle sollten weniger GPU-Energie je Anfrage benoetigen als ein 70B-Modell; 0.01 Wh ist eine grobe untere Schaetzung ohne eigene Messung"
+      "note": "Kleinere Modelle sollten weniger GPU-Energie je Anfrage benötigen als ein 70B-Modell; 0.01 Wh ist eine grobe untere Schätzung ohne eigene Messung"
     },
     {
       "id": "overhead-factor-min",
@@ -49,8 +49,8 @@
       "model_or_object": "GPU-only zu IT-Energie (vor PUE)",
       "value": 1.7,
       "unit": "Faktor",
-      "functional_unit": "Multiplikator auf GPU-only-Energie fuer IT-Energie (Host+Idle), vor PUE",
-      "measurement_boundary": "ANNAHME; untere Grenze der Spanne, angelehnt an die haeufig zitierte GPU-zu-IT-Spanne (u.a. MIT Technology Review 2.0) und S1 §4.1",
+      "functional_unit": "Multiplikator auf GPU-only-Energie für IT-Energie (Host+Idle), vor PUE",
+      "measurement_boundary": "ANNAHME; untere Grenze der Spanne, angelehnt an die häufig zitierte GPU-zu-IT-Spanne (u.a. MIT Technology Review 2.0) und S1 §4.1",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -70,7 +70,7 @@
       "model_or_object": "GPU-only zu IT-Energie (vor PUE)",
       "value": 2.0,
       "unit": "Faktor",
-      "functional_unit": "Multiplikator auf GPU-only-Energie fuer IT-Energie (Host+Idle), vor PUE",
+      "functional_unit": "Multiplikator auf GPU-only-Energie für IT-Energie (Host+Idle), vor PUE",
       "measurement_boundary": "ANNAHME; Mittelwert, angelehnt an MIT Technology Review (Faktor 2.0)",
       "water_scope": "-",
       "carbon_accounting": "-",
@@ -91,8 +91,8 @@
       "model_or_object": "GPU-only zu IT-Energie (vor PUE)",
       "value": 2.4,
       "unit": "Faktor",
-      "functional_unit": "Multiplikator auf GPU-only-Energie fuer IT-Energie (Host+Idle), vor PUE",
-      "measurement_boundary": "ANNAHME; Obergrenze, aus dem Verhaeltnis von Gemini Vollstack zu enger Systemgrenze (0.24/0.10 = 2.4, S1 Tab. 1)",
+      "functional_unit": "Multiplikator auf GPU-only-Energie für IT-Energie (Host+Idle), vor PUE",
+      "measurement_boundary": "ANNAHME; Obergrenze, aus dem Verhältnis von Gemini Vollstack zu enger Systemgrenze (0.24/0.10 = 2.4, S1 Tab. 1)",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -112,7 +112,7 @@
       "model_or_object": "Kostenanteil Input-Token relativ zu Output-Token",
       "value": 0.1,
       "unit": "Faktor",
-      "functional_unit": "Anteil, mit dem ein Input-Token wie ein Output-Token gezaehlt wird (Prefill vs. Decoding)",
+      "functional_unit": "Anteil, mit dem ein Input-Token wie ein Output-Token gezählt wird (Prefill vs. Decoding)",
       "measurement_boundary": "ANNAHME; Prefill (Input) ist rechnerisch billiger als Decoding (Output), aber mit den vorliegenden Fakten nicht quantifiziert",
       "water_scope": "-",
       "carbon_accounting": "-",
@@ -124,7 +124,7 @@
       "locator": "-",
       "quote": "-",
       "second_source": "-",
-      "note": "Offene Stelle, siehe docs/methodology-draft.md. Betrifft nur die Gewichtung von Input- zu Output-Token, nicht die Skalierung auf die Gesamt-Tokenzahl (dafuer seit der Umstellung auf Wh/1.000 Output-Token: src/resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT)."
+      "note": "Offene Stelle, siehe docs/methodology-draft.md. Betrifft nur die Gewichtung von Input- zu Output-Token, nicht die Skalierung auf die Gesamt-Tokenzahl (dafür seit der Umstellung auf Wh/1.000 Output-Token: src/resolve.ts:OUTPUT_TOKENS_FOR_ENERGY_FACT)."
     },
     {
       "id": "frontier-class-joule-median",
@@ -134,7 +134,7 @@
       "value": 0.39,
       "unit": "Wh",
       "functional_unit": "pro Anfrage, GPU-only",
-      "measurement_boundary": "Zahl steht nur im second_source-Feld von llama31-405b-inf-energy, nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthaelt",
+      "measurement_boundary": "Zahl steht nur im second_source-Feld von llama31-405b-inf-energy, nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthält",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -144,7 +144,7 @@
       "source_id": "A-THIRSTYAI",
       "locator": "-",
       "quote": "-",
-      "second_source": "Ursprungsfakt: llama31-405b-inf-energy (S14 Monte-Carlo-Schaetzung Median 0.39 Wh, IQR 0.19-0.68)",
+      "second_source": "Ursprungsfakt: llama31-405b-inf-energy (S14 Monte-Carlo-Schätzung Median 0.39 Wh, IQR 0.19-0.68)",
       "note": "Siehe docs/methodology-draft.md"
     },
     {
@@ -155,7 +155,7 @@
       "value": 0.68,
       "unit": "Wh",
       "functional_unit": "pro Anfrage, GPU-only",
-      "measurement_boundary": "Zahl steht nur im second_source-Feld von llama31-405b-inf-energy, nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthaelt",
+      "measurement_boundary": "Zahl steht nur im second_source-Feld von llama31-405b-inf-energy, nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthält",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -165,7 +165,7 @@
       "source_id": "A-THIRSTYAI",
       "locator": "-",
       "quote": "-",
-      "second_source": "Ursprungsfakt: llama31-405b-inf-energy (S14 Monte-Carlo-Schaetzung Median 0.39 Wh, IQR 0.19-0.68)",
+      "second_source": "Ursprungsfakt: llama31-405b-inf-energy (S14 Monte-Carlo-Schätzung Median 0.39 Wh, IQR 0.19-0.68)",
       "note": "Siehe docs/methodology-draft.md"
     },
     {
@@ -175,8 +175,8 @@
       "model_or_object": "PUE-Bandbreite um den Punktwert je Anbieter",
       "value": 0.1,
       "unit": "Faktor",
-      "functional_unit": "wird vom PUE-Punktwert ab- und aufgezaehlt fuer min/max",
-      "measurement_boundary": "ANNAHME; PUE wird von Anbietern meist als Punktwert berichtet, keine dokumentierte Bandbreite verfuegbar",
+      "functional_unit": "wird vom PUE-Punktwert ab- und aufgezählt für min/max",
+      "measurement_boundary": "ANNAHME; PUE wird von Anbietern meist als Punktwert berichtet, keine dokumentierte Bandbreite verfügbar",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -187,17 +187,17 @@
       "locator": "-",
       "quote": "-",
       "second_source": "-",
-      "note": "Siehe docs/methodology-draft.md. Fuer den Default-Anbieter (kein Google/Microsoft) wird die Bandbreite seit Zyklus C nur noch nach oben verwendet: die Untergrenze ist der Fakt us-dc-pue-ai-2024, die Obergrenze us-dc-pue-2024 + diese Bandbreite. Google (google-pue) und Microsoft (msft-pue-global-fy25) bleiben unveraendert symmetrisch um ihren Punktwert."
+      "note": "Siehe docs/methodology-draft.md. Für den Default-Anbieter (kein Google/Microsoft) wird die Bandbreite seit Zyklus C nur noch nach oben verwendet: die Untergrenze ist der Fakt us-dc-pue-ai-2024, die Obergrenze us-dc-pue-2024 + diese Bandbreite. Google (google-pue) und Microsoft (msft-pue-global-fy25) bleiben unverändert symmetrisch um ihren Punktwert."
     },
     {
       "id": "withdrawal-to-consumption-share",
       "category": "assumption",
       "phase": "-",
-      "model_or_object": "Anteil Wasserverbrauch an Wasserentnahme (Kuehlung)",
+      "model_or_object": "Anteil Wasserverbrauch an Wasserentnahme (Kühlung)",
       "value": 0.8,
       "unit": "Faktor",
-      "functional_unit": "Multiplikator auf Entnahme-WUE-Werte, um eine Verbrauchs-Naeherung (mid) zu erhalten; die Entnahme selbst bleibt max",
-      "measurement_boundary": "Zahl steht nur im note-Feld von google-wue-cat2, nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen und auf andere Anbieter (AWS, Meta) uebertragen, damit resolve.ts keine Literale enthaelt",
+      "functional_unit": "Multiplikator auf Entnahme-WUE-Werte, um eine Verbrauchs-Näherung (mid) zu erhalten; die Entnahme selbst bleibt max",
+      "measurement_boundary": "Zahl steht nur im note-Feld von google-wue-cat2, nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen und auf andere Anbieter (AWS, Meta) übertragen, damit resolve.ts keine Literale enthält",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -218,7 +218,7 @@
       "value": 0.32,
       "unit": "L/kWh",
       "functional_unit": "WUE-site je IT-kWh",
-      "measurement_boundary": "Zahl steht nur im note-Feld von us-dc-wue-site-2023 (Hyperscale-Median), nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthaelt",
+      "measurement_boundary": "Zahl steht nur im note-Feld von us-dc-wue-site-2023 (Hyperscale-Median), nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthält",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -228,7 +228,7 @@
       "source_id": "A-THIRSTYAI",
       "locator": "-",
       "quote": "-",
-      "second_source": "Ursprungsfakt: us-dc-wue-site-2023 (Hyperscale-Median 0.32, Sensitivitaet 0.40)",
+      "second_source": "Ursprungsfakt: us-dc-wue-site-2023 (Hyperscale-Median 0.32, Sensitivität 0.40)",
       "note": "Siehe docs/methodology-draft.md"
     },
     {
@@ -239,7 +239,7 @@
       "value": 0.4,
       "unit": "L/kWh",
       "functional_unit": "WUE-site je IT-kWh",
-      "measurement_boundary": "Zahl steht nur im note-Feld von us-dc-wue-site-2023 (Sensitivitaet), nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthaelt",
+      "measurement_boundary": "Zahl steht nur im note-Feld von us-dc-wue-site-2023 (Sensitivität), nicht als eigener Fakt; hier als eigene ANNAHME herausgezogen, damit resolve.ts keine Literale enthält",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -249,17 +249,17 @@
       "source_id": "A-THIRSTYAI",
       "locator": "-",
       "quote": "-",
-      "second_source": "Ursprungsfakt: us-dc-wue-site-2023 (Hyperscale-Median 0.32, Sensitivitaet 0.40)",
+      "second_source": "Ursprungsfakt: us-dc-wue-site-2023 (Hyperscale-Median 0.32, Sensitivität 0.40)",
       "note": "Siehe docs/methodology-draft.md"
     },
     {
       "id": "region-fallback-confidence-cap",
       "category": "assumption",
       "phase": "-",
-      "model_or_object": "Obergrenze der confidence bei unbekannter Region (Rueckgriff auf US-Werte)",
+      "model_or_object": "Obergrenze der confidence bei unbekannter Region (Rückgriff auf US-Werte)",
       "value": 2,
       "unit": "Konfidenzstufe",
-      "functional_unit": "deckelt die confidence von ewif/carbonIntensity, wenn auf US-Durchschnitt zurueckgefallen wird",
+      "functional_unit": "deckelt die confidence von ewif/carbonIntensity, wenn auf US-Durchschnitt zurückgefallen wird",
       "measurement_boundary": "ANNAHME; eigene redaktionelle Regel des Projekts, keine externe Quelle",
       "water_scope": "-",
       "carbon_accounting": "-",
@@ -277,11 +277,11 @@
       "id": "cache-read-compute-share-anthropic",
       "category": "assumption",
       "phase": "-",
-      "model_or_object": "Rechenanteil eines Cache-Read-Tokens ggue. einem frischen Input-Token (Anthropic-Modelle)",
+      "model_or_object": "Rechenanteil eines Cache-Read-Tokens ggü. einem frischen Input-Token (Anthropic-Modelle)",
       "value": 0.1,
       "unit": "Faktor",
       "functional_unit": "Multiplikator auf cache_read_input_tokens in src/readers/claudeCode.ts, um sie anteilig wie frische Input-Token zu behandeln",
-      "measurement_boundary": "ANNAHME; konzeptionelles Intervall 0 (kein zusaetzlicher Rechenaufwand, reiner KV-Cache-Treffer) bis 0.1 (Anthropics Preisverhaeltnis als Proxy fuer Rechenaufwand). Hier gespeichert wird nur der obere/mid-Wert 0.1; die Untergrenze 0 wird in toInputTokenRange() strukturell durch die eigene min-Formel realisiert (cacheRead dort komplett ausgeschlossen), nicht durch einen zweiten Fakt.",
+      "measurement_boundary": "ANNAHME; konzeptionelles Intervall 0 (kein zusätzlicher Rechenaufwand, reiner KV-Cache-Treffer) bis 0.1 (Anthropics Preisverhältnis als Proxy für Rechenaufwand). Hier gespeichert wird nur der obere/mid-Wert 0.1; die Untergrenze 0 wird in toInputTokenRange() strukturell durch die eigene min-Formel realisiert (cacheRead dort komplett ausgeschlossen), nicht durch einen zweiten Fakt.",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -292,7 +292,7 @@
       "locator": "Abschnitt Pricing",
       "quote": "Cache reads: 0.1x the base input tokens price",
       "second_source": "-",
-      "note": "Preis als Proxy fuer Rechenanteil, keine Energiemessung; anbieterspezifisch (nur direkt anwendbar auf Anthropic-Modelle). Ersetzt die fruehere Annahme, cache reads wie volle Input-Token zu zaehlen (Faktor 1.0), die fuer stark gecachte Sitzungen unrealistisch hohe Werte ergab. Siehe docs/claude-code-reader.md."
+      "note": "Preis als Proxy für Rechenanteil, keine Energiemessung; anbieterspezifisch (nur direkt anwendbar auf Anthropic-Modelle). Ersetzt die frühere Annahme, cache reads wie volle Input-Token zu zählen (Faktor 1.0), die für stark gecachte Sitzungen unrealistisch hohe Werte ergab. Siehe docs/claude-code-reader.md."
     },
     {
       "id": "class-claude-sonnet-5",
@@ -301,8 +301,8 @@
       "model_or_object": "Claude Sonnet 5",
       "value": 50,
       "unit": "Mrd. Parameter (Platzhalter)",
-      "functional_unit": "Groessenklassen-Zuordnung, keine echte Parameterzahl",
-      "measurement_boundary": "Anthropic veroeffentlicht keine Parameterzahlen fuer Claude-Modelle. Der Wert 50 ist kein Schaetzwert der tatsaechlichen Groesse, sondern nur so gewaehlt, dass er in ThirstyAIs eigener Bucket-Grenze (bucketBySize: 10 < value <= 200) sicher in die Klasse 'mid' faellt - dieselbe Klasse, die die Namensheuristik (Familie 'claude' + Marker 'sonnet') ohnehin liefert.",
+      "functional_unit": "Größenklassen-Zuordnung, keine echte Parameterzahl",
+      "measurement_boundary": "Anthropic veröffentlicht keine Parameterzahlen für Claude-Modelle. Der Wert 50 ist kein Schätzwert der tatsächlichen Größe, sondern nur so gewählt, dass er in ThirstyAIs eigener Bucket-Grenze (bucketBySize: 10 < value <= 200) sicher in die Klasse 'mid' fällt - dieselbe Klasse, die die Namensheuristik (Familie 'claude' + Marker 'sonnet') ohnehin liefert.",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -313,7 +313,7 @@
       "locator": "-",
       "quote": "-",
       "second_source": "-",
-      "note": "Parameterzahl nicht veroeffentlicht, Zuordnung nach Namensschema, ANNAHME.",
+      "note": "Parameterzahl nicht veröffentlicht, Zuordnung nach Namensschema, ANNAHME.",
       "aliases": ["claude-sonnet-5"]
     }
   ]
