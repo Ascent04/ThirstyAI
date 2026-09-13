@@ -5,7 +5,7 @@ title: Glossar
 
 Nachschlagewerk für die Begriffe, die in ThirstyAI, in der Faktentabelle und auf der Rechner-Seite vorkommen. Zum Springen gedacht, nicht zum Lesen von vorn.
 
-Stand 2026-09-10.
+Stand 2026-09-13.
 
 ---
 
@@ -52,7 +52,7 @@ Die festgehaltene Feststellung, dass ein Anbieter nichts veröffentlicht hat, mi
 Der Vorgang, mit dem neue Daten in die Tabelle kommen: Recherche, Prüfung, Übertragung, dann erst Verwendung im Code.
 
 ### verified
-Das Feld, das festhält, wann und von wem eine Quelle tatsächlich geöffnet und der Wert dort nachgeschlagen wurde. Ein Fakt ohne dieses Feld ist ungültig.
+Das Feld, das festhält, wann und von wem eine Quelle tatsächlich geöffnet und der Wert dort nachgeschlagen wurde. Nicht jeder Fakt trägt das Feld; welche Fakten geprüft wurden, steht in `verification-v0.2.md` und `verification-v0.3.md`.
 
 ### second_source
 Die unabhängige Zweitquelle, die einen Wert bestätigt. Sie ist die Voraussetzung für das Rating BESTÄTIGT.

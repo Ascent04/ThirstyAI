@@ -3,7 +3,7 @@ title: FAQ
 ---
 # ThirstyAI – Fragen und Antworten
 
-Stand 2026-09-09.
+Stand 2026-09-13.
 
 ---
 
@@ -121,7 +121,7 @@ Der Weg heißt „Addendum" und läuft in Zyklen: Recherche (Quellen öffnen, We
 Strommix: jährlich, wenn die Behörden ihre Werte veröffentlichen (Frühjahr bis Herbst des Folgejahres). Modellmesswerte: wenn neue Studien erscheinen, grob quartalsweise nachschauen. Negativbefunde: am Prüfdatum wiederholen. Ein Kalender dafür gibt es noch nicht – das wäre ein sinnvolles Werkzeug.
 
 ### Was ist der EcoLogits-Crosscheck?
-EcoLogits ist ein französisches Open-Source-Projekt, das dasselbe versucht wie ThirstyAI, mit anderer Methode. Der Crosscheck rechnet dieselben Beispiele mit beiden und vergleicht. Stimmen die Größenordnungen, ist das eine unabhängige Bestätigung; weichen sie ab, weiß man, wo die Methoden auseinandergehen. Der letzte Lauf ist veraltet, weil sich seither die Token-Einheit und die PUE/CO₂-Intervalle geändert haben.
+EcoLogits ist ein französisches Open-Source-Projekt, das dasselbe versucht wie ThirstyAI, mit anderer Methode. Der Crosscheck rechnet dieselben Beispiele mit beiden und vergleicht. Stimmen die Größenordnungen, ist das eine unabhängige Bestätigung; weichen sie ab, weiß man, wo die Methoden auseinandergehen. Der Lauf wurde zuletzt am 2026-09-10 nachgerechnet; alle zehn Fälle stimmten mit dem Code dieses Datums überein (siehe `verification-v0.3.md`).
 
 Ein zweiter Abgleich ist möglich, aber nur für ein Modell: Mistrals Ökobilanz für Mistral Large 2. Weil sie den gesamten Lebenszyklus umfasst und ThirstyAI nur den Betrieb, ist das kein Vergleich gleicher Zahlen, sondern ein Maß dafür, wie viel die Systemgrenze ausmacht.
 

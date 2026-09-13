@@ -3,7 +3,7 @@ title: FAQ
 ---
 # ThirstyAI – Frequently Asked Questions
 
-Last updated 2026-09-09.
+Last updated 2026-09-13.
 
 ---
 
@@ -121,7 +121,7 @@ The process is called an addendum and runs in cycles: research (open sources, fi
 Grid mix: annually, when the agencies publish (spring to autumn of the following year). Model measurements: whenever new studies appear, worth checking roughly quarterly. Negative findings: repeat on their recorded check date. There is no calendar for this yet – that would be a useful addition.
 
 ### What is the EcoLogits cross-check?
-EcoLogits is a French open-source project attempting the same thing as ThirstyAI, with a different method. The cross-check runs the same examples through both and compares. If the orders of magnitude agree, that is independent corroboration; if they diverge, you learn where the methods part ways. The most recent run is out of date, because the token unit and the PUE/CO₂ intervals have changed since.
+EcoLogits is a French open-source project attempting the same thing as ThirstyAI, with a different method. The cross-check runs the same examples through both and compares. If the orders of magnitude agree, that is independent corroboration; if they diverge, you learn where the methods part ways. The run was last re-computed on 2026-09-10; all ten cases matched the code of that date (see `verification-v0.3.md`).
 
 A second comparison is possible, but only for one model: Mistral's life cycle assessment of Mistral Large 2. Because it covers the full life cycle while ThirstyAI covers operation only, this is not a comparison of like figures but a measure of how much the system boundary accounts for.
 

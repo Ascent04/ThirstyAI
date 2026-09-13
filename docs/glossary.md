@@ -5,7 +5,7 @@ title: Glossary
 
 A reference for the terms used in ThirstyAI, in the fact table and on the calculator page. Meant for jumping into, not for reading front to back.
 
-Last updated 2026-09-10.
+Last updated 2026-09-13.
 
 ---
 
@@ -52,7 +52,7 @@ The recorded observation that a provider has published nothing, with the date it
 The process by which new data enters the table: research, review, transfer, and only then use in the code.
 
 ### verified
-The field recording when and by whom a source was actually opened and the value looked up in it. A fact without this field is invalid.
+The field recording when and by whom a source was actually opened and the value looked up in it. Not every fact carries the field; which facts were checked is recorded in `verification-v0.2.md` and `verification-v0.3.md`.
 
 ### second_source
 The independent second source confirming a value. It is the precondition for the rating BESTÄTIGT.
