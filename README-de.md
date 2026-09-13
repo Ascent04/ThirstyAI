@@ -11,7 +11,7 @@ Region den Wasser-, Strom- und CO2-Verbrauch einer KI-Anfrage schätzt. Das
 Ergebnis ist bewusst eine Bandbreite (Minimum, Mittelwert, Maximum), keine
 einzelne Zahl, weil die zugrunde liegenden Messwerte aus unterschiedlichen
 Systemgrenzen, Regionen und Methoden stammen. Zu jedem Ergebnis liefert die
-Bibliothek die verwendeten Quellen und eine Konfidenzeinstufung (1-5) mit,
+Bibliothek die verwendeten Quellen und eine Vertrauensnote (1-5) mit,
 damit sichtbar bleibt, wie belastbar eine Zahl ist.
 
 Die Bibliothek trifft keine Netzwerkzugriffe zur Laufzeit und hat keine
@@ -80,7 +80,7 @@ Optionen von `calc`:
 | `--in <n>` | Anzahl Input-Token (Default 0) |
 | `--region <code>` | Regionscode, z.B. `DE`, `US` |
 | `--provider <name>` | Cloud-Anbieter, beeinflusst den verwendeten PUE-Fakt |
-| `--year <yyyy>` | Bezugsjahr fuer das CO2-Regionsraster (Default 2024) |
+| `--year <yyyy>` | Bezugsjahr für das CO2-Regionsraster (Default 2024) |
 | `--json` | gibt das `Result`-Objekt als JSON statt als Tabelle aus |
 | `--help` | gibt die Aufrufsyntax aus |
 
@@ -89,17 +89,17 @@ Optionen von `session`:
 | Option | Bedeutung |
 | --- | --- |
 | `<file>` | Pfad zu einem Claude-Code-Sitzungsprotokoll (JSONL, Pflicht) |
-| `--region <code>` | Regionscode, gilt fuer alle Modelle der Sitzung |
-| `--year <yyyy>` | Bezugsjahr fuer das CO2-Regionsraster (Default 2024) |
+| `--region <code>` | Regionscode, gilt für alle Modelle der Sitzung |
+| `--year <yyyy>` | Bezugsjahr für das CO2-Regionsraster (Default 2024) |
 | `--json` | gibt `{ file, records, skipped, tokens, region, referenceYear, models, total }` als JSON aus |
 
-Exit-Codes: `0` Erfolg, `1` Bedienfehler (fehlendes/ungueltiges Argument, fehlende oder nicht lesbare Datei, oder - bei `session` - keine erkannte Nutzungszeile in der Datei), `2` ein Fehler aus der Bibliothek (z.B. ein unbekanntes `--year`).
+Exit-Codes: `0` Erfolg, `1` Bedienfehler (fehlendes/ungültiges Argument, fehlende oder nicht lesbare Datei, oder - bei `session` - keine erkannte Nutzungszeile in der Datei), `2` ein Fehler aus der Bibliothek (z.B. ein unbekanntes `--year`).
 
-Unbekannte Modellnamen fallen auf die Klasse `frontier` zurueck (bewusst konservativ - schaetzt eher zu hoch als zu niedrig).
+Unbekannte Modellnamen fallen auf die Klasse `frontier` zurück (bewusst konservativ - schätzt eher zu hoch als zu niedrig).
 
-Confidence ist das Minimum ueber alle verwendeten Koeffizienten; bei gpu-only-Modellen ist sie derzeit durch ANNAHME-Fakten (Overhead-Faktor, Wasser-Fallback am Standort) auf 1/5 gedeckelt. Die Assumptions-Zeile sagt mehr als der Zahlenwert.
+Confidence ist das Minimum über alle verwendeten Koeffizienten; bei gpu-only-Modellen ist sie derzeit durch ANNAHME-Fakten (Overhead-Faktor, Wasser-Fallback am Standort) auf 1/5 gedeckelt. Die Assumptions-Zeile sagt mehr als der Zahlenwert.
 
-„Wh per 1,000 output tokens (all compute)" gewichtet Input- und Cache-Token in ein Output-Token-Aequivalent ein und teilt die Gesamtenergie dadurch - deshalb liegt der Wert bei Sitzungen mit langen Kontexten deutlich ueber dem reinen `calc`-Wert pro Output-Token.
+„Wh per 1,000 output tokens (all compute)" gewichtet Input- und Cache-Token in ein Output-Token-Äquivalent ein und teilt die Gesamtenergie dadurch - deshalb liegt der Wert bei Sitzungen mit langen Kontexten deutlich über dem reinen `calc`-Wert pro Output-Token.
 
 ## Web-Rechner
 
@@ -143,40 +143,40 @@ console.log(
 console.log(
   `CO2 (Scope 2): ${result.co2Scope2.min.toFixed(3)}-${result.co2Scope2.max.toFixed(3)} g`,
 );
-console.log(`Konfidenz: ${result.confidence}/5, Quellen: ${result.factIds.join(", ")}`);
+console.log(`Vertrauensnote: ${result.confidence}/5, Quellen: ${result.factIds.join(", ")}`);
 ```
 
-`loadFacts` liest und prueft die Faktendateien, `calculate` liefert das
+`loadFacts` liest und prüft die Faktendateien, `calculate` liefert das
 Ergebnis. Beide Aufrufe sind synchron und greifen nicht auf das Netzwerk zu.
-Alle drei Dateien sind noetig: `facts.json` enthaelt die belegten Messwerte,
+Alle drei Dateien sind nötig: `facts.json` enthält die belegten Messwerte,
 `assumptions.json` die eigenen ANNAHME-Fakten (z.B. Input-Kostenanteil,
-Overhead-Faktor), `models.json` bekannte Modellgroessen (Parameterzahl) fuer
+Overhead-Faktor), `models.json` bekannte Modellgrößen (Parameterzahl) für
 die Klassifikation - auf sie alle greift `calculate` je nach Modell und
-Berechnungsschritt zurueck; fehlt eine, bricht die Berechnung mit einem
+Berechnungsschritt zurück; fehlt eine, bricht die Berechnung mit einem
 Fehler zur fehlenden Fakt-ID ab.
 
 ## Was die Zahlen bedeuten
 
 - **waterScope1** und **waterScope2** sind getrennt, nicht addiert:
-  waterScope1 ist Kuehlwasser, das am Rechenzentrum selbst verdunstet;
-  waterScope2 ist Wasser, das bei der Stromerzeugung fuer die Anlage
+  waterScope1 ist Kühlwasser, das am Rechenzentrum selbst verdunstet;
+  waterScope2 ist Wasser, das bei der Stromerzeugung für die Anlage
   verbraucht wird. Beide stammen aus unterschiedlichen Quellen und
-  Systemgrenzen, eine Summe waere schwerer nachvollziehbar als die
+  Systemgrenzen, eine Summe wäre schwerer nachvollziehbar als die
   beiden Einzelwerte.
 - **co2Scope2** deckt bewusst nur die Emissionen des Stromverbrauchs ab
   (location-/market-based). Herstellung der Hardware (Scope 3) und
-  Kaeltemittel (Scope 1) sind nicht enthalten - der Feldname macht das
+  Kältemittel (Scope 1) sind nicht enthalten - der Feldname macht das
   absichtlich sichtbar, statt eine nicht herleitbare Gesamtzahl zu
-  suggerieren. Details und ein konkretes Beispiel dieser Luecke stehen
+  suggerieren. Details und ein konkretes Beispiel dieser Lücke stehen
   in [docs/methodology-de.md](docs/methodology-de.md).
-- **confidence** (1-5) ist das Minimum der Konfidenzwerte aller fuer
-  dieses Ergebnis tatsaechlich verwendeten Koeffizienten - mit
+- **confidence** (1-5) ist das Minimum der Vertrauensnoten aller für
+  dieses Ergebnis tatsächlich verwendeten Koeffizienten - mit
   Ausnahme einiger universeller Annahmen, die in jede Berechnung
-  eingehen und die Zahl sonst wertlos machen wuerden (Begruendung in
-  docs/methodology-de.md). Eine niedrige confidence heisst nicht
-  "falsch", sondern "auf duennerer Quellenlage geschaetzt" - z.B. weil
+  eingehen und die Zahl sonst wertlos machen würden (Begründung in
+  docs/methodology-de.md). Eine niedrige confidence heißt nicht
+  "falsch", sondern "auf dünnerer Quellenlage geschätzt" - z.B. weil
   die Region unbekannt war und auf US-Durchschnittswerte
-  zurueckgefallen wurde. `factIds` und `assumptions` im Ergebnis zeigen,
+  zurückgefallen wurde. `factIds` und `assumptions` im Ergebnis zeigen,
   welche Fakten und eigenen Annahmen konkret eingeflossen sind.
 
 ## Abgleich mit EcoLogits
@@ -196,7 +196,7 @@ die Begründung für jede Abweichung:
   ebenfalls Umweltwirkungen von LLM-Anfragen, mit Fokus auf Python-SDKs
   großer Anbieter. ThirstyAI unterscheidet sich in drei Punkten:
   - **Quellenangabe pro Koeffizient**: jeder verwendete Zahlenwert trägt
-    seine eigene Quellen-ID, Fundstelle und Konfidenz, statt eines
+    seine eigene Quellen-ID, Fundstelle und Vertrauensnote, statt eines
     Gesamt-Disclaimers.
   - **Scope-Trennung beim Wasser**: Wasserverbrauch (verdunstet) und
     Wasserentnahme (überwiegend zurückgeführt) werden nicht vermischt,
@@ -206,7 +206,7 @@ die Begründung für jede Abweichung:
 ## Faktendatei
 
 `data/facts.json` ist eine kuratierte Sammlung öffentlich belegter
-Messwerte und Schätzungen (Version 0.2, Stand 2026-09-03). Sie wird nicht
+Messwerte und Schätzungen (Schemaversion und Erstellungsdatum stehen im Dateikopf). Sie wird nicht
 verändert. Eigene, klar gekennzeichnete Annahmen liegen separat in
 `data/assumptions.json`.
 
