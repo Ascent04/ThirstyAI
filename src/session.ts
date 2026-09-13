@@ -24,8 +24,8 @@ export interface Aggregate {
 const CACHE_READ_COMPUTE_SHARE_MIN = 0;
 
 /**
- * Aggregiert rohe Claude-Code-Zaehlwerte je Modell und bildet daraus, je
- * Cache-Read-Faktor (min 0 / mid+max aus dem uebergebenen Fakt-Wert), einen
+ * Aggregiert rohe Claude-Code-Zählwerte je Modell und bildet daraus, je
+ * Cache-Read-Faktor (min 0 / mid+max aus dem übergebenen Fakt-Wert), einen
  * eigenen tokensIn-Summenwert (siehe toInputTokenRange in
  * src/readers/claudeCode.ts).
  */
@@ -74,8 +74,8 @@ export interface ModelMeasurement {
   waterScope1: Range;
   waterScope2: Range;
   co2Scope2: Range;
-  /** confidence je Lauf (min/mid/max-tokensIn) - haengt in der Praxis nicht
-   * von tokensIn ab (siehe calculate.ts), ist deshalb ueblicherweise gleich. */
+  /** confidence je Lauf (min/mid/max-tokensIn) - hängt in der Praxis nicht
+   * von tokensIn ab (siehe calculate.ts), ist deshalb üblicherweise gleich. */
   confidenceMin: number;
   confidenceMid: number;
   confidenceMax: number;
@@ -115,12 +115,12 @@ function sumRange(ranges: Range[]): Range {
 }
 
 /**
- * Berechnet je Modell drei getrennte calculate()-Laeufe (einen pro
+ * Berechnet je Modell drei getrennte calculate()-Läufe (einen pro
  * Cache-Read-Faktor aus dem min/mid/max-Tripel von aggregateByModel) und
- * uebernimmt aus jedem Lauf nur das dazu passende Feld (min-Lauf -> .min,
- * mid-Lauf -> .mid, max-Lauf -> .max) - nicht ueber zwei Extremlaeufe
- * gemittelt, siehe examples/claude-code-session.ts. Zusaetzlich ein
- * Gesamtaggregat ueber alle Modelle: Summen der Ranges, Confidence als
+ * übernimmt aus jedem Lauf nur das dazu passende Feld (min-Lauf -> .min,
+ * mid-Lauf -> .mid, max-Lauf -> .max) - nicht über zwei Extremläufe
+ * gemittelt, siehe examples/claude-code-session.ts. Zusätzlich ein
+ * Gesamtaggregat über alle Modelle: Summen der Ranges, Confidence als
  * Minimum, factIds/assumptions als Vereinigung.
  */
 export function measureSession(

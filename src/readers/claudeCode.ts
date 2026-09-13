@@ -2,8 +2,8 @@ import { createReadStream } from "node:fs";
 import { createInterface } from "node:readline";
 
 /**
- * Rohe Zaehlwerte einer einzelnen Assistant-Nachricht aus einem Claude-Code-
- * Sitzungsprotokoll (JSONL). Enthaelt ausschliesslich Zaehlfelder aus
+ * Rohe Zählwerte einer einzelnen Assistant-Nachricht aus einem Claude-Code-
+ * Sitzungsprotokoll (JSONL). Enthält ausschließlich Zählfelder aus
  * message.usage - niemals message.content.
  */
 export interface ClaudeCodeUsageRecord {
@@ -18,7 +18,7 @@ export interface ClaudeCodeUsageRecord {
 
 export interface ReadClaudeCodeUsageResult {
   records: ClaudeCodeUsageRecord[];
-  /** Zeilen, die nicht als JSON geparst werden konnten oder keine gueltige
+  /** Zeilen, die nicht als JSON geparst werden konnten oder keine gültige
    * message.id trugen. */
   skippedUnparsable: number;
   /** Zeilen mit model === "<synthetic>" (keine echte Modellanfrage). */
@@ -31,31 +31,31 @@ function numberOrZero(value: unknown): number {
 
 /**
  * Liest ein Claude-Code-Sitzungsprotokoll (JSONL) zeilenweise und liefert
- * eine deduplizierte Liste von Zaehlwerten pro Nachricht.
+ * eine deduplizierte Liste von Zählwerten pro Nachricht.
  *
- * Eine einzelne Anfrage kann sich ueber mehrere JSONL-Zeilen erstrecken
+ * Eine einzelne Anfrage kann sich über mehrere JSONL-Zeilen erstrecken
  * (ein Streaming-Chunk pro Content-Block), alle mit identischer
- * message.usage - dedupliziert wird ueber message.id. Bei mehreren Zeilen
- * mit derselben message.id wird die mit dem groessten output_tokens
- * behalten (konservativ: falls Werte je Zeile abweichen sollten, zaehlt
- * der vollstaendigste Stand).
+ * message.usage - dedupliziert wird über message.id. Bei mehreren Zeilen
+ * mit derselben message.id wird die mit dem größten output_tokens
+ * behalten (konservativ: falls Werte je Zeile abweichen sollten, zählt
+ * der vollständigste Stand).
  *
- * Liest ausschliesslich: die oberste Ebene "timestamp", sowie
+ * Liest ausschließlich: die oberste Ebene "timestamp", sowie
  * message.id, message.model und message.usage.* (input_tokens,
  * output_tokens, cache_creation_input_tokens, cache_read_input_tokens).
  * message.content wird nie geparst oder inspiziert - thinking_tokens wird
  * bewusst nicht gelesen (siehe output_tokens-Kommentar unten).
  *
- * output_tokens schliesst laut empirischer Pruefung thinking_tokens ein
- * (Korrelation 0.977 ueber 153 Nachrichten, output_tokens nie kleiner als
+ * output_tokens schließt laut empirischer Prüfung thinking_tokens ein
+ * (Korrelation 0.977 über 153 Nachrichten, output_tokens nie kleiner als
  * thinking_tokens); ein separates Auslesen von thinking_tokens ist daher
- * fuer die Gesamtzaehlung nicht noetig.
+ * für die Gesamtzählung nicht nötig.
  *
  * Aufrufer-Pflicht: filePath sollte eine Kopie der Sitzungsdatei sein
  * (z.B. unter /tmp), nicht die live wachsende Originaldatei - diese
- * Funktion prueft das nicht selbst.
+ * Funktion prüft das nicht selbst.
  *
- * Keine Abhaengigkeiten ausser node:fs/node:readline. Nicht ueber
+ * Keine Abhängigkeiten außer node:fs/node:readline. Nicht über
  * src/index.ts exportiert.
  */
 export async function readClaudeCodeUsage(filePath: string): Promise<ReadClaudeCodeUsageResult> {
@@ -129,19 +129,19 @@ export async function readClaudeCodeUsage(filePath: string): Promise<ReadClaudeC
 /**
  * ANNAHME, confidence 1 (Fakt "cache-read-compute-share-anthropic" in
  * data/assumptions.json): Cache-Reads werden als Intervall behandelt statt
- * als fester Wert. min schliesst cacheReadTokens komplett aus (ein
+ * als fester Wert. min schließt cacheReadTokens komplett aus (ein
  * Cache-Treffer braucht im Idealfall keine erneute Verarbeitung). max
- * zaehlt cacheReadTokens mit `cacheReadComputeShare` gewichtet - Anthropics
- * eigenes Preisverhaeltnis fuer Cache-Reads (0.1x der normalen
- * Input-Token) dient dabei als Proxy fuer den Rechenanteil, keine
- * Energiemessung. cacheCreationTokens zaehlen in beiden Faellen voll, da
+ * zählt cacheReadTokens mit `cacheReadComputeShare` gewichtet - Anthropics
+ * eigenes Preisverhältnis für Cache-Reads (0.1x der normalen
+ * Input-Token) dient dabei als Proxy für den Rechenanteil, keine
+ * Energiemessung. cacheCreationTokens zählen in beiden Fällen voll, da
  * sie in jedem Fall frisch verarbeitete Eingabe sind.
  *
  * cacheReadComputeShare wird bewusst nicht hart codiert, sondern vom
  * Aufrufer aus data/assumptions.json geladen (Fakt-ID
- * "cache-read-compute-share-anthropic", value 0.1) und hier uebergeben -
- * damit bleibt die Annahme an einer Stelle sourcebar und aenderbar.
- * Kurze Methodik-Fassung und bekannte Einschraenkungen:
+ * "cache-read-compute-share-anthropic", value 0.1) und hier übergeben -
+ * damit bleibt die Annahme an einer Stelle sourcebar und änderbar.
+ * Kurze Methodik-Fassung und bekannte Einschränkungen:
  * docs/claude-code-reader.md.
  */
 export function toInputTokenRange(

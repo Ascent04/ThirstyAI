@@ -7,8 +7,8 @@ export interface ModelClassification {
   confidence: number;
   fullstack: boolean;
   family: string;
-  /** Fakt-ID aus data/models.json, falls die Klasse ueber eine bekannte
-   * Parameterzahl statt ueber die Namensheuristik bestimmt wurde. */
+  /** Fakt-ID aus data/models.json, falls die Klasse über eine bekannte
+   * Parameterzahl statt über die Namensheuristik bestimmt wurde. */
   sourceFactId?: string;
 }
 
@@ -73,8 +73,8 @@ function tokensEqual(a: string[], b: string[]): boolean {
  * /Kleinschreibung und Trennzeichen ignorierend) der Anfrage entspricht -
  * "exakter Name, dann Alias", siehe Klassifikations-Reihenfolge unten. Keine
  * Teilstring-/Teilmengen-Suche: ein unbekannter Namensvariante (z.B. ein
- * anderer Praefix oder Suffix) faellt bewusst auf die Namensheuristik
- * zurueck, statt geraten zu werden.
+ * anderer Präfix oder Suffix) fällt bewusst auf die Namensheuristik
+ * zurück, statt geraten zu werden.
  */
 function findExactOrAliasFact(tokens: string[], table: FactTable): Fact | undefined {
   const parameterFacts = table.facts.filter((fact) => fact.category === "parameters");
@@ -94,19 +94,19 @@ function findExactOrAliasFact(tokens: string[], table: FactTable): Fact | undefi
   return undefined;
 }
 
-/** confidence fuer einen ueber die Namensheuristik erkannten Groessen-/
- * Verhaltensmarker (Reasoning-Token, explizite Groessenangabe, Namenshinweis
- * wie "mini"/"large"): 2, wenn zusaetzlich eine Modellfamilie erkannt wurde,
- * sonst 1 (die Familie allein traegt die Aussage nicht). */
+/** confidence für einen über die Namensheuristik erkannten Größen-/
+ * Verhaltensmarker (Reasoning-Token, explizite Größenangabe, Namenshinweis
+ * wie "mini"/"large"): 2, wenn zusätzlich eine Modellfamilie erkannt wurde,
+ * sonst 1 (die Familie allein trägt die Aussage nicht). */
 function markerConfidence(family: string | undefined): number {
   return family !== undefined ? 2 : 1;
 }
 
 /**
- * Ordnet einen Modellnamen einer groben Groessenklasse zu. Die Klasse
+ * Ordnet einen Modellnamen einer groben Größenklasse zu. Die Klasse
  * bestimmt in resolve.ts, welche Energie-Koeffizienten verwendet werden.
- * Ein unbekannter Modellname (keine erkennbare Familie, keine Groessen- oder
- * Reasoning-Hinweise) faellt auf "frontier" mit confidence 1 zurueck, da das
+ * Ein unbekannter Modellname (keine erkennbare Familie, keine Größen- oder
+ * Reasoning-Hinweise) fällt auf "frontier" mit confidence 1 zurück, da das
  * die konservativste (energieintensivste) Annahme ist.
  */
 export function classifyModel(
@@ -181,7 +181,7 @@ export function classifyModel(
     };
   }
 
-  // Weder Fakt noch Groessen-/Verhaltensmarker: mit oder ohne bekannte
-  // Familie gleichermassen unbelegt, daher confidence 1 in beiden Faellen.
+  // Weder Fakt noch Größen-/Verhaltensmarker: mit oder ohne bekannte
+  // Familie gleichermaßen unbelegt, daher confidence 1 in beiden Fällen.
   return { modelClass: "frontier", confidence: 1, fullstack: false, family: family ?? "unbekannt" };
 }

@@ -51,11 +51,11 @@ function pointRange(fact: Fact): CoefficientRange {
 
 /**
  * deltaFact (die Bandbreite um den PUE-Punktwert) wird auf jede einzige
- * Anfrage angewendet, unabhaengig von Modell, Anbieter oder Region - genau
+ * Anfrage angewendet, unabhängig von Modell, Anbieter oder Region - genau
  * wie input-token-cost-share in calculate.ts geht seine confidence deshalb
- * nicht in die Gesamt-confidence ein (sonst waere
- * jedes Ergebnis unabhaengig von der Qualitaet der PUE-Quelle auf 1
- * begrenzt), erscheint aber ueber factIds in `assumptions`.
+ * nicht in die Gesamt-confidence ein (sonst wäre
+ * jedes Ergebnis unabhängig von der Qualität der PUE-Quelle auf 1
+ * begrenzt), erscheint aber über factIds in `assumptions`.
  */
 function spreadRange(fact: Fact, deltaFact: Fact): CoefficientRange {
   const delta = deltaFact.value;
@@ -115,11 +115,11 @@ function isMetaProvider(p?: string): boolean {
 
 /**
  * Ordnet jedem in resolveEnergyPerRequest verwendeten Energie-Fakt den Fakt
- * zu, aus dem die zugehoerige mittlere Output-Tokenzahl stammt - explizite
+ * zu, aus dem die zugehörige mittlere Output-Tokenzahl stammt - explizite
  * Tabelle, keine Heuristik. "measured": die Tokenzahl stammt aus derselben
  * Messung/demselben Benchmark wie der Energiewert. "assumed": die Tokenzahl
  * stammt aus einer anderen Quelle und wird dem Energiewert nur zugeordnet -
- * das drueckt sich in einem confidence-Deckel von 2 aus, siehe
+ * das drückt sich in einem confidence-Deckel von 2 aus, siehe
  * perThousandOutputTokens().
  */
 export const OUTPUT_TOKENS_FOR_ENERGY_FACT: Record<
@@ -146,15 +146,15 @@ interface PerThousandTokens {
 }
 
 /**
- * Rechnet einen Wh-pro-Anfrage-Fakt in Wh pro 1.000 Output-Token um, ueber
+ * Rechnet einen Wh-pro-Anfrage-Fakt in Wh pro 1.000 Output-Token um, über
  * den in OUTPUT_TOKENS_FOR_ENERGY_FACT hinterlegten Token-Fakt. Bei
- * basis "assumed" wird die confidence zusaetzlich auf 2 gedeckelt, weil die
+ * basis "assumed" wird die confidence zusätzlich auf 2 gedeckelt, weil die
  * Tokenzahl nicht aus derselben Messung stammt wie der Energiewert.
  */
 function perThousandOutputTokens(energyFact: Fact, table: FactTable): PerThousandTokens {
   const mapping = OUTPUT_TOKENS_FOR_ENERGY_FACT[energyFact.id];
   if (!mapping) {
-    throw new Error(`Kein Token-Fakt fuer Energie-Fakt "${energyFact.id}" hinterlegt`);
+    throw new Error(`Kein Token-Fakt für Energie-Fakt "${energyFact.id}" hinterlegt`);
   }
   const tokenFact = requireFact(table, mapping.tokenFactId);
   const value = (energyFact.value / tokenFact.value) * 1000;
@@ -190,7 +190,7 @@ function resolveEnergyPerRequest(
   if (classification.fullstack) {
     // Gemini Apps: der Fakt ist bereits Vollstack (inkl. PUE), kein
     // GPU-only-Wert. calculate.ts erkennt fullstack und wendet keinen
-    // zusaetzlichen Overhead an. Skaliert wie alle anderen Klassen auf
+    // zusätzlichen Overhead an. Skaliert wie alle anderen Klassen auf
     // Wh pro 1.000 Output-Token (keine Sonderbehandlung).
     const fact = requireFact(table, "gemini-energy");
     const r = perThousandOutputTokens(fact, table);
@@ -317,7 +317,7 @@ function resolveWueSite(
   }
 
   // Fallback: US-Rechenzentren-Durchschnitt. min/max stehen nur in der Notiz
-  // des Fakts (Hyperscale-Median 0.32, Sensitivitaet 0.40), daher als eigene
+  // des Fakts (Hyperscale-Median 0.32, Sensitivität 0.40), daher als eigene
   // ANNAHME-Fakten herausgezogen.
   const fallback = requireFact(table, "us-dc-wue-site-2023");
   const min = requireFact(table, "wue-site-fallback-min");
@@ -341,9 +341,9 @@ interface EwifRegionFacts {
 
 /**
  * min/mid/max je Region aus konkurrierenden Quellen (Lohrmann vs. WRI).
- * Lohrmann ist fuer europaeische Regionen begutachtet, kraftwerksscharf und
+ * Lohrmann ist für europäische Regionen begutachtet, kraftwerksscharf und
  * reproduzierbar und bildet daher mid; WRI (ewif-*) ist ein Arbeitspapier auf
- * einer nicht einsehbaren Datenbank. Bei SE liegt Lohrmann ueber WRI, daher
+ * einer nicht einsehbaren Datenbank. Bei SE liegt Lohrmann über WRI, daher
  * dort umgekehrte Zuordnung (min = WRI, max = Lohrmann).
  */
 const EWIF_REGION_TABLE: Record<string, EwifRegionFacts> = {
@@ -392,13 +392,13 @@ function resolveEwif(
 /**
  * min/mid/max je Region als eigene Fakt-ID-Listen (nicht ein einzelner
  * Punktwert wie zuvor). Jede Liste geht durch `latest()`, damit asOf
- * grundsaetzlich greifen wuerde - fuer 2024 enthaelt aber jede Liste genau
- * eine Fakt-ID (keine Auswahl mehr noetig), daher ist `latest()` hier ein
- * reiner Existenz-/Cutoff-Check, keine Auswahl zwischen mehreren Jahrgaengen.
+ * grundsätzlich greifen würde - für 2024 enthält aber jede Liste genau
+ * eine Fakt-ID (keine Auswahl mehr nötig), daher ist `latest()` hier ein
+ * reiner Existenz-/Cutoff-Check, keine Auswahl zwischen mehreren Jahrgängen.
  * DE mid/max sind bewusst fest auf grid-co2-uba-de-2024 gepinnt (nicht die
  * neuere grid-co2-uba-de-2025), da diese Tabelle den Bezugsjahr-Report 2024
  * abbildet, nicht den "aktuell bekannten" Wert. min = kleinster, max =
- * groesster 2024-Wert ueber alle Quellen inkl. mid (EEA/Ember/nationale
+ * größter 2024-Wert über alle Quellen inkl. mid (EEA/Ember/nationale
  * Referenz je nach Region, siehe Zyklus B, Stufe 1 Soll-Tabelle).
  */
 interface RegionCarbonFacts {
@@ -486,13 +486,13 @@ function resolveCarbonIntensity(
   const p = normalizeProvider(provider);
   if (isGoogleProvider(p)) {
     // Googles eigener Flotten-Emissionsfaktor (market-based) statt Regionsraster,
-    // da Gemini Apps ueber die globale Flotte serviert wird.
+    // da Gemini Apps über die globale Flotte serviert wird.
     return pointRange(requireFact(table, "google-ef-mb-2024"));
   }
 
   const yearTable = CARBON_REGION_TABLE_BY_YEAR[referenceYear];
   if (!yearTable) {
-    throw new Error(`Kein CO2-Regionsraster fuer Bezugsjahr ${referenceYear} hinterlegt`);
+    throw new Error(`Kein CO2-Regionsraster für Bezugsjahr ${referenceYear} hinterlegt`);
   }
 
   const entry = region ? yearTable[region.toUpperCase()] : undefined;
@@ -516,8 +516,8 @@ function resolveCarbonIntensity(
 }
 
 /**
- * Loest alle fuenf Koeffizienten fuer eine Anfrage auf. Jede Teilfunktion
- * gibt die genutzten factIds mit zurueck, damit ein Ergebnis spaeter
+ * Löst alle fünf Koeffizienten für eine Anfrage auf. Jede Teilfunktion
+ * gibt die genutzten factIds mit zurück, damit ein Ergebnis später
  * nachvollziehbar bleibt.
  */
 export function resolveCoefficients(input: ResolveInput, table: FactTable): ResolvedCoefficients {
