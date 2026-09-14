@@ -5,6 +5,9 @@
  */
 import { calculateEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
 import type { Fact } from "../src/facts.js";
+import { pick } from "./strings.js";
+
+const S = pick(document.documentElement.lang);
 
 const UNKNOWN_MODEL_VALUE = "unknown-model";
 const WORDS_TO_TOKENS = 1.3;
@@ -57,8 +60,8 @@ function infoTip(text: string): HTMLElement {
   button.type = "button";
   button.className = "info-btn";
   button.setAttribute("popovertarget", id);
-  button.setAttribute("aria-label", "Explanation");
-  button.textContent = "?";
+  button.setAttribute("aria-label", S.infoExplanation);
+  button.textContent = S.infoToggleGlyph;
   wrap.appendChild(button);
 
   const textEl = document.createElement("span");
@@ -104,7 +107,7 @@ function prefersReducedMotion(): boolean {
 }
 
 function barNumbersText(row: ResultRangeLike): string {
-  return `min ${round3(row.min)} · mid ${round3(row.mid)} · max ${round3(row.max)}`;
+  return S.barNumbers(String(round3(row.min)), String(round3(row.mid)), String(round3(row.max)));
 }
 
 /**
@@ -184,7 +187,7 @@ function boundaryText(fact: Fact): string {
   for (const value of [fact.measurement_boundary, fact.functional_unit, fact.water_scope]) {
     if (value && value !== "-") return value;
   }
-  return "—";
+  return S.boundaryFallback;
 }
 
 function buildFactRow(id: string): HTMLElement {
@@ -236,14 +239,14 @@ function buildFactRow(id: string): HTMLElement {
   return row;
 }
 
-const COLUMN_TIPS: Record<string, string> = {
-  ID: "Identifier in data/facts.json.",
-  Value: "The number as recorded, with its unit.",
-  Rating: "Strength of evidence — see glossary.",
-  Confidence: "How dependable this value is, 1 to 5.",
-  "Measurement boundary": "What this value includes and leaves out.",
-  Source: "Where the value comes from.",
-};
+const COLUMNS: { label: string; tip: string }[] = [
+  { label: S.columnId, tip: S.columnTipId },
+  { label: S.columnValue, tip: S.columnTipValue },
+  { label: S.columnRating, tip: S.columnTipRating },
+  { label: S.columnConfidence, tip: S.columnTipConfidence },
+  { label: S.columnMeasurementBoundary, tip: S.columnTipMeasurementBoundary },
+  { label: S.columnSource, tip: S.columnTipSource },
+];
 
 function buildFactsTable(title: string, ids: string[], tipText: string): HTMLElement {
   const section = document.createElement("div");
@@ -259,10 +262,10 @@ function buildFactsTable(title: string, ids: string[], tipText: string): HTMLEle
 
   const thead = document.createElement("thead");
   const headRow = document.createElement("tr");
-  for (const label of ["ID", "Value", "Rating", "Confidence", "Measurement boundary", "Source"]) {
+  for (const col of COLUMNS) {
     const th = document.createElement("th");
-    th.textContent = label;
-    th.appendChild(infoTip(COLUMN_TIPS[label]));
+    th.textContent = col.label;
+    th.appendChild(infoTip(col.tip));
     headRow.appendChild(th);
   }
   thead.appendChild(headRow);
@@ -288,7 +291,7 @@ function populateModelSelect(select: HTMLSelectElement): void {
   }
   const other = document.createElement("option");
   other.value = UNKNOWN_MODEL_VALUE;
-  other.textContent = "Other / unknown model";
+  other.textContent = S.otherUnknownModel;
   select.appendChild(other);
 }
 
@@ -337,8 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function updateAmountEcho(): void {
     if (amountIsTooLarge()) {
-      amountEcho.textContent =
-        "Value too large — the calculator is meant for up to 100 billion tokens.";
+      amountEcho.textContent = S.amountTooLarge;
       derivedTokens.hidden = true;
       derivedTokens.textContent = "";
       return;
@@ -346,13 +348,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const amount = Number(amountInput.value);
     amountEcho.textContent = `${groupDigits(amount)} ${
-      amountUnitWords.checked ? "words" : "output tokens"
+      amountUnitWords.checked ? S.unitWords : S.unitOutputTokens
     }`;
 
     if (amountUnitWords.checked) {
       const tokens = Math.round(amount * WORDS_TO_TOKENS);
-      derivedTokens.textContent =
-        `≈ ${groupDigits(tokens)} output tokens, ×${WORDS_TO_TOKENS} assumption`;
+      derivedTokens.textContent = S.derivedTokens(groupDigits(tokens), String(WORDS_TO_TOKENS));
       derivedTokens.hidden = false;
       return;
     }
@@ -397,21 +398,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const rows: { label: string; tip: string; row: ResultRangeLike; kind: BarKind }[] = [
       {
-        label: "Energy",
+        label: S.labelEnergy,
         // Just the metric here - how to read a bar is shown by the annotated
         // example in the empty state (index.html), not repeated per row.
-        tip:
-          "Electricity for one request, from the chip through the data " +
-          "centre. Watt-hours: a 40-watt laptop running for one minute " +
-          "uses about 0.7 Wh.",
+        tip: S.tipEnergy,
         row: result.energyTotal,
         kind: "energy",
       },
       {
-        label: "Water",
-        tip:
-          "Water evaporated for one request — cooling at the data centre " +
-          "plus cooling at the power plants that supplied the electricity.",
+        label: S.labelWater,
+        tip: S.tipWater,
         row: {
           min: result.waterScope1.min + result.waterScope2.min,
           mid: result.waterScope1.mid + result.waterScope2.mid,
@@ -420,11 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
         kind: "water",
       },
       {
-        label: "CO2",
-        tip:
-          "Carbon dioxide from generating the electricity for one request. " +
-          "Location-based: the actual grid mix of the region, not green " +
-          "power contracts.",
+        label: S.labelCo2,
+        tip: S.tipCo2,
         row: result.co2Scope2,
         kind: "carbon",
       },
@@ -444,52 +437,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const note = document.createElement("p");
     note.className = "note";
-    note.textContent = "Range = spread between credible sources' methods, not instrument error.";
+    note.textContent = S.rangeNote;
     resultsEl.appendChild(note);
 
     const confidence = document.createElement("p");
     confidence.className = "confidence";
     confidence.append(
-      `Data confidence ${result.dataConfidence}/5`,
-      infoTip(
-        "The weakest evidenced source that went into this result, from 1 " +
-          "to 5. It says how good the data is.",
-      ),
+      S.dataConfidence(String(result.dataConfidence)),
+      infoTip(S.dataConfidenceTip),
       " · ",
-      `Method confidence ${result.methodConfidence}/5`,
-      infoTip(
-        "The weakest assumption that went into this result, from 1 to 5. " +
-          "It says how sound the calculation is where no source exists.",
-      ),
+      S.methodConfidence(String(result.methodConfidence)),
+      infoTip(S.methodConfidenceTip),
     );
     resultsEl.appendChild(confidence);
 
     const boundaryLine = document.createElement("p");
     boundaryLine.className = "confidence";
     boundaryLine.append(
-      `Measurement boundary: ${result.boundary}`,
-      infoTip(
-        "How much of the system is counted. gpu-only means the figure " +
-          "covers the chip and is scaled up to the data centre; fullstack " +
-          "means it was measured across the whole stack.",
-      ),
+      S.measurementBoundaryLine(result.boundary),
+      infoTip(S.measurementBoundaryTip),
     );
     resultsEl.appendChild(boundaryLine);
 
     const boundaryNote = document.createElement("p");
     boundaryNote.className = "confidence-note";
-    boundaryNote.textContent =
-      "Operation only. Training, hardware manufacturing and data centre " +
-      "construction are not included — see the FAQ on system boundary.";
+    boundaryNote.textContent = S.operationOnlyNote;
     resultsEl.appendChild(boundaryNote);
 
     if (result.methodConfidence === 1) {
       const confidenceNote = document.createElement("p");
       confidenceNote.className = "confidence-note";
-      confidenceNote.textContent =
-        "Method confidence is capped at 1/5 by unverified assumptions (see " +
-        "Assumptions below). Data confidence reflects the weakest measured " +
-        "source actually used.";
+      confidenceNote.textContent = S.methodConfidenceCappedNote;
       resultsEl.appendChild(confidenceNote);
     }
 
@@ -501,9 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       const waterFallbackNote = document.createElement("p");
       waterFallbackNote.className = "confidence-note";
-      waterFallbackNote.textContent =
-        "No grid water factor available for this region — the US average " +
-        "is used as a fallback, and confidence is capped accordingly.";
+      waterFallbackNote.textContent = S.waterFallbackNote;
       resultsEl.appendChild(waterFallbackNote);
     }
     if (
@@ -513,16 +489,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       const carbonFallbackNote = document.createElement("p");
       carbonFallbackNote.className = "confidence-note";
-      carbonFallbackNote.textContent =
-        "No regional grid carbon factor available — the US average is " +
-        "used as a fallback.";
+      carbonFallbackNote.textContent = S.carbonFallbackNote;
       resultsEl.appendChild(carbonFallbackNote);
     }
 
     if (isUnknownModel(model)) {
       const hint = document.createElement("p");
       hint.className = "unknown-model-hint";
-      hint.textContent = "Unknown model: conservative frontier-class estimate.";
+      hint.textContent = S.unknownModelHint;
       resultsEl.appendChild(hint);
     }
 
@@ -530,20 +504,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const factsUsedIds = result.factIds.filter((id) => !assumptionIds.has(id));
 
     resultsEl.appendChild(
-      buildFactsTable(
-        "Facts used",
-        factsUsedIds,
-        "Every source that went into this result. Ratings and boundaries " +
-          "are shown so the numbers can be checked.",
-      ),
+      buildFactsTable(S.factsUsedTitle, factsUsedIds, S.factsUsedTip),
     );
 
     if (result.assumptions.length > 0) {
       const assumptionsBox = buildFactsTable(
-        "Assumptions",
+        S.assumptionsTitle,
         result.assumptions,
-        "Values the project had to set itself because no source exists. " +
-          "They are kept separate from evidenced facts on purpose.",
+        S.assumptionsTip,
       );
       assumptionsBox.className += " assumptions-box";
       resultsEl.appendChild(assumptionsBox);
