@@ -55,4 +55,20 @@ describe("browser-calc", () => {
 
     expect(bundle).toContain(`generated:"${generated}"`);
   });
+
+  // Regel 19, Ergänzung: das Bundle bettet alle drei Datendateien ein
+  // (facts, assumptions, models). Der Wächter oben prüft nur facts.json.
+  // Vergleich als sortierte Liste: jedes generated-Datum der Dateien muss
+  // genau einmal als generated:"…" im Bundle stehen, Reihenfolge egal.
+  it("das eingecheckte Bundle enthält den generated-Stand aller drei Datendateien (sonst fehlt npm run build:web)", () => {
+    const expected = [FACTS, ASSUMPTIONS, MODELS_JSON]
+      .map((p) => (JSON.parse(readFileSync(p, "utf-8")) as { generated: string }).generated)
+      .sort();
+    const bundle = readFileSync(BUNDLE, "utf-8");
+    const found = (bundle.match(/generated:"[^"]*"/g) ?? [])
+      .map((s) => s.slice('generated:"'.length, -1))
+      .sort();
+
+    expect(found).toEqual(expected);
+  });
 });
