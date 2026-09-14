@@ -164,19 +164,34 @@ EcoLogits (Python, GenAI Impact, JOSS 2025) wurde offline für dieselben
 zehn Fälle (fünf Modellfamilien, kurz/lang) berechnet, ohne unsere
 Koeffizienten daran anzupassen. Drei Erkenntnisse:
 
-1. **Bei einem echten, offenen Modell mit bekannter Parameterzahl
-   (Llama-3.1-70B-Instruct) stimmen beide Systeme auf 40 % genau
-   überein**, obwohl sie methodisch komplett unabhängig sind
-   (EcoLogits: Parameter-Regression; ThirstyAI: Benchmark-Fakten). Das
-   ist die stärkste externe Bestätigung, die ThirstyAI bisher hat.
-2. **Bei allen vier proprietären Modellen weichen die Werte um den
-   Faktor 3-6 ab, in beide Richtungen** - nicht weil eines der Systeme
-   falsch rechnet, sondern weil EcoLogits die Parameterzahl geschlossener
-   Modelle selbst schätzen muss (z.B. gemini-2.5-pro: 200-600 Mrd.
-   aktive Parameter, mit den Warnhinweisen `model-arch-not-released` und
-   `model-arch-multimodal` versehen) und seine GPU-Energie linear mit
-   dieser Schätzung skaliert, während ThirstyAI an gemessene
-   Benchmark-Bandbreiten aus der Faktendatei gebunden bleibt.
+1. **Bei den beiden Modellen mit öffentlich bekannter Parameterzahl
+   (Llama-3.1-70B-Instruct und, seit der Alias-Korrektur aus Schritt 8,
+   Mistral Large 2) liegt ThirstyAIs mid-Schätzung beim 1,3- bis
+   2,3-fachen des EcoLogits-Werts, und der EcoLogits-Punktwert fällt in
+   allen 12 Vergleichen (Energie, CO2, Wasser × kurz/lang) in ThirstyAIs
+   min–max-Spanne**, obwohl beide Systeme methodisch komplett unabhängig
+   sind (EcoLogits: Parameter-Regression; ThirstyAI: Benchmark-Fakten).
+   Das ist die stärkste externe Bestätigung, die ThirstyAI bisher hat -
+   und zugleich der Hinweis, dass ThirstyAIs mid-Wert bei diesen beiden
+   Modellen systematisch über EcoLogits liegt.
+2. **Bei den drei proprietären Familien (GPT, Claude, Gemini) weichen
+   die Werte um den Faktor 2 bis 6 ab, in beide Richtungen** -
+   GPT-4o-mini: ThirstyAI 3,7- bis 4,7-fach höher; Claude Sonnet 4.5:
+   2- bis 2,5-fach niedriger; Gemini 2.5 Pro: rund 4,5- bis 6-fach
+   niedriger - nicht weil eines der Systeme falsch rechnet, sondern aus
+   zwei in `results.md` dokumentierten Gründen. Bei Gemini muss
+   EcoLogits die Parameterzahl des geschlossenen Modells selbst
+   schätzen (200-600 Mrd. aktive Parameter, mit den Warnhinweisen
+   `model-arch-not-released` und `model-arch-multimodal` versehen) und
+   skaliert seine GPU-Energie linear mit dieser Schätzung, während
+   ThirstyAI an gemessene Benchmark-Bandbreiten aus der Faktendatei
+   gebunden bleibt. Bei GPT-4o-mini landen beide Systeme in derselben
+   kleinsten Größenklasse; hier trennt sie die Serving-Annahme:
+   EcoLogits legt den GPU-Overhead auf 64 gleichzeitige Anfragen um
+   (fester `batch_size`-Term in seiner Energie-Regression), ThirstyAIs
+   overhead-factor-Annahme (1,7-2,4x) kennt keine Parallelität und
+   treibt den Wert nach oben. Für die Claude-Abweichung nennt
+   `results.md` bisher keine Erklärung.
 3. **ThirstyAIs Namensheuristik hatte eine dokumentierte Schwäche**
    (behoben in Schritt 8, siehe Nachtrag): bei mistral-large-latest (real
    123 Mrd. Parameter, laut EcoLogits/Mistral selbst - passt in
@@ -211,7 +226,7 @@ kein Vergleich zwischen einem gemessenen und einem geschätzten Wert.
 erst dann die Namensheuristik. "mistral-large-latest" ist als Alias von
 `params-mistral-large-2` hinterlegt und wird dadurch korrekt als "mid"
 klassifiziert - Befund 3 ist damit für die Gegenprobe behoben (siehe
-aktualisierte results.md, mistral-Zeilen jetzt innerhalb von 25 % statt
+aktualisierte results.md, mistral-Zeilen jetzt beim 1,3- bis 1,7-fachen statt
 Faktor 6-8). Außerdem wurde die confidence-Staffelung der
 Namensheuristik verfeinert: Fakt-basierte Treffer übernehmen die
 confidence des Fakts, ein Namenstreffer mit erkannter Familie UND

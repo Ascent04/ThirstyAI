@@ -160,19 +160,33 @@ EcoLogits (Python, GenAI Impact, JOSS 2025) was run offline for the same
 ten cases (five model families, short/long) without adjusting our
 coefficients to match it. Three findings:
 
-1. **For one real, open model with a known parameter count
-   (Llama-3.1-70B-Instruct), the two systems agree to within 40%**,
-   despite being methodologically completely independent (EcoLogits:
-   parameter regression; ThirstyAI: benchmark facts). This is the
-   strongest external confirmation ThirstyAI has so far.
-2. **For all four proprietary models the values diverge by a factor of
-   3-6, in both directions** - not because either system is
-   miscalculating, but because EcoLogits has to estimate the parameter
-   count of closed models itself (e.g. gemini-2.5-pro: 200-600 billion
+1. **For the two models with a publicly known parameter count
+   (Llama-3.1-70B-Instruct and, since the alias fix in step 8, Mistral
+   Large 2), ThirstyAI's mid estimate is 1.3 to 2.3 times the EcoLogits
+   value, and the EcoLogits point value falls inside ThirstyAI's min–max
+   range in all 12 comparisons (energy, CO2, water × short/long)**,
+   despite the two systems being methodologically completely
+   independent (EcoLogits: parameter regression; ThirstyAI: benchmark
+   facts). This is the strongest external confirmation ThirstyAI has so
+   far - and at the same time the signal that for these two models
+   ThirstyAI's mid value sits systematically above EcoLogits.
+2. **For the three proprietary families (GPT, Claude, Gemini) the
+   values diverge by a factor of 2 to 6, in both directions** -
+   gpt-4o-mini: ThirstyAI 3.7 to 4.7 times higher; Claude Sonnet 4.5:
+   2 to 2.5 times lower; Gemini 2.5 Pro: roughly 4.5 to 6 times lower -
+   not because either system is miscalculating, but for two reasons
+   documented in `results.md`. For Gemini, EcoLogits has to estimate
+   the parameter count of the closed model itself (200-600 billion
    active parameters, flagged with the `model-arch-not-released` and
-   `model-arch-multimodal` warnings) and its GPU energy scales linearly
+   `model-arch-multimodal` warnings) and scales its GPU energy linearly
    with that estimate, while ThirstyAI stays tied to measured benchmark
-   ranges from the fact file.
+   ranges from the fact file. For gpt-4o-mini both systems land in the
+   same smallest size class; what separates them is the serving
+   assumption: EcoLogits spreads GPU overhead across 64 concurrent
+   requests (a fixed `batch_size` term in its energy regression), while
+   ThirstyAI's overhead-factor assumption (1.7-2.4x) knows no
+   concurrency and pushes the value up. For the Claude divergence,
+   `results.md` does not yet give an explanation.
 3. **ThirstyAI's name heuristic had a documented weakness** (fixed in
    step 8, see addendum): for mistral-large-latest (really 123 billion
    parameters, according to EcoLogits/Mistral themselves - which fits
@@ -205,7 +219,7 @@ field (checked for uniqueness across the whole table on load).
 only then the name heuristic. "mistral-large-latest" is recorded as an
 alias of `params-mistral-large-2` and is thereby correctly classified as
 "mid" - finding 3 is thus fixed for the cross-check (see the updated
-results.md, mistral rows now within 25% instead of a factor of 6-8).
+results.md, mistral rows now at 1.3 to 1.7 times instead of a factor of 6-8).
 The confidence staffing of the name heuristic was also refined:
 fact-based matches take on the fact's own confidence; a name match with
 a recognized family AND a size/behavior marker (e.g. "mini", "70b",
