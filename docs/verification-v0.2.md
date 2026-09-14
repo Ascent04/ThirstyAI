@@ -12,34 +12,33 @@ falsch oder ungenau herausgestellt hat.
 Vier Schritte, in dieser Reihenfolge:
 
 1. **Addendum (Deep Research)**: `research/thirstyai-facts-v0.2-addendum.json`
-   wurde am 2026-09-03 von Claude in einer claude.ai-Sitzung (Advanced
-   Research) erstellt und von Mathias geprüft/freigegeben
-   (`meta.created_by`). Es enthält 25 neue Fakten (F013-F037), 2 abgelehnte
-   Kandidaten (`rejected`) und ist als "historisches Herkunftsdokument"
-   gekennzeichnet: sein ursprünglicher Inhalt bleibt unverändert, bekannte
-   Fehler stehen separat im Block `meta.errata`.
+   wurde am 2026-09-03 von Claude in einem Deep-Research-Lauf erstellt
+   und von Mathias geprüft/freigegeben (`meta.created_by`). Es enthält
+   25 neue Fakten (F013-F037), 2 abgelehnte Kandidaten (`rejected`) und
+   ist als "historisches Herkunftsdokument" gekennzeichnet: sein
+   ursprünglicher Inhalt bleibt unverändert, bekannte Fehler stehen
+   separat im Block `meta.errata`.
 2. **Einpflegen**: Die Werte aus dem Addendum wurden in `data/facts.json`
    übernommen (Merge in Version 0.2, siehe `data/CHANGELOG.md`). Dabei
    trugen viele übernommene Fakten das Kürzel "aus Addendum, nicht selbst
    geöffnet" in `note` oder `verified` - ein offener Hinweis, dass die
    Primärquelle noch nicht direkt eingesehen wurde.
-3. **Drei Runden Primärquellenprüfung**: In separaten claude.ai-Sitzungen
-   (Modell Fable 5.1) wurden die Primärquellen der betroffenen Fakten
-   tatsächlich geöffnet und die Zitate, Fundstellen und Werte geprüft.
-   Commits `171f20c` (Runde 1, vier Fakten: EMA Singapur, RTE Frankreich,
-   EPA eGRID USA, LBNL WUE-site) und `7631bd5` (Runden 2+3, weitere 18
-   Fakten: Ember-Länderwerte, UBA Deutschland, Google/Gemini, Hugging
-   Face AI Energy Score, Samsi et al., LBNL PUE/Energie/Wasser, Oviedo et
-   al./Joule, Meta Model Card).
-4. **Übertragung durch Claude Code**: Die in den claude.ai-Sitzungen
-   gefundenen Ergebnisse wurden von Claude Code (diesem Werkzeug, ohne
-   eigenen Web- oder PDF-Zugriff in dieser Aufgabe) in `data/facts.json`
-   übertragen.
+3. **Drei Runden Primärquellenprüfung**: In drei Prüfrunden hat Claude
+   die Primärquellen der betroffenen Fakten tatsächlich geöffnet und
+   Zitate, Fundstellen und Werte geprüft; Mathias hat die Befunde
+   abgenommen. Commits `171f20c` (Runde 1, vier Fakten: EMA Singapur,
+   RTE Frankreich, EPA eGRID USA, LBNL WUE-site) und `7631bd5` (Runden
+   2+3, weitere 18 Fakten: Ember-Länderwerte, UBA Deutschland,
+   Google/Gemini, Hugging Face AI Energy Score, Samsi et al., LBNL
+   PUE/Energie/Wasser, Oviedo et al./Joule, Meta Model Card).
+4. **Übertragung durch Claude Code**: Die Prüfergebnisse wurden von
+   Claude Code in `data/facts.json` übertragen. Claude Code hatte dabei
+   keinen Zugriff auf die Quellen; die Übertragung umfasste keine
+   erneute Quellenprüfung.
 
-**Arbeitsteilung und das Feld `verified`**: Claude Code hat in diesem
-Repository keinen Netzwerkzugriff und konnte daher keine der
-Primärquellen selbst öffnen. Das Feld `verified` bei den betroffenen
-Fakten macht das ausdrücklich sichtbar - es lautet durchgehend:
+**Arbeitsteilung und das Feld `verified`**: Prüfung und Übertragung
+waren getrennte Schritte mit getrennten Werkzeugen. Das Feld `verified`
+der betroffenen Fakten hält das wörtlich fest - es lautet durchgehend:
 
 > "\[Datum\]: Primärquelle geöffnet und geprüft durch Claude in
 > claude.ai-Sitzung (Fable 5.1); Übertragung durch Claude Code ohne
@@ -47,9 +46,11 @@ Fakten macht das ausdrücklich sichtbar - es lautet durchgehend:
 
 Das heißt: `verified` bestätigt, dass *eine* Primärquellenprüfung
 stattgefunden hat und durch wen - nicht, dass Claude Code sie selbst
-durchgeführt hat. Wer die zugrunde liegende Sitzung nicht einsehen kann,
-sollte `verified` als Herkunftsangabe lesen, nicht als eigenständigen
-Beleg.
+durchgeführt hat. Wer die zugrunde liegende Prüfung nicht einsehen
+kann, sollte `verified` als Herkunftsangabe lesen, nicht als
+eigenständigen Beleg. Nachprüfbar ist jeder Fakt trotzdem: Fundstelle
+(`locator`) und Wortzitat (`quote`) stehen im Datensatz und lassen sich
+direkt in der Quelle kontrollieren.
 
 ## 2. Die 22 übernommenen Fakten
 
