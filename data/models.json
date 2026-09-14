@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2",
-  "generated": "2026-09-13",
-  "generated_by": "ThirstyAI: bekannte Modellgrössen (Parameterzahl) für die Klassifikation",
+  "generated": "2026-09-14",
+  "generated_by": "ThirstyAI: bekannte Modellgrößen (Parameterzahl) für die Klassifikation",
   "sources": {
     "M1": {
       "title": "Mistral Large 2 (Ankündigung)",
@@ -149,7 +149,7 @@
       "value": 39,
       "unit": "Mrd. Parameter",
       "functional_unit": "Anzahl aktiver Parameter pro Token (Mixture-of-Experts)",
-      "measurement_boundary": "Mixture-of-Experts: 141 Mrd. Parameter gesamt gespeichert, aber nur 39 Mrd. pro Token aktiv (2 von 8 Experten je Layer). Für die Größenklasse wird die aktive Zahl verwendet, weil sie die tatsächliche Rechenlast (und damit Energie) pro Token bestimmt, nicht die gespeicherte Modellgrösse.",
+      "measurement_boundary": "Mixture-of-Experts: 141 Mrd. Parameter gesamt gespeichert, aber nur 39 Mrd. pro Token aktiv (2 von 8 Experten je Layer). Für die Größenklasse wird die aktive Zahl verwendet, weil sie die tatsächliche Rechenlast (und damit Energie) pro Token bestimmt, nicht die gespeicherte Modellgröße.",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
@@ -171,7 +171,7 @@
       "value": 37,
       "unit": "Mrd. Parameter",
       "functional_unit": "Anzahl aktiver Parameter pro Token (Mixture-of-Experts)",
-      "measurement_boundary": "Mixture-of-Experts: 671 Mrd. Parameter gesamt gespeichert, aber nur 37 Mrd. pro Token aktiv. Für die Größenklasse wird die aktive Zahl verwendet, weil sie die tatsächliche Rechenlast (und damit Energie) pro Token bestimmt, nicht die gespeicherte Modellgrösse.",
+      "measurement_boundary": "Mixture-of-Experts: 671 Mrd. Parameter gesamt gespeichert, aber nur 37 Mrd. pro Token aktiv. Für die Größenklasse wird die aktive Zahl verwendet, weil sie die tatsächliche Rechenlast (und damit Energie) pro Token bestimmt, nicht die gespeicherte Modellgröße.",
       "water_scope": "-",
       "carbon_accounting": "-",
       "region": "-",
