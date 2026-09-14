@@ -45,11 +45,11 @@ describe("browser-calc", () => {
   });
 
   // Regel 19: docs/calculator/bundle.js ist eingecheckt und wird nicht im
-  // Testlauf gebaut. Faengt den vergessenen "npm run build:web" ab, wenn
-  // data/facts.json sich geaendert hat. Der Praefix generated:" gehoert zur
-  // Pruefung: das Datum steht im Bundle auch als verified-Datum einer Quelle,
-  // eine Suche nur nach dem Datum waere also gruen trotz veraltetem Bundle.
-  it("das eingecheckte Bundle enthaelt den generated-Stand aus data/facts.json (sonst fehlt npm run build:web)", () => {
+  // Testlauf gebaut. Fängt den vergessenen "npm run build:web" ab, wenn
+  // data/facts.json sich geändert hat. Der Präfix generated:" gehört zur
+  // Prüfung: das Datum steht im Bundle auch als verified-Datum einer Quelle,
+  // eine Suche nur nach dem Datum wäre also grün trotz veraltetem Bundle.
+  it("das eingecheckte Bundle enthält den generated-Stand aus data/facts.json (sonst fehlt npm run build:web)", () => {
     const generated = (JSON.parse(readFileSync(FACTS, "utf-8")) as { generated: string }).generated;
     const bundle = readFileSync(BUNDLE, "utf-8");
 

@@ -4,7 +4,7 @@ import { readClaudeCodeUsage, toInputTokenRange } from "../src/readers/claudeCod
 const FIXTURE = new URL("./fixtures/claude-code-sample.jsonl", import.meta.url).pathname;
 
 describe("readClaudeCodeUsage", () => {
-  it("dedupliziert nach message.id und behaelt den Datensatz mit dem groessten output_tokens", async () => {
+  it("dedupliziert nach message.id und behält den Datensatz mit dem größten output_tokens", async () => {
     const { records } = await readClaudeCodeUsage(FIXTURE);
     const msg1 = records.filter((r) => r.messageId === "msg_test_1");
     expect(msg1).toHaveLength(1);
@@ -19,16 +19,16 @@ describe("readClaudeCodeUsage", () => {
     expect(msg2?.cacheReadTokens).toBe(0);
   });
 
-  it("ueberspringt Nutzer-Zeilen ohne usage, ohne sie zu zaehlen", async () => {
+  it("überspringt Nutzer-Zeilen ohne usage, ohne sie zu zählen", async () => {
     const { records, skippedUnparsable, skippedSynthetic } = await readClaudeCodeUsage(FIXTURE);
-    // 3 gueltige Assistant-Nachrichten (msg_test_1 dedupliziert, msg_test_2);
-    // die Nutzer-Zeile taucht in keinem Zaehler auf.
+    // 3 gültige Assistant-Nachrichten (msg_test_1 dedupliziert, msg_test_2);
+    // die Nutzer-Zeile taucht in keinem Zähler auf.
     expect(records).toHaveLength(2);
     expect(skippedUnparsable).toBe(1);
     expect(skippedSynthetic).toBe(1);
   });
 
-  it("zaehlt nicht parsbare Zeilen und synthetische Modelle, nimmt sie aber nicht in records auf", async () => {
+  it("zählt nicht parsbare Zeilen und synthetische Modelle, nimmt sie aber nicht in records auf", async () => {
     const { records, skippedUnparsable, skippedSynthetic } = await readClaudeCodeUsage(FIXTURE);
     expect(records.some((r) => r.model === "<synthetic>")).toBe(false);
     expect(skippedUnparsable).toBeGreaterThanOrEqual(1);
@@ -37,7 +37,7 @@ describe("readClaudeCodeUsage", () => {
 });
 
 describe("toInputTokenRange", () => {
-  it("schliesst cacheReadTokens im Minimum aus und gewichtet es im Maximum mit dem uebergebenen Faktor", () => {
+  it("schließt cacheReadTokens im Minimum aus und gewichtet es im Maximum mit dem übergebenen Faktor", () => {
     const range = toInputTokenRange(
       {
         messageId: "x",

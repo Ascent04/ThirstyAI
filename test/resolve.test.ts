@@ -13,7 +13,7 @@ function table() {
 describe("resolveCoefficients", () => {
   it("region DE liefert UBA-CO2 und Lohrmann-Wasserwerte", () => {
     const result = resolveCoefficients({ model: "llama-3.1-70b", region: "DE" }, table());
-    // mid/max sind fuer das Bezugsjahr 2024 fest auf den UBA-2024-Fakt
+    // mid/max sind für das Bezugsjahr 2024 fest auf den UBA-2024-Fakt
     // gepinnt (nicht die neuere grid-co2-uba-de-2025), siehe
     // CARBON_REGION_TABLE_BY_YEAR in resolve.ts.
     expect(result.carbonIntensity.factIds).toContain("grid-co2-uba-de-2024");
@@ -32,7 +32,7 @@ describe("resolveCoefficients", () => {
     expect(result.wueSite.factIds).toContain("aws-wue-2025");
   });
 
-  it("faellt bei unbekannter Region auf US-Werte mit confidence 2 zurueck", () => {
+  it("fällt bei unbekannter Region auf US-Werte mit confidence 2 zurück", () => {
     const result = resolveCoefficients(
       { model: "llama-3.1-70b", region: "ZZ" },
       table(),
@@ -53,7 +53,7 @@ describe("resolveCoefficients", () => {
     expect(result.carbonIntensity.mid).toBeCloseTo(94, 5);
   });
 
-  it("liefert fuer jede Modellklasse min <= mid <= max", () => {
+  it("liefert für jede Modellklasse min <= mid <= max", () => {
     for (const model of ["gpt-4o-mini", "claude-3-5-sonnet", "llama-3.1-405b", "deepseek-r1"]) {
       const result = resolveCoefficients({ model }, table());
       expect(result.energyPerRequestGpuOnly.min).toBeLessThanOrEqual(
@@ -65,9 +65,9 @@ describe("resolveCoefficients", () => {
     }
   });
 
-  it("hat fuer jeden von resolveEnergyPerRequest tatsaechlich verwendeten Energie-Fakt einen Token-Fakt hinterlegt", () => {
-    // Jeder Energie-Fakt, den resolveEnergyPerRequest ueber alle vier
-    // Modellklassen und den Vollstack-Pfad hinweg nachschlaegt, muss in
+  it("hat für jeden von resolveEnergyPerRequest tatsächlich verwendeten Energie-Fakt einen Token-Fakt hinterlegt", () => {
+    // Jeder Energie-Fakt, den resolveEnergyPerRequest über alle vier
+    // Modellklassen und den Vollstack-Pfad hinweg nachschlägt, muss in
     // OUTPUT_TOKENS_FOR_ENERGY_FACT (resolve.ts) eine Zuordnung haben -
     // sonst wirft perThousandOutputTokens() zur Laufzeit. Diese Liste
     // synchron zu den case-Zweigen in resolveEnergyPerRequest halten.
@@ -85,11 +85,11 @@ describe("resolveCoefficients", () => {
       "gemini-energy",
     ];
     for (const id of usedEnergyFactIds) {
-      expect(OUTPUT_TOKENS_FOR_ENERGY_FACT[id], `fehlende Zuordnung fuer "${id}"`).toBeDefined();
+      expect(OUTPUT_TOKENS_FOR_ENERGY_FACT[id], `fehlende Zuordnung für "${id}"`).toBeDefined();
     }
 
-    // Gegenprobe: fuer je ein Modell pro Klasse (+ Vollstack) darf
-    // resolveCoefficients tatsaechlich nicht werfen.
+    // Gegenprobe: für je ein Modell pro Klasse (+ Vollstack) darf
+    // resolveCoefficients tatsächlich nicht werfen.
     const t = table();
     expect(() => resolveCoefficients({ model: "gpt-4o-mini" }, t)).not.toThrow();
     expect(() => resolveCoefficients({ model: "claude-3-5-sonnet" }, t)).not.toThrow();
@@ -135,7 +135,7 @@ describe("resolveCoefficients", () => {
     ]);
   });
 
-  it("PUE Google/Microsoft: unveraendert symmetrisch um den jeweiligen Punktwert", () => {
+  it("PUE Google/Microsoft: unverändert symmetrisch um den jeweiligen Punktwert", () => {
     const t = table();
     const google = resolveCoefficients({ model: "llama-3.1-70b", provider: "google" }, t);
     expect(google.pue.factIds).toContain("google-pue");
@@ -149,7 +149,7 @@ describe("resolveCoefficients", () => {
     );
   });
 
-  it("carbonIntensity 2024: min <= mid <= max fuer jede Region im REGION_TABLE", () => {
+  it("carbonIntensity 2024: min <= mid <= max für jede Region im REGION_TABLE", () => {
     const t = table();
     for (const region of ["DE", "IE", "NL", "SE", "FI", "FR", "US", "SG", "IN", "JP", "EU"]) {
       const result = resolveCoefficients({ model: "llama-3.1-70b", region }, t);

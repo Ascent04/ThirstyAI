@@ -17,15 +17,15 @@ function closeWithin(value: number, target: number, tolerance: number): void {
 }
 
 /**
- * Baut eine eigenstaendige Faktentabelle fuer Testfall 2. Sie tritt nicht
+ * Baut eine eigenständige Faktentabelle für Testfall 2. Sie tritt nicht
  * gegen data/facts.json an, sondern liefert Li et al.s eigene Koeffizienten
  * (PUE 1.17, WUE 0.55, EWIF 3.142, Energie 4.0 Wh, kein Overhead) unter
- * denselben Fakt-IDs, die resolve.ts fuer die Modellklasse "small"
- * nachschlaegt - so lassen sich waterScope1 (2.2 mL) und waterScope2
- * (14.7 mL) aus arXiv:2304.03271 Tab. 1 unabhaengig von den echten
- * Projektfakten pruefen. GPT-3 wird hier absichtlich nicht als "small"
+ * denselben Fakt-IDs, die resolve.ts für die Modellklasse "small"
+ * nachschlägt - so lassen sich waterScope1 (2.2 mL) und waterScope2
+ * (14.7 mL) aus arXiv:2304.03271 Tab. 1 unabhängig von den echten
+ * Projektfakten prüfen. GPT-3 wird hier absichtlich nicht als "small"
  * klassifiziert, weil es das ist, sondern weil nur diese Klasse ihre
- * Koeffizienten vollstaendig aus (ueberschreibbaren) Fakten statt aus
+ * Koeffizienten vollständig aus (überschreibbaren) Fakten statt aus
  * Literalen im Code bezieht.
  */
 function overrideTable(): FactTable {
@@ -96,7 +96,7 @@ describe("calculate", () => {
     closeWithin(result.co2Scope2.mid, 0.023, 0.1);
     expect(result.boundary).toBe("fullstack");
     // Vollstack-Fakt ist bereits die Gesamtenergie inkl. PUE, energyTotal
-    // darf durch die Intervall-Division bei energyIt nicht verfaelscht werden.
+    // darf durch die Intervall-Division bei energyIt nicht verfälscht werden.
     expect(result.energyTotal.mid).toBeCloseTo(0.24, 10);
   });
 
@@ -109,7 +109,7 @@ describe("calculate", () => {
     closeWithin(result.waterScope2.mid, 14.7, 0.05);
   });
 
-  it("liefert bei 0 Token ueberall 0", () => {
+  it("liefert bei 0 Token überall 0", () => {
     const result = calculate(
       { model: "llama-3.1-70b", tokensIn: 0, tokensOut: 0 },
       table(),
@@ -120,7 +120,7 @@ describe("calculate", () => {
     expect(result.co2Scope2.mid).toBe(0);
   });
 
-  it("faellt bei unbekannter Region auf US-Werte zurueck (confidence 2)", () => {
+  it("fällt bei unbekannter Region auf US-Werte zurück (confidence 2)", () => {
     const result = calculate(
       { model: "gemini-apps", provider: "google", region: "ZZ", tokensIn: 0, tokensOut: 300 },
       table(),
@@ -129,7 +129,7 @@ describe("calculate", () => {
     expect(result.factIds).toContain("ewif-us-average");
   });
 
-  it("haelt min <= mid <= max ein, auch bei Vollstack-Fakten (PUE-Division)", () => {
+  it("hält min <= mid <= max ein, auch bei Vollstack-Fakten (PUE-Division)", () => {
     const cases: Array<{ model: string; provider?: string }> = [
       { model: "gpt-4o-mini" },
       { model: "claude-3-5-sonnet" },
@@ -146,7 +146,7 @@ describe("calculate", () => {
     }
   });
 
-  it("waehlt bei asOf in der Vergangenheit den damals bekannten Fakt", () => {
+  it("wählt bei asOf in der Vergangenheit den damals bekannten Fakt", () => {
     const result = calculate(
       {
         model: "llama-3.1-70b",
@@ -161,7 +161,7 @@ describe("calculate", () => {
     expect(result.factIds).not.toContain("grid-co2-uba-de-2025");
   });
 
-  it("Referenzfall claude-sonnet-5/1000 out/DE: dataConfidence 2, methodConfidence 1, confidence unveraendert 1", () => {
+  it("Referenzfall claude-sonnet-5/1000 out/DE: dataConfidence 2, methodConfidence 1, confidence unverändert 1", () => {
     const result = calculate(
       { model: "claude-sonnet-5", tokensIn: 0, tokensOut: 1000, region: "DE" },
       table(),
@@ -171,7 +171,7 @@ describe("calculate", () => {
     expect(result.confidence).toBe(1);
   });
 
-  it("dataConfidence/methodConfidence entsprechen einer unabhaengig gebildeten Minimum-Berechnung ueber factIds/rating", () => {
+  it("dataConfidence/methodConfidence entsprechen einer unabhängig gebildeten Minimum-Berechnung über factIds/rating", () => {
     const t = table();
     const result = calculate(
       { model: "claude-sonnet-5", tokensIn: 0, tokensOut: 1000, region: "DE" },

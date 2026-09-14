@@ -10,7 +10,7 @@ const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathnam
 const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
 describe("buildFactTable", () => {
-  it("mergt/validiert wie loadFacts, ohne eigenes fs, und liefert fuer [] eine leere Tabelle", () => {
+  it("mergt/validiert wie loadFacts, ohne eigenes fs, und liefert für [] eine leere Tabelle", () => {
     const rawFiles: RawFactFile[] = [FACTS, ASSUMPTIONS, MODELS].map(
       (path) => JSON.parse(readFileSync(path, "utf-8")) as RawFactFile,
     );

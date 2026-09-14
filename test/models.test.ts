@@ -10,19 +10,19 @@ function tableWithModels() {
   // Dieselbe Ladeliste und -reihenfolge wie loadTable() in src/cli.ts. Seit
   // class-claude-sonnet-5 in data/assumptions.json liegt (Regel "Datei folgt
   // Rating"), liegen Fakt und Quelle "A-THIRSTYAI" in derselben Datei;
-  // assumptions.json ist fuer die Assertions hier damit nicht mehr zwingend,
+  // assumptions.json ist für die Assertions hier damit nicht mehr zwingend,
   // die Liste bleibt aber bewusst die der Produktion.
   return loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 }
 
 describe("classifyModel", () => {
-  it("erkennt kleine Modelle an Groessen- oder Namenshinweisen", () => {
+  it("erkennt kleine Modelle an Größen- oder Namenshinweisen", () => {
     expect(classifyModel("gpt-4o-mini").modelClass).toBe("small");
     expect(classifyModel("claude-3-5-haiku").modelClass).toBe("small");
     expect(classifyModel("llama-3.1-8b-instruct").modelClass).toBe("small");
   });
 
-  it("erkennt mittlere Modelle an expliziter Groesse oder Namenshinweisen", () => {
+  it("erkennt mittlere Modelle an expliziter Größe oder Namenshinweisen", () => {
     expect(classifyModel("llama-3.1-70b-instruct").modelClass).toBe("mid");
     expect(classifyModel("claude-3-5-sonnet").modelClass).toBe("mid");
     expect(classifyModel("gemini-1.5-flash").modelClass).toBe("mid");
@@ -45,19 +45,19 @@ describe("classifyModel", () => {
     expect(result.fullstack).toBe(true);
   });
 
-  it("faellt bei unbekanntem Modell auf frontier mit confidence 1 zurueck", () => {
+  it("fällt bei unbekanntem Modell auf frontier mit confidence 1 zurück", () => {
     const result = classifyModel("xyzzy-modell-9000");
     expect(result.modelClass).toBe("frontier");
     expect(result.confidence).toBe(1);
   });
 
-  it("faellt bei bekannter Familie ohne Groessenhinweis auf frontier mit confidence 1 zurueck (seit Schritt 8: nur Familie ohne Marker zaehlt wie unbekannt)", () => {
+  it("fällt bei bekannter Familie ohne Größenhinweis auf frontier mit confidence 1 zurück (seit Schritt 8: nur Familie ohne Marker zählt wie unbekannt)", () => {
     const result = classifyModel("gpt-5");
     expect(result.modelClass).toBe("frontier");
     expect(result.confidence).toBe(1);
   });
 
-  it("staffelt die Namensheuristik-confidence: Familie+Groessenmarker=2, nur Familie oder unbekannt=1", () => {
+  it("staffelt die Namensheuristik-confidence: Familie+Größenmarker=2, nur Familie oder unbekannt=1", () => {
     expect(classifyModel("gpt-4o-mini").confidence).toBe(2);
     expect(classifyModel("gpt-5").confidence).toBe(1);
     expect(classifyModel("xyzzy-modell-9000").confidence).toBe(1);
@@ -67,16 +67,16 @@ describe("classifyModel", () => {
     const result = classifyModel("mistral-large-2", undefined, tableWithModels());
     expect(result.modelClass).toBe("mid");
     expect(result.sourceFactId).toBe("params-mistral-large-2");
-    // Ohne Fakten-Tabelle wuerde dieselbe Zeichenkette ueber die
+    // Ohne Fakten-Tabelle würde dieselbe Zeichenkette über die
     // Namensheuristik (FRONTIER_TOKENS: "large") falsch als "frontier"
-    // eingeordnet - das zeigt, warum die Fakten-Pruefung zuerst kommt.
+    // eingeordnet - das zeigt, warum die Fakten-Prüfung zuerst kommt.
     expect(classifyModel("mistral-large-2").modelClass).toBe("frontier");
   });
 
-  it("loest einen bekannten Alias auf (exakter Name -> Alias -> Heuristik)", () => {
+  it("löst einen bekannten Alias auf (exakter Name -> Alias -> Heuristik)", () => {
     // "mistral-large-latest" ist kein exakter Fakt-Name, aber ein
-    // deklarierter Alias von params-mistral-large-2 - ohne Alias-Aufloesung
-    // wuerde die Namensheuristik (FRONTIER_TOKENS: "large") faelschlich
+    // deklarierter Alias von params-mistral-large-2 - ohne Alias-Auflösung
+    // würde die Namensheuristik (FRONTIER_TOKENS: "large") fälschlich
     // "frontier" liefern.
     const result = classifyModel("mistral-large-latest", undefined, tableWithModels());
     expect(result.modelClass).toBe("mid");

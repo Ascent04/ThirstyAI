@@ -5,8 +5,8 @@ const FACTS = new URL("../data/facts.json", import.meta.url).pathname;
 const ASSUMPTIONS = new URL("../data/assumptions.json", import.meta.url).pathname;
 const MODELS = new URL("../data/models.json", import.meta.url).pathname;
 
-describe("oeffentlicher Einstieg (src/index.ts)", () => {
-  it("laedt Fakten und berechnet ein plausibles Ergebnis end-to-end", () => {
+describe("öffentlicher Einstieg (src/index.ts)", () => {
+  it("lädt Fakten und berechnet ein plausibles Ergebnis end-to-end", () => {
     const table = loadFacts([FACTS, ASSUMPTIONS, MODELS]);
 
     const result = calculate(
