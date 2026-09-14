@@ -183,11 +183,15 @@ Fehler zur fehlenden Fakt-ID ab.
 
 Die Ergebnisse von ThirstyAI wurden offline mit
 [EcoLogits](https://ecologits.ai/) (Python, GenAI Impact, JOSS 2025) für
-zehn Fälle über fünf Modellfamilien verglichen. Bei Modellen mit
-öffentlich bekannter Größe stimmen beide Werkzeuge auf ±30% überein;
-bei proprietären Modellen weichen sie um den Faktor 3-6 voneinander ab,
-weil beide die Modellgröße schätzen müssen. Vollständige Tabellen und
-die Begründung für jede Abweichung:
+zehn Fälle über fünf Modellfamilien verglichen. Bei den beiden Modellen
+mit öffentlich bekannter Größe (Llama 3.1 70B, Mistral Large 2) liegt
+ThirstyAIs mid-Schätzung beim 1,3- bis 2,3-fachen des EcoLogits-Werts,
+und der EcoLogits-Punktwert fällt in allen 12 Vergleichen in ThirstyAIs
+min–max-Spanne. Bei proprietären Modellen weichen die Werkzeuge um den
+Faktor 2–6 in beide Richtungen ab (GPT-4o-mini: ThirstyAI ~4× höher,
+Claude: ~2× niedriger, Gemini 2.5 Pro: ~5× niedriger), weil beide die
+Modellgröße schätzen müssen und unterschiedliche Serving-Annahmen
+verwenden. Vollständige Tabellen und die Begründung für jede Abweichung:
 [docs/crosscheck/results.md](docs/crosscheck/results.md).
 
 ## Verwandte Projekte

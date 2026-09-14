@@ -10,7 +10,7 @@ Alle zehn ThirstyAI-Ergebnisse haben confidence 1: keines der Modelle trifft Thi
 
 Seit Schritt 8 löst ThirstyAI Modellnamen in drei Stufen auf: exakter Fakt-Name, dann deklarierter Alias (beide aus `data/models.json`), erst dann die Namensheuristik. 'mistral-large-latest' ist jetzt als Alias von params-mistral-large-2 hinterlegt und landet dadurch korrekt in 'mid' (vorher, Schritt 7: 'frontier' über die Namensheuristik, siehe methodology-de.md).
 
-**Wichtigster Befund vorab:** Bei den beiden Modellen mit öffentlich bekannter (nicht geschätzter) Parameterzahl - Llama-3.1-70B-Instruct und seit der Alias-Korrektur auch Mistral Large 2 - liegen beide Systeme innerhalb von 25 % beieinander (siehe llama- und mistral-Zeilen unten). Bei den drei verbleibenden Familien (GPT, Claude, Gemini) muss EcoLogits die Parameterzahl selbst schätzen (proprietäre Modelle) - das ist der größte Einzelfaktor für die Abweichungen dort, nicht ein Fehler in einem der beiden Systeme.
+**Wichtigster Befund vorab:** Bei den beiden Modellen mit öffentlich bekannter (nicht geschätzter) Parameterzahl - Llama-3.1-70B-Instruct und seit der Alias-Korrektur auch Mistral Large 2 - liegt ThirstyAIs mid-Schätzung beim 1,3- bis 2,3-fachen des EcoLogits-Werts, und der EcoLogits-Punktwert fällt in allen 12 Vergleichen (Energie, CO2, Wasser × short/long) in ThirstyAIs min–max-Spanne (siehe llama- und mistral-Zeilen unten). Bei den drei verbleibenden Familien (GPT, Claude, Gemini) muss EcoLogits die Parameterzahl selbst schätzen (proprietäre Modelle) - das ist der größte Einzelfaktor für die Abweichungen dort, nicht ein Fehler in einem der beiden Systeme.
 
 ## Energie (Wh)
 

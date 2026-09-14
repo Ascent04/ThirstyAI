@@ -187,10 +187,14 @@ the calculation fails with an error naming the missing fact ID.
 
 ThirstyAI's results were checked offline against
 [EcoLogits](https://ecologits.ai/) (Python, GenAI Impact, JOSS 2025) for
-ten cases across five model families. For models with a publicly known
-size, both tools agree to within ±30%; for proprietary models, they
-diverge by a factor of 3-6, because both have to estimate the model
-size. Full tables and the reasoning behind each deviation:
+ten cases across five model families. For the two models with a publicly
+known size (Llama 3.1 70B, Mistral Large 2), ThirstyAI's mid estimate is
+1.3–2.3× EcoLogits' value, and EcoLogits' point estimate falls inside
+ThirstyAI's min–max range in all 12 comparisons. For proprietary models
+the tools diverge by a factor of 2–6 in either direction (GPT-4o-mini:
+ThirstyAI ~4× higher, Claude: ~2× lower, Gemini 2.5 Pro: ~5× lower),
+because both have to estimate the model size and use different serving
+assumptions. Full tables and the reasoning behind each deviation:
 [docs/crosscheck/results.md](docs/crosscheck/results.md).
 
 ## Related projects
