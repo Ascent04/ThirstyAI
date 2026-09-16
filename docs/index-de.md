@@ -18,7 +18,7 @@ Derzeit gestützt auf **144 Fakten** aus **35 Quellen**.
 
 - [Rechner]({{ site.baseurl }}/calculator/index-de.html) — Modell, Textmenge und Region
   eingeben und ein Ergebnis mit min/mid/max-Bandbreite erhalten. Die
-  Oberfläche des Rechners ist englisch.
+  englische Fassung liegt unter [calculator/]({{ site.baseurl }}/calculator/).
 
 ## Weiterlesen
 
