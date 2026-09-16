@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThirstyAI Rechner</title>
+<style>
+  /* Palette read off docs/assets/banner.jpg: turquoise lake, sand shore,
+     paper white mountains, and the brass sign - the only object in the
+     scene that is not paper, which is why it marks the single emphasised
+     value (the mid estimate) and the assumptions we made ourselves. */
+  :root {
+    color-scheme: light dark;
+    --bg: #faf6ec;
+    --bg-sunk: #f2ebda;
+    --fg: #241f18;
+    --muted: #6e6557;
+    --border: #dcd2bc;
+    --accent: #1f7f79;
+    --water: #2e9a94;
+    --water-soft: #bfddd9;
+    --energy: #b8781c;
+    --energy-soft: #ecdcc0;
+    --carbon: #4a7c46;
+    --carbon-soft: #cfdcc9;
+    --brass: #a8801f;
+    --brass-soft: #f0e4c4;
+    --error: #a3402a;
+    --hero-filter: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141b1c;
+      --bg-sunk: #1b2426;
+      --fg: #ece5d6;
+      --muted: #98a29e;
+      --border: #2c3a3b;
+      --accent: #63c8bf;
+      --water: #3fb8b0;
+      --water-soft: #26403f;
+      --energy: #d9a252;
+      --energy-soft: #3a2f1c;
+      --carbon: #6faa68;
+      --carbon-soft: #22301f;
+      --brass: #d9ae52;
+      --brass-soft: #2a2718;
+      --error: #e08b72;
+      --hero-filter: brightness(0.9) saturate(0.95);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 24px 16px 48px;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  main { max-width: 720px; margin: 0 auto; }
+
+  a { color: var(--accent); text-underline-offset: 2px; }
+
+  /* --- header --------------------------------------------------------- */
+
+  .hero {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    filter: var(--hero-filter);
+  }
+
+  h1 {
+    margin: 0 0 2px;
+    font-size: 1.45rem;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* --- form ----------------------------------------------------------- */
+
+  form {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+    background: var(--bg-sunk);
+    border: 1px solid var(--border);
+  }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+
+  .field-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .field-row > .field { flex: 1; min-width: 200px; }
+
+  label { font-weight: 600; font-size: 0.9rem; }
+
+  /* .field stacks its children in a column, so a bare .info span next to a
+     label lands on its own line. Label and tip share one flex row instead.
+     The button's own margin is dropped here so the 0.4em gap is the whole
+     spacing - inside .radio-group the margin still applies, unchanged. */
+  .label-row { display: flex; align-items: center; gap: 0.4em; }
+  .label-row .info-btn { margin-left: 0; }
+
+  select, input[type="number"] {
+    padding: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  select:focus-visible,
+  input:focus-visible,
+  summary:focus-visible,
+  button:focus-visible,
+  .info-btn:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .radio-group { display: flex; gap: 16px; align-items: center; }
+  .radio-group label { font-weight: 400; display: flex; align-items: center; gap: 4px; }
+
+  #derived-tokens, #amount-echo { color: var(--muted); font-size: 0.85rem; }
+  .region-note { color: var(--muted); font-size: 0.85rem; }
+
+  /* Quick picks for the amount. Same shape as the Calculate button, but an
+     outline instead of a filled block - they set a value, they do not run
+     the calculation. */
+  .preset-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .preset {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .preset:hover { border-color: var(--accent); }
+
+  /* Toggletip: a small "?" circle that reveals one sentence of explanation
+     on click. The circle is the one rounded shape on the page - it is a
+     recognisable symbol, unlike a form control or a button. Opening and
+     closing is the browser's job (popover API), so there is no JS here. */
+  .info { display: inline-block; }
+
+  .info-btn {
+    width: 1.1em;
+    height: 1.1em;
+    margin-left: 4px;
+    padding: 0;
+    border: 1px solid var(--muted);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.8em;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+  }
+
+  .info-btn:hover,
+  .info-btn:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* The popover lives in the top layer, so nothing clips it - not the
+     horizontal scroll box around the facts table either. Without an explicit
+     width it would be squeezed to the width of its containing block (the
+     one-character .info span) and break after every word, hence max-content
+     clamped by max-width. Where anchor positioning is missing, the UA styles
+     (fixed, inset 0, margin auto) centre it in the viewport - readable, and
+     the reason margin: auto is spelled out here rather than left implicit. */
+  .info-text {
+    margin: auto;
+    padding: 8px 10px;
+    width: max-content;
+    max-width: min(32em, calc(100vw - 32px));
+    background: var(--bg-sunk);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Where anchor positioning exists, the tip sits under its own "?" instead.
+     No anchor-name is needed: popovertarget makes the invoking button the
+     popover's implicit anchor, which is what position-area resolves against.
+     A uniform 4px margin keeps the gap correct in every flipped direction. */
+  @supports (position-area: bottom) {
+    .info-text {
+      position: absolute;
+      position-area: bottom span-right;
+      position-try-fallbacks: flip-block, flip-inline;
+      inset: auto;
+      margin: 4px;
+    }
+  }
+
+  details { color: var(--muted); font-size: 0.9rem; }
+  summary { cursor: pointer; font-weight: 600; }
+  details[open] > .field { margin-top: 8px; }
+
+  #calculate {
+    /* Grid item in the form: justify-self is the inline axis, so this is the
+       whole change. The other fields keep their default stretch and stay
+       left-aligned. */
+    justify-self: center;
+    padding: 10px 20px;
+    border: 1px solid var(--accent);
+    border-radius: 0;
+    background: var(--accent);
+    color: var(--bg);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Stays visible but quiet - no blinking, no motion, just a border colour
+     swap - once an input has changed since the last calculation. */
+  #calculate.needs-attention {
+    border-color: var(--brass);
+  }
+
+  /* --- results: three ranges ------------------------------------------ */
+
+  #results { margin-top: 32px; }
+
+  /* Dims the previous result once an input has changed but Calculate has
+     not been pressed yet - the numbers on screen no longer match the
+     form. No motion, just a fixed lower opacity. */
+  #results.stale { opacity: 0.45; }
+
+  /* Annotated example bar in the empty state. Every colour comes from a
+     variable, so both modes are covered without a second rule set. */
+  .example-bar { display: block; max-width: 100%; height: auto; margin-bottom: 20px; }
+
+  .example-bar text { fill: var(--muted); font-size: 11px; }
+  .example-bar .ex-leader { fill: none; stroke: var(--muted); stroke-width: 1; }
+  .example-bar .ex-fill { fill: var(--water); }
+  .example-bar .ex-hatch-bg { fill: var(--bg-sunk); }
+  .example-bar .ex-hatch-stripe { fill: var(--water-soft); }
+  .example-bar .ex-marker { fill: var(--brass); }
+  .example-bar .ex-edge { fill: var(--fg); }
+
+  .example-bar-narrow { display: none; }
+
+  /* Below roughly 600px the wide variant (560 units plus the body's 32px of
+     padding) stops fitting, so the labels move underneath the bar. Two SVGs
+     rather than one: viewBox is an attribute, not a CSS property, so a layout
+     that needs a different aspect ratio cannot be switched in CSS alone - and
+     scaling the wide one down would shrink its label text with it. */
+  @media (max-width: 600px) {
+    .example-bar-wide { display: none; }
+    .example-bar-narrow { display: block; }
+  }
+
+  .result-row { margin-bottom: 20px; }
+
+  .result-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .bar-wrap { display: flex; flex-direction: column; gap: 6px; }
+
+  /* The hatched band is the span the sources disagree over; the solid fill
+     is the floor every source clears. Hard-edged stripes on purpose - the
+     picture language has facets and clean edges, no soft gradients. Colour
+     itself (background/hatching) is set per metric below - .bar-wrap.energy,
+     .bar-wrap.water, .bar-wrap.carbon. */
+  .bar-track {
+    position: relative;
+    height: 14px;
+    border-right: 2px solid var(--fg);
+    overflow: visible;
+  }
+
+  .bar-min {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    transition: width 600ms ease-out;
+  }
+
+  /* The marker snaps in once its bar has finished growing: its left position
+     is set straight away and never animated, only the opacity is. */
+  .bar-mid-marker {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 2px;
+    background: var(--brass);
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
+  /* Staggered start per metric: energy first, then water, then CO2. The
+     marker waits out the full 600ms growth plus its own offset. */
+  .bar-wrap.energy .bar-min { transition-delay: 0ms; }
+  .bar-wrap.water .bar-min { transition-delay: 80ms; }
+  .bar-wrap.carbon .bar-min { transition-delay: 160ms; }
+
+  .bar-wrap.energy .bar-mid-marker { transition-delay: 600ms; }
+  .bar-wrap.water .bar-mid-marker { transition-delay: 680ms; }
+  .bar-wrap.carbon .bar-mid-marker { transition-delay: 760ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-min, .bar-mid-marker { transition: none; }
+  }
+
+  .bar-wrap.energy .bar-min { background: var(--energy); }
+  .bar-wrap.energy .bar-track {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--energy-soft) 0 6px,
+      var(--bg-sunk) 6px 12px
+    );
+  }
+
+  .bar-wrap.water .bar-min { background: var(--water); }
+  .bar-wrap.water .bar-track {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--water-soft) 0 6px,
+      var(--bg-sunk) 6px 12px
+    );
+  }
+
+  .bar-wrap.carbon .bar-min { background: var(--carbon); }
+  .bar-wrap.carbon .bar-track {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--carbon-soft) 0 6px,
+      var(--bg-sunk) 6px 12px
+    );
+  }
+
+  /* Fades the hatched band toward the page background as it approaches the
+     maximum - the far end of the range is the least certain part of the
+     estimate. bar-min and the mid marker sit above this layer (z-index) so
+     the fade softens only the track's hatching, never the min fill or the
+     mid marker itself. */
+  .bar-track::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to right,
+      transparent 0%, transparent 35%, var(--bg) 100%);
+    pointer-events: none;
+  }
+
+  /* min, mid and max carry equal weight on purpose: the spread is the
+     result, not a footnote to the middle value. */
+  .bar-numbers {
+    font-size: 0.9rem;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .confidence {
+    margin: 24px 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    max-width: 62ch;
+    margin: 8px 0;
+  }
+
+  /* Same as .note for now - the two are split into separate classes so
+     confidence-specific styling can diverge later without touching
+     browser-dom.ts again. */
+  .confidence-note {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    max-width: 62ch;
+    margin: 8px 0;
+  }
+
+  .unknown-model-hint {
+    margin: 12px 0;
+    padding: 8px 12px;
+    background: var(--brass-soft);
+    border-left: 3px solid var(--brass);
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--fg);
+  }
+
+  .error {
+    margin: 12px 0;
+    padding: 8px 12px;
+    border-left: 3px solid var(--error);
+    color: var(--error);
+    font-weight: 600;
+  }
+
+  /* --- sources -------------------------------------------------------- */
+
+  .facts-section {
+    margin-top: 32px;
+    overflow-x: auto;
+  }
+
+  .facts-section h3 {
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* Assumptions are our own reasoning, not a source. The sand tint and the
+     brass rule set them apart from the measured facts at a glance. */
+  .assumptions-box {
+    padding: 14px 16px;
+    background: var(--brass-soft);
+    border-left: 3px solid var(--brass);
+  }
+
+  .assumptions-box h3 { border-bottom-color: var(--brass); }
+
+  .facts-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .facts-table th {
+    text-align: left;
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .facts-table td {
+    padding: 6px 8px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .facts-table tbody tr:nth-child(even) { background: rgba(127, 127, 127, 0.06); }
+
+  .facts-table th:nth-child(1), .facts-table td:nth-child(1) { width: 21%; overflow-wrap: anywhere; }
+  .facts-table th:nth-child(2), .facts-table td:nth-child(2) { width: 13%; font-variant-numeric: tabular-nums; }
+  .facts-table th:nth-child(3), .facts-table td:nth-child(3) { width: 12%; }
+  .facts-table th:nth-child(4), .facts-table td:nth-child(4) { width: 8%; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .facts-table th:nth-child(5), .facts-table td:nth-child(5) { width: 28%; }
+  .facts-table th:nth-child(6), .facts-table td:nth-child(6) { width: 18%; overflow-wrap: anywhere; }
+
+  /* The measurement boundary is long prose and was driving row height.
+     Smaller and quieter, so nineteen rows stay scannable - the text is
+     still there in full. */
+  .facts-table td:nth-child(5) {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  /* --- footer --------------------------------------------------------- */
+
+  footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 600px) {
+    .field-row { flex-direction: column; }
+    .field-row > .field { min-width: 0; }
+    .hero { height: 180px; object-fit: cover; object-position: 62% 50%; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <img class="hero" src="../assets/banner.jpg" width="1600" height="893" decoding="async"
+       alt="Thirsty, ein kleiner Roboter aus gefaltetem Karton, sitzt auf einem Papiersteg an einem Bergsee und trinkt durch einen langen gefalteten Strohhalm. Ein heller, trockener Ring am Ufer zeigt, wie weit das Wasser schon gesunken ist.">
+  <h1>ThirstyAI Rechner</h1>
+  <p class="subtitle">Wasser | Energie | CO&#8322;-Fußabdruck von KI-Anfragen &mdash; eine Schätzung mit Spannen, keine Messung</p>
+
+  <form>
+    <div class="field">
+      <div class="label-row">
+        <label for="model">Modell</label>
+        <span class="info">
+          <button type="button" class="info-btn" popovertarget="tip-model" aria-label="Erklärung">?</button>
+          <span class="info-text" popover id="tip-model">An welches KI-Modell die Anfrage geht. Modelle sind nach Größenklasse gruppiert; ähnlich große Modelle teilen sich dieselbe Energieschätzung.</span>
+        </span>
+      </div>
+      <select id="model"></select>
+      <span class="region-note">Modelle sind nach Größenklasse gruppiert. Ähnlich große Modelle teilen sich dieselbe Energieschätzung; geschlossene Modelle werden durch offene Modelle vergleichbarer Größe vertreten.</span>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <div class="label-row">
+          <label for="amount">Menge</label>
+          <span class="info">
+            <button type="button" class="info-btn" popovertarget="tip-amount" aria-label="Erklärung">?</button>
+            <span class="info-text" popover id="tip-amount">Wie viel Text das Modell erzeugt. Das treibt den Energieverbrauch &mdash; das Lesen der Eingabe kostet weit weniger.</span>
+          </span>
+        </div>
+        <input type="number" id="amount" value="1000" min="0" max="100000000000" step="1">
+        <div class="radio-group">
+          <label><input type="radio" name="unit" id="unit-output-tokens" value="output-tokens" checked> Output-Token</label>
+          <span class="info">
+            <button type="button" class="info-btn" popovertarget="tip-output-tokens" aria-label="Erklärung">?</button>
+            <span class="info-text" popover id="tip-output-tokens">Token sind die Stücke, in die Modelle Text zerlegen &mdash; Wortteile, kurze Wörter, Satzzeichen. Grob 1,3 Token pro Wort.</span>
+          </span>
+          <label><input type="radio" name="unit" id="unit-words" value="words"> Wörter</label>
+          <span class="info">
+            <button type="button" class="info-btn" popovertarget="tip-words" aria-label="Erklärung">?</button>
+            <span class="info-text" popover id="tip-words">Stattdessen eine Wortzahl eingeben; sie wird mit 1,3 Token pro Wort umgerechnet.</span>
+          </span>
+        </div>
+        <div class="preset-row">
+          <button type="button" class="preset" data-amount="500">Eine Antwort</button>
+          <button type="button" class="preset" data-amount="10000">Ein Nutzer, ein Tag</button>
+          <button type="button" class="preset" data-amount="2600000">Ein Nutzer, ein Jahr</button>
+          <button type="button" class="preset" data-amount="1300000000">500 Nutzer, ein Jahr</button>
+        </div>
+        <div id="amount-echo"></div>
+        <div id="derived-tokens" hidden></div>
+      </div>
+
+      <div class="field">
+        <div class="label-row">
+          <label for="region">Region</label>
+          <span class="info">
+            <button type="button" class="info-btn" popovertarget="tip-region" aria-label="Erklärung">?</button>
+            <span class="info-text" popover id="tip-region">Wo das Rechenzentrum läuft. Die Region bestimmt den Strommix und damit sowohl den CO2-Gehalt des Stroms als auch das in den Kraftwerken verbrauchte Wasser.</span>
+          </span>
+        </div>
+        <select id="region"></select>
+        <span class="region-note">Bezugsjahr 2024</span>
+      </div>
+    </div>
+
+    <details>
+      <summary>Erweitert<span class="info">
+        <button type="button" class="info-btn" popovertarget="tip-advanced" aria-label="Erklärung">?</button>
+        <span class="info-text" popover id="tip-advanced">Optional. Input-Token werden mit einem Anteil von 0,1 gegenüber Output-Token angerechnet &mdash; eine Annahme, keine Messung.</span>
+      </span></summary>
+      <div class="field">
+        <div class="label-row">
+          <label for="tokens-in">Input-Token</label>
+          <span class="info">
+            <button type="button" class="info-btn" popovertarget="tip-tokens-in" aria-label="Erklärung">?</button>
+            <span class="info-text" popover id="tip-tokens-in">Der Text, den das Modell vor der Antwort liest. Günstiger als Erzeugen, aber nicht kostenlos.</span>
+          </span>
+        </div>
+        <input type="number" id="tokens-in" value="0" min="0" step="1">
+      </div>
+    </details>
+
+    <button type="button" id="calculate" class="needs-attention">Berechnen</button>
+  </form>
+
+  <section id="results" aria-live="polite">
+    <div class="result-label">So liest man die Balken</div>
+
+    <svg class="example-bar example-bar-wide" viewBox="0 0 560 100" width="560" height="100"
+         role="img" aria-label="Beispielbalken: die gefüllte Fläche endet beim Minimum, eine messingfarbene Linie markiert den am besten belegten Wert, die Kante ganz rechts ist das Maximum, und die schraffierte Fläche dazwischen ist die Spanne, über die sich die Quellen uneinig sind.">
+      <defs>
+        <pattern id="ex-hatch-wide" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect class="ex-hatch-bg" width="12" height="12"/>
+          <rect class="ex-hatch-stripe" width="6" height="12"/>
+        </pattern>
+      </defs>
+      <rect x="110" y="30" width="250" height="14" fill="url(#ex-hatch-wide)"/>
+      <rect class="ex-fill" x="110" y="30" width="50" height="14"/>
+      <rect class="ex-marker" x="284" y="26" width="2" height="22"/>
+      <rect class="ex-edge" x="360" y="30" width="2" height="14"/>
+      <polyline class="ex-leader" points="100,62 160,62 160,44"/>
+      <polyline class="ex-leader" points="285,26 285,14 370,14"/>
+      <polyline class="ex-leader" points="361,44 361,62 370,62"/>
+      <text x="96" y="66" text-anchor="end">Minimum</text>
+      <text x="374" y="18">am besten belegter Wert</text>
+      <text x="374" y="66">Maximum</text>
+      <text x="110" y="92">die schraffierte Fläche ist die Spanne, über die sich die Quellen uneinig sind</text>
+    </svg>
+
+    <svg class="example-bar example-bar-narrow" viewBox="0 0 320 145" width="320" height="145"
+         role="img" aria-label="Beispielbalken: die gefüllte Fläche endet beim Minimum, eine messingfarbene Linie markiert den am besten belegten Wert, die Kante ganz rechts ist das Maximum, und die schraffierte Fläche dazwischen ist die Spanne, über die sich die Quellen uneinig sind.">
+      <defs>
+        <pattern id="ex-hatch-narrow" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect class="ex-hatch-bg" width="12" height="12"/>
+          <rect class="ex-hatch-stripe" width="6" height="12"/>
+        </pattern>
+      </defs>
+      <rect x="10" y="20" width="280" height="14" fill="url(#ex-hatch-narrow)"/>
+      <rect class="ex-fill" x="10" y="20" width="56" height="14"/>
+      <rect class="ex-marker" x="205" y="16" width="2" height="22"/>
+      <rect class="ex-edge" x="290" y="20" width="2" height="14"/>
+      <polyline class="ex-leader" points="66,34 66,50 74,50"/>
+      <polyline class="ex-leader" points="206,34 206,70 198,70"/>
+      <polyline class="ex-leader" points="291,34 291,90 283,90"/>
+      <text x="78" y="54">Minimum</text>
+      <text x="194" y="74" text-anchor="end">am besten belegter Wert</text>
+      <text x="279" y="94" text-anchor="end">Maximum</text>
+      <text x="10" y="120">die schraffierte Fläche ist die Spanne<tspan x="10" dy="14">über die sich die Quellen uneinig sind</tspan></text>
+    </svg>
+
+    <p class="note">Modell, Menge und Region wählen, dann auf Berechnen drücken.</p>
+  </section>
+
+  <footer>
+    Faktentabelle erzeugt <span id="facts-generated"></span> &middot; Schema 0.3 &middot;
+    <a href="../faq-de.html">Quellen und Methodik</a>
+    &middot; <a href="../glossary-de.html">Glossar</a>
+  </footer>
+</main>
+<script type="module" src="./bundle.js"></script>
+</body>
+</html>

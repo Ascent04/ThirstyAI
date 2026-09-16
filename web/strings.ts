@@ -74,7 +74,80 @@ export const EN = {
 
 export type Strings = typeof EN;
 
-const TABLES: Record<string, Strings> = { en: EN };
+export const DE: Strings = {
+  infoExplanation: "Erklärung",
+  infoToggleGlyph: "?",
+  barNumbers: (min, mid, max) => `min ${min} · mid ${mid} · max ${max}`,
+  boundaryFallback: "—",
+  columnTipId: "Kennung in data/facts.json.",
+  columnTipValue: "Der Wert, wie er in der Quelle steht, mit Einheit.",
+  columnTipRating: "Stärke der Belege — siehe Glossar.",
+  columnTipConfidence: "Wie verlässlich dieser Wert ist, 1 bis 5.",
+  columnTipMeasurementBoundary: "Was dieser Wert einschließt und was nicht.",
+  columnTipSource: "Woher der Wert stammt.",
+  columnId: "ID",
+  columnValue: "Wert",
+  columnRating: "Bewertung",
+  columnConfidence: "Konfidenz",
+  columnMeasurementBoundary: "Messgrenze",
+  columnSource: "Quelle",
+  otherUnknownModel: "Anderes / unbekanntes Modell",
+  amountTooLarge: "Wert zu groß — der Rechner ist für bis zu 100 Milliarden Token gedacht.",
+  unitWords: "Wörter",
+  unitOutputTokens: "Output-Token",
+  derivedTokens: (tokens, wordsToTokens) =>
+    `≈ ${tokens} Output-Token, ×${wordsToTokens.replace(".", ",")} Annahme`,
+  labelEnergy: "Energie",
+  tipEnergy:
+    "Strom für eine Anfrage, vom Chip bis zum Rechenzentrum. Wattstunden: " +
+    "ein 40-Watt-Laptop verbraucht in einer Minute etwa 0,7 Wh.",
+  labelWater: "Wasser",
+  tipWater:
+    "Verdunstetes Wasser für eine Anfrage — Kühlung im Rechenzentrum plus " +
+    "Kühlung in den Kraftwerken, die den Strom geliefert haben.",
+  labelCo2: "CO2",
+  tipCo2:
+    "Kohlendioxid aus der Stromerzeugung für eine Anfrage. Location-based: " +
+    "der tatsächliche Strommix der Region, keine Ökostromverträge.",
+  rangeNote: "Spanne = Streuung zwischen den Methoden glaubwürdiger Quellen, kein Messfehler.",
+  dataConfidence: (n) => `Datenkonfidenz ${n}/5`,
+  dataConfidenceTip:
+    "Die schwächste belegte Quelle, die in dieses Ergebnis eingeht, von 1 " +
+    "bis 5. Sagt, wie gut die Daten sind.",
+  methodConfidence: (n) => `Methodenkonfidenz ${n}/5`,
+  methodConfidenceTip:
+    "Die schwächste Annahme, die in dieses Ergebnis eingeht, von 1 bis 5. " +
+    "Sagt, wie belastbar die Rechnung dort ist, wo keine Quelle existiert.",
+  measurementBoundaryLine: (boundary) => `Messgrenze: ${boundary}`,
+  measurementBoundaryTip:
+    "Wie viel vom System mitgezählt wird. gpu-only heißt: die Zahl erfasst " +
+    "den Chip und wird auf das Rechenzentrum hochgerechnet; fullstack heißt: " +
+    "über den ganzen Stack gemessen.",
+  operationOnlyNote:
+    "Nur Betrieb. Training, Hardware-Herstellung und Bau des Rechenzentrums " +
+    "sind nicht enthalten — siehe FAQ zur Systemgrenze.",
+  methodConfidenceCappedNote:
+    "Die Methodenkonfidenz ist durch ungeprüfte Annahmen auf 1/5 begrenzt " +
+    "(siehe Annahmen unten). Die Datenkonfidenz spiegelt die schwächste " +
+    "tatsächlich verwendete gemessene Quelle.",
+  waterFallbackNote:
+    "Für diese Region liegt kein Wasserfaktor für das Stromnetz vor — " +
+    "ersatzweise gilt der US-Durchschnitt, die Konfidenz ist entsprechend begrenzt.",
+  carbonFallbackNote:
+    "Kein regionaler CO2-Faktor für das Stromnetz verfügbar — ersatzweise " +
+    "gilt der US-Durchschnitt.",
+  unknownModelHint: "Unbekanntes Modell: konservative Schätzung der Frontier-Klasse.",
+  factsUsedTitle: "Verwendete Fakten",
+  factsUsedTip:
+    "Jede Quelle, die in dieses Ergebnis eingeht. Bewertungen und Messgrenzen " +
+    "werden angezeigt, damit die Zahlen nachprüfbar sind.",
+  assumptionsTitle: "Annahmen",
+  assumptionsTip:
+    "Werte, die das Projekt selbst setzen musste, weil keine Quelle existiert. " +
+    "Sie werden bewusst getrennt von belegten Fakten geführt.",
+};
+
+const TABLES: Record<string, Strings> = { en: EN, de: DE };
 export function pick(lang: string): Strings {
   return TABLES[lang.slice(0, 2).toLowerCase()] ?? EN;
 }
