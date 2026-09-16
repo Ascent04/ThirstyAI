@@ -27,14 +27,14 @@ Die Belegstärke eines Fakts. Vier Stufen:
 - **UMSTRITTEN** — mehrere seriöse Quellen widersprechen sich bei derselben Größe.
 - **ANNAHME** — keine Quelle; vom Projekt gesetzt.
 
-### Vertrauensnote (confidence)
+### Konfidenz (confidence)
 Eine Zahl von 1 bis 5 je Fakt. Sie bewertet, wie belastbar der einzelne Wert ist — unabhängig vom Rating. Ein BESTÄTIGT-Fakt kann eine niedrige Note tragen, wenn die Quelle selbst Unsicherheiten einräumt.
 
-### Data confidence
-Die schwächste Vertrauensnote unter den **belegten** Fakten, die in eine konkrete Rechnung eingegangen sind. Sagt: So gut ist die Datenlage für dieses Ergebnis.
+### Datenkonfidenz (data confidence)
+Die schwächste Konfidenz unter den **belegten** Fakten, die in eine konkrete Rechnung eingegangen sind. Sagt: So gut ist die Datenlage für dieses Ergebnis.
 
-### Method confidence
-Die schwächste Vertrauensnote unter den **Annahmen**, die eingegangen sind. Sagt: So gut ist der Rechenweg dort, wo es keine Quelle gibt. Steht praktisch immer auf 1, weil der Overhead-Faktor in fast jeder Rechnung steckt.
+### Methodenkonfidenz (method confidence)
+Die schwächste Konfidenz unter den **Annahmen**, die eingegangen sind. Sagt: So gut ist der Rechenweg dort, wo es keine Quelle gibt. Steht praktisch immer auf 1, weil der Overhead-Faktor in fast jeder Rechnung steckt.
 
 ### Messgrenze (measurement_boundary)
 Was ein Wert einschließt und was nicht. Der wichtigste Kontext überhaupt: Ein Energiewert für „nur den Grafikchip" und einer für „das ganze Rechenzentrum" unterscheiden sich um Faktor 1,7 bis 2,4, obwohl beide „Wattstunden pro Anfrage" heißen.
@@ -105,7 +105,7 @@ Zwei Wege, den CO₂-Gehalt von Strom zu bestimmen. **Standortbasiert** nimmt de
 **GPU-only** misst nur den Grafikchip. **Vollstack** misst den ganzen Server samt Prozessor, Arbeitsspeicher, Netzwerk und Rechenzentrum. Die meisten veröffentlichten Messungen sind GPU-only.
 
 ### Overhead-Faktor
-Die Zahl, mit der von GPU-only auf Vollstack umgerechnet wird. Liegt zwischen 1,7 und 2,4. Eine Annahme, keine Messung — und der Grund, warum die Method confidence fast immer 1 ist.
+Die Zahl, mit der von GPU-only auf Vollstack umgerechnet wird. Liegt zwischen 1,7 und 2,4. Eine Annahme, keine Messung — und der Grund, warum die Methodenkonfidenz fast immer 1 ist.
 
 ### Ökobilanz (LCA)
 Eine Bewertung nach ISO 14040/44, die alle Lebensphasen erfasst: Rohstoffgewinnung, Herstellung, Nutzung, Entsorgung. Deutlich weiter als ThirstyAIs Betriebsrechnung.

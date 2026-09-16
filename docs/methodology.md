@@ -220,7 +220,7 @@ only then the name heuristic. "mistral-large-latest" is recorded as an
 alias of `params-mistral-large-2` and is thereby correctly classified as
 "mid" - finding 3 is thus fixed for the cross-check (see the updated
 results.md, mistral rows now at 1.3 to 1.7 times instead of a factor of 6-8).
-The confidence staffing of the name heuristic was also refined:
+The confidence tiering of the name heuristic was also refined:
 fact-based matches take on the fact's own confidence; a name match with
 a recognized family AND a size/behavior marker (e.g. "mini", "70b",
 "r1") yields confidence 2; a recognized family without a marker, or a

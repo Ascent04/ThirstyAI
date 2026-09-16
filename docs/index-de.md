@@ -10,7 +10,7 @@ ThirstyAI schätzt den Wasser-, Strom- und CO&#8322;-Fußabdruck einer
 KI-Anfrage — als Bandbreite, nicht als einzelne Zahl, weil die zugrunde
 liegenden Messungen aus unterschiedlichen Systemgrenzen, Regionen und
 Methoden stammen. Jedes Ergebnis nennt die Fakten und Annahmen dahinter,
-jeweils mit einer Vertrauensnote (confidence).
+jeweils mit einer Konfidenz (confidence).
 
 Derzeit gestützt auf **144 Fakten** aus **35 Quellen**.
 

@@ -51,7 +51,7 @@ Wenn du in einem langen Gespräch weiterschreibst, muss das Modell den bisherige
 3. **Strom → Wasser vor Ort (Scope 1).** Kühltürme verdunsten Wasser. Der Faktor (Liter pro kWh) hängt am Chip-Strom, nicht am Gebäude-Strom – das ist ein Detail, das im Code richtig sitzen muss und heute bewiesen ist.
 4. **Strom → Wasser im Kraftwerk (Scope 2).** Auch das Kraftwerk braucht Kühlwasser. Regionale Faktoren.
 5. **Strom → CO₂.** Strommix der Region: Frankreich (Atom) sehr niedrig, Deutschland mittel, Indien hoch. Für 2024 gibt es pro Region drei Werte (min/mid/max) aus verschiedenen Datenbanken (UBA, Ember, EEA, eGRID).
-6. **Ausgabe** als Spanne mit Bezugsjahr, Fakt-IDs und Vertrauensnoten.
+6. **Ausgabe** als Spanne mit Bezugsjahr, Fakt-IDs und Konfidenzwerten.
 
 ### Was ist nicht enthalten?
 Die Rechnung deckt den **laufenden Betrieb einer einzelnen Anfrage** ab: Strom am Chip, Aufschlag fürs Rechenzentrum, Kühlwasser vor Ort, Kraftwerkswasser und CO₂ des Strommixes. Ausdrücklich **nicht** enthalten sind:
@@ -68,7 +68,7 @@ Der Unterschied liegt fast vollständig im Training: Laut derselben Studie entfa
 Für eine Scope-3-Bilanz heißt das: Die Zahlen aus ThirstyAI sind der Betriebsanteil, nicht der Gesamtfußabdruck. Wer den vollständigen Lebenszyklus braucht, kommt an einer Ökobilanz des jeweiligen Modells nicht vorbei — und die gibt es bisher für genau ein Modell.
 
 ### Was ist der „Overhead-Faktor"?
-Die meisten veröffentlichten Messungen erfassen nur den Grafikchip (GPU), nicht den ganzen Server mit Prozessor, Arbeitsspeicher, Netzwerk und Speicher. Der Overhead-Faktor rechnet von der einen Grenze auf die andere um; er liegt zwischen 1,7 und 2,4. Er ist eine Annahme, keine Messung – und weil er in fast jeder Rechnung steckt, begrenzt er die Methoden-Vertrauensnote (siehe unten) nach unten.
+Die meisten veröffentlichten Messungen erfassen nur den Grafikchip (GPU), nicht den ganzen Server mit Prozessor, Arbeitsspeicher, Netzwerk und Speicher. Der Overhead-Faktor rechnet von der einen Grenze auf die andere um; er liegt zwischen 1,7 und 2,4. Er ist eine Annahme, keine Messung – und weil er in fast jeder Rechnung steckt, begrenzt er die Methodenkonfidenz (siehe unten) nach unten.
 
 ### Was ist „Scope 1" und „Scope 2" beim Wasser?
 Begriffe aus der CO₂-Bilanzierung, hier auf Wasser übertragen: Scope 1 = direkt vor Ort (Kühlung im Rechenzentrum), Scope 2 = indirekt über die Stromerzeugung (Kraftwerkskühlung). Beides zusammen ist der Wasserfußabdruck.
@@ -95,19 +95,19 @@ Das ist die richtige Frage, und die Antwort ist ein Verfahren, kein Versprechen:
 
 1. **Nur Primärquellen.** Kein Wert kommt aus einem Blogartikel, einer Zusammenfassung oder einer Schlagzeile. Wenn ein Wert in einem Artikel steht, wird die dort zitierte Originalquelle geöffnet und der Wert dort nachgeschlagen. Steht er dort nicht, kommt er nicht in die Tabelle.
 2. **Jede Quelle wurde tatsächlich geöffnet.** Nicht „ist bekannt", sondern: PDF heruntergeladen, Seite gelesen, Tabelle gefunden, Wert abgeschrieben. Wo ein Fakt in einer dokumentierten Prüfrunde gegen seine Primärquelle geprüft wurde, hält das `verified`-Feld fest, wann und von wem. Nicht jeder Fakt trägt das Feld; `docs/verification-v0.2.md` und `docs/verification-v0.3.md` halten fest, welche Fakten geprüft wurden und wie.
-3. **Rating nach Belegstärke.** Jeder Fakt trägt eine von drei Noten: BESTÄTIGT (Primärquelle plus unabhängige Zweitquelle), EINZELQUELLE (eine seriöse Quelle, keine Bestätigung), UMSTRITTEN (seriöse Quellen widersprechen sich). Zusätzlich eine Vertrauensnote 1–5. Was nur geschätzt ist, heißt ANNAHME und liegt in einer eigenen Datei.
+3. **Rating nach Belegstärke.** Jeder Fakt trägt eine von drei Noten: BESTÄTIGT (Primärquelle plus unabhängige Zweitquelle), EINZELQUELLE (eine seriöse Quelle, keine Bestätigung), UMSTRITTEN (seriöse Quellen widersprechen sich). Zusätzlich eine Konfidenz 1–5. Was nur geschätzt ist, heißt ANNAHME und liegt in einer eigenen Datei.
 4. **Kontext wird mitgeschrieben.** Ein Messwert ohne Messgrenze ist wertlos: „GPU-only" (nur der Chip) und „Vollstack" (ganzes Rechenzentrum) unterscheiden sich um Faktor 1,7 bis 2,4. Jeder Fakt trägt seine Messgrenze, damit man nicht Äpfel mit Birnen rechnet.
 5. **Negativbefunde werden festgehalten.** Wenn ein Anbieter nichts veröffentlicht, steht das als Fakt in der Tabelle, mit Prüfdatum. So sieht man, was gesucht und nicht gefunden wurde – und wann man nachschauen sollte.
 6. **Werte werden nie überschrieben.** Kommt eine neue Zahl, wird ein neuer Fakt angelegt; der alte bleibt. Man kann jede Rechnung von früher wiederholen.
 7. **Vier-Augen-Prinzip.** Recherche und Prüfung der Quelle einerseits, Eintragen in die Datei andererseits sind getrennte Rollen. Wer einträgt, prüft nicht selbst – und schreibt das so ins `verified`-Feld.
 
-Wie sicher bist du also? So sicher wie die beste Quelle, die es gibt, und das Rating sagt dir, wie gut die ist. Bei UMSTRITTEN oder Vertrauensnote 2 weißt du: Hier ist die Spanne breit, weil die Welt es nicht besser weiß – nicht, weil das Werkzeug schlampig war.
+Wie sicher bist du also? So sicher wie die beste Quelle, die es gibt, und das Rating sagt dir, wie gut die ist. Bei UMSTRITTEN oder Konfidenz 2 weißt du: Hier ist die Spanne breit, weil die Welt es nicht besser weiß – nicht, weil das Werkzeug schlampig war.
 
-### Was bedeuten „Data confidence" und „Method confidence"?
-Zwei getrennte Vertrauensnoten, jeweils von 1 bis 5:
+### Was bedeuten „Datenkonfidenz" und „Methodenkonfidenz"?
+Zwei getrennte Konfidenzwerte, jeweils von 1 bis 5:
 
-- **Data confidence** ist die schwächste *belegte* Quelle, die in diese konkrete Rechnung eingegangen ist. Sie sagt: So gut ist die Datenlage.
-- **Method confidence** ist die schwächste *Annahme*, die eingegangen ist. Sie sagt: So gut ist der Rechenweg dort, wo es keine Quelle gibt.
+- **Datenkonfidenz** ist die schwächste *belegte* Quelle, die in diese konkrete Rechnung eingegangen ist. Sie sagt: So gut ist die Datenlage.
+- **Methodenkonfidenz** ist die schwächste *Annahme*, die eingegangen ist. Sie sagt: So gut ist der Rechenweg dort, wo es keine Quelle gibt.
 
 Die Trennung ist nötig, weil eine einzelne Note irreführend wäre. Der Overhead-Faktor ist eine Annahme mit Note 1 und steckt in fast jeder Rechnung – eine gemeinsame Note wäre deshalb fast immer 1, egal wie gut die Quellen sind. Getrennt sieht man: Die Quellenarbeit kann bei 4 liegen, während die Methode bei 1 liegt. Beide Zahlen zusammen mit der Faktenliste darunter erlauben es, die Noten selbst nachzurechnen.
 
@@ -155,7 +155,7 @@ Wenn ein Anbieter freiwillig einen belastbaren Wert veröffentlicht, wird er als
 ## Teil 5 – Bekannte Lücken (ehrlich)
 
 - **Langer Kontext.** Die Energiewerte pro Token stammen aus Kurzkontext-Benchmarks. Bei Sitzungen mit 300.000+ Token Kontext ist der Verbrauch pro Output-Token systematisch höher. Dokumentiert, nicht gelöst.
-- **Overhead-Faktor** ist eine Annahme und begrenzt die Method confidence in praktisch jeder Rechnung auf 1.
+- **Overhead-Faktor** ist eine Annahme und begrenzt die Methodenkonfidenz in praktisch jeder Rechnung auf 1.
 - **Cache-Faktor** ist eine Annahme und dominiert die Spanne bei langen Sitzungen.
 - **Input-Anteil 0,1** ist eine Annahme, nur qualitativ gestützt.
 - **Kraftwerkswasser** stammt überwiegend aus dem Datenjahr 2015; für einige Länder liegen zwei Quellen mit abweichenden Werten vor.
