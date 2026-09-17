@@ -1,5 +1,7 @@
 ---
+layout: default
 title: Glossar
+lang: de
 ---
 # Glossar
 

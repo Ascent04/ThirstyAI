@@ -1,4 +1,5 @@
 ---
+layout: default
 title: FAQ
 ---
 # ThirstyAI – Frequently Asked Questions

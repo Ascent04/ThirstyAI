@@ -24,10 +24,17 @@
 <body>
 <header class="site-header">
   <nav class="site-nav">
+    {% if page.lang == "de" %}
+    <a href="{{ site.baseurl }}/index-de.html">Start</a>
+    <a href="{{ site.baseurl }}/calculator/index-de.html">Rechner</a>
+    <a href="{{ site.baseurl }}/faq-de.html">FAQ</a>
+    <a href="{{ site.baseurl }}/glossary-de.html">Glossar</a>
+    {% else %}
     <a href="{{ site.baseurl }}/">Home</a>
     <a href="{{ site.baseurl }}/calculator/">Calculator</a>
     <a href="{{ site.baseurl }}/faq.html">FAQ</a>
     <a href="{{ site.baseurl }}/glossary.html">Glossary</a>
+    {% endif %}
   </nav>
   <div class="site-controls">
     {% assign base = page.name | remove: ".md" %}
@@ -50,7 +57,11 @@
     {% endif %}
     <button type="button" id="theme-toggle" aria-label="Toggle dark mode">&#9680;</button>
   </div>
+  {% if page.lang == "de" %}
+  <input type="search" id="site-search" placeholder="Diese Seite durchsuchen…" aria-label="Diese Seite durchsuchen">
+  {% else %}
   <input type="search" id="site-search" placeholder="Search this page…" aria-label="Search this page">
+  {% endif %}
 </header>
 <main id="page-content">
 {{ content }}

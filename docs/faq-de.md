@@ -1,5 +1,7 @@
 ---
+layout: default
 title: FAQ
+lang: de
 ---
 # ThirstyAI – Fragen und Antworten
 
