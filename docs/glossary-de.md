@@ -17,9 +17,9 @@ Diese Begriffe stehen so in der Faktentabelle und auf der Rechner-Seite. Sie zu 
 Ein einzelner Wert aus einer geprüften Quelle, mit ID, Einheit, Messgrenze, Bewertung und Quellenangabe. Fakten liegen in `data/facts.json`.
 
 ### Annahme
-Ein Wert, den das Projekt selbst setzen musste, weil keine Quelle existiert. Annahmen liegen getrennt in `data/assumptions.json` und tragen das Rating ANNAHME. Die Trennung ist eine Regel: Datei folgt Rating.
+Ein Wert, den das Projekt selbst setzen musste, weil keine Quelle existiert. Annahmen liegen getrennt in `data/assumptions.json` und tragen die Bewertung ANNAHME. Die Trennung ist eine Regel: Datei folgt Bewertung.
 
-### Rating
+### Bewertung (rating)
 Die Belegstärke eines Fakts. Vier Stufen:
 
 - **BESTÄTIGT** — Primärquelle plus unabhängige Zweitquelle.
@@ -28,7 +28,7 @@ Die Belegstärke eines Fakts. Vier Stufen:
 - **ANNAHME** — keine Quelle; vom Projekt gesetzt.
 
 ### Konfidenz (confidence)
-Eine Zahl von 1 bis 5 je Fakt. Sie bewertet, wie belastbar der einzelne Wert ist — unabhängig vom Rating. Ein BESTÄTIGT-Fakt kann eine niedrige Note tragen, wenn die Quelle selbst Unsicherheiten einräumt.
+Eine Zahl von 1 bis 5 je Fakt. Sie bewertet, wie belastbar der einzelne Wert ist — unabhängig von der Bewertung. Ein BESTÄTIGT-Fakt kann eine niedrige Note tragen, wenn die Quelle selbst Unsicherheiten einräumt.
 
 ### Datenkonfidenz (data confidence)
 Die schwächste Konfidenz unter den **belegten** Fakten, die in eine konkrete Rechnung eingegangen sind. Sagt: So gut ist die Datenlage für dieses Ergebnis.
@@ -55,7 +55,7 @@ Der Vorgang, mit dem neue Daten in die Tabelle kommen: Recherche, Prüfung, Übe
 Das Feld, das festhält, wann und von wem eine Quelle tatsächlich geöffnet und der Wert dort nachgeschlagen wurde. Nicht jeder Fakt trägt das Feld; welche Fakten geprüft wurden, steht in `verification-v0.2.md` und `verification-v0.3.md`.
 
 ### second_source
-Die unabhängige Zweitquelle, die einen Wert bestätigt. Sie ist die Voraussetzung für das Rating BESTÄTIGT.
+Die unabhängige Zweitquelle, die einen Wert bestätigt. Sie ist die Voraussetzung für die Bewertung BESTÄTIGT.
 
 ### Crosscheck
 Ein Fakt, der bewusst **nicht** in die Rechnung eingeht, sondern zum Vergleich dient — etwa Mistrals Ökobilanz, die einen anderen Lebenszyklus abdeckt als ThirstyAI.

@@ -95,13 +95,13 @@ Das ist die richtige Frage, und die Antwort ist ein Verfahren, kein Versprechen:
 
 1. **Nur Primärquellen.** Kein Wert kommt aus einem Blogartikel, einer Zusammenfassung oder einer Schlagzeile. Wenn ein Wert in einem Artikel steht, wird die dort zitierte Originalquelle geöffnet und der Wert dort nachgeschlagen. Steht er dort nicht, kommt er nicht in die Tabelle.
 2. **Jede Quelle wurde tatsächlich geöffnet.** Nicht „ist bekannt", sondern: PDF heruntergeladen, Seite gelesen, Tabelle gefunden, Wert abgeschrieben. Wo ein Fakt in einer dokumentierten Prüfrunde gegen seine Primärquelle geprüft wurde, hält das `verified`-Feld fest, wann und von wem. Nicht jeder Fakt trägt das Feld; `docs/verification-v0.2.md` und `docs/verification-v0.3.md` halten fest, welche Fakten geprüft wurden und wie.
-3. **Rating nach Belegstärke.** Jeder Fakt trägt eine von drei Noten: BESTÄTIGT (Primärquelle plus unabhängige Zweitquelle), EINZELQUELLE (eine seriöse Quelle, keine Bestätigung), UMSTRITTEN (seriöse Quellen widersprechen sich). Zusätzlich eine Konfidenz 1–5. Was nur geschätzt ist, heißt ANNAHME und liegt in einer eigenen Datei.
+3. **Bewertung nach Belegstärke.** Jeder Fakt trägt eine von drei Noten: BESTÄTIGT (Primärquelle plus unabhängige Zweitquelle), EINZELQUELLE (eine seriöse Quelle, keine Bestätigung), UMSTRITTEN (seriöse Quellen widersprechen sich). Zusätzlich eine Konfidenz 1–5. Was nur geschätzt ist, heißt ANNAHME und liegt in einer eigenen Datei.
 4. **Kontext wird mitgeschrieben.** Ein Messwert ohne Messgrenze ist wertlos: „GPU-only" (nur der Chip) und „Vollstack" (ganzes Rechenzentrum) unterscheiden sich um Faktor 1,7 bis 2,4. Jeder Fakt trägt seine Messgrenze, damit man nicht Äpfel mit Birnen rechnet.
 5. **Negativbefunde werden festgehalten.** Wenn ein Anbieter nichts veröffentlicht, steht das als Fakt in der Tabelle, mit Prüfdatum. So sieht man, was gesucht und nicht gefunden wurde – und wann man nachschauen sollte.
 6. **Werte werden nie überschrieben.** Kommt eine neue Zahl, wird ein neuer Fakt angelegt; der alte bleibt. Man kann jede Rechnung von früher wiederholen.
 7. **Vier-Augen-Prinzip.** Recherche und Prüfung der Quelle einerseits, Eintragen in die Datei andererseits sind getrennte Rollen. Wer einträgt, prüft nicht selbst – und schreibt das so ins `verified`-Feld.
 
-Wie sicher bist du also? So sicher wie die beste Quelle, die es gibt, und das Rating sagt dir, wie gut die ist. Bei UMSTRITTEN oder Konfidenz 2 weißt du: Hier ist die Spanne breit, weil die Welt es nicht besser weiß – nicht, weil das Werkzeug schlampig war.
+Wie sicher bist du also? So sicher wie die beste Quelle, die es gibt, und die Bewertung sagt dir, wie gut die ist. Bei UMSTRITTEN oder Konfidenz 2 weißt du: Hier ist die Spanne breit, weil die Welt es nicht besser weiß – nicht, weil das Werkzeug schlampig war.
 
 ### Was bedeuten „Datenkonfidenz" und „Methodenkonfidenz"?
 Zwei getrennte Konfidenzwerte, jeweils von 1 bis 5:
@@ -112,10 +112,10 @@ Zwei getrennte Konfidenzwerte, jeweils von 1 bis 5:
 Die Trennung ist nötig, weil eine einzelne Note irreführend wäre. Der Overhead-Faktor ist eine Annahme mit Note 1 und steckt in fast jeder Rechnung – eine gemeinsame Note wäre deshalb fast immer 1, egal wie gut die Quellen sind. Getrennt sieht man: Die Quellenarbeit kann bei 4 liegen, während die Methode bei 1 liegt. Beide Zahlen zusammen mit der Faktenliste darunter erlauben es, die Noten selbst nachzurechnen.
 
 ### Was ist der Unterschied zwischen `facts.json` und `assumptions.json`?
-`facts.json`: alles, was in einer Quelle steht (Ratings BESTÄTIGT, EINZELQUELLE, UMSTRITTEN). `assumptions.json`: alles, was das Projekt selbst setzen musste, weil es keine Quelle gibt – der Input-Anteil 0,1, der Cache-Faktor, der Overhead-Faktor. Die Trennung ist eine Regel: Datei folgt Rating. So kann ein Prüfer sofort sehen, wo Belege enden und Schätzung anfängt. Im Web-Rechner entspricht das den zwei getrennten Tabellen unter dem Ergebnis.
+`facts.json`: alles, was in einer Quelle steht (Bewertungen BESTÄTIGT, EINZELQUELLE, UMSTRITTEN). `assumptions.json`: alles, was das Projekt selbst setzen musste, weil es keine Quelle gibt – der Input-Anteil 0,1, der Cache-Faktor, der Overhead-Faktor. Die Trennung ist eine Regel: Datei folgt Bewertung. So kann ein Prüfer sofort sehen, wo Belege enden und Schätzung anfängt. Im Web-Rechner entspricht das den zwei getrennten Tabellen unter dem Ergebnis.
 
 ### Wie kommen neue Daten hinein?
-Der Weg heißt „Addendum" und läuft in Zyklen: Recherche (Quellen öffnen, Werte finden, Rating vergeben, Befund ablegen), Review (Ist die Quelle seriös, ist das Rating richtig, gehört der Wert hinein?), Übertragung (neue Fakten anlegen, IDs vergeben, `verified`-Feld setzen), Verwendung (erst wenn der Fakt drin ist, wird entschieden, ob und wie der Code ihn benutzt – mit Vorhersage der Zahlenwirkung).
+Der Weg heißt „Addendum" und läuft in Zyklen: Recherche (Quellen öffnen, Werte finden, Bewertung vergeben, Befund ablegen), Review (Ist die Quelle seriös, ist die Bewertung richtig, gehört der Wert hinein?), Übertragung (neue Fakten anlegen, IDs vergeben, `verified`-Feld setzen), Verwendung (erst wenn der Fakt drin ist, wird entschieden, ob und wie der Code ihn benutzt – mit Vorhersage der Zahlenwirkung).
 
 ### Wie oft muss man aktualisieren?
 Strommix: jährlich, wenn die Behörden ihre Werte veröffentlichen (Frühjahr bis Herbst des Folgejahres). Modellmesswerte: wenn neue Studien erscheinen, grob quartalsweise nachschauen. Negativbefunde: am Prüfdatum wiederholen. Ein Kalender dafür gibt es noch nicht – das wäre ein sinnvolles Werkzeug.
