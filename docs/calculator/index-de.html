@@ -209,6 +209,7 @@
      popover's implicit anchor, which is what position-area resolves against.
      A uniform 4px margin keeps the gap correct in every flipped direction. */
   @supports (position-area: bottom) {
+  @media (min-width: 601px) {
     .info-text {
       position: absolute;
       position-area: bottom span-right;
@@ -216,6 +217,7 @@
       inset: auto;
       margin: 4px;
     }
+  }
   }
 
   details { color: var(--muted); font-size: 0.9rem; }
@@ -456,7 +458,7 @@
 
   .facts-table {
     width: 100%;
-    min-width: 620px;
+    min-width: 720px;
     border-collapse: collapse;
     font-size: 0.85rem;
   }
