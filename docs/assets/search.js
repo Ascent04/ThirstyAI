@@ -33,7 +33,12 @@
     // left alone - it is never hidden by a search.
   }
 
-  if (sections.length === 0) return;
+  if (sections.length === 0 || sections.every((s) => s.entries.length === 0)) {
+    // Nothing to filter on this page (e.g. the start page has no h3 entries):
+    // hide the search box instead of offering a control that does nothing.
+    input.hidden = true;
+    return;
+  }
 
   function entryText(entry) {
     return entry.els.map((el) => el.textContent).join(" ").toLowerCase();
@@ -42,6 +47,7 @@
   function applyFilter() {
     const query = input.value.trim().toLowerCase();
     for (const section of sections) {
+      if (section.entries.length === 0) continue; // headings without entries are never hidden
       let anyVisible = false;
       for (const entry of section.entries) {
         const matches = query === "" || entryText(entry).includes(query);
