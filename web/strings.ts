@@ -1,6 +1,7 @@
 export const EN = {
   infoExplanation: "Explanation",
   infoToggleGlyph: "?",
+  decimalSeparator: ".",
   barNumbers: (min: string, mid: string, max: string) => `min ${min} · mid ${mid} · max ${max}`,
   boundaryFallback: "—",
   columnTipId: "Identifier in data/facts.json.",
@@ -77,6 +78,7 @@ export type Strings = typeof EN;
 export const DE: Strings = {
   infoExplanation: "Erklärung",
   infoToggleGlyph: "?",
+  decimalSeparator: ",",
   barNumbers: (min, mid, max) => `min ${min} · mid ${mid} · max ${max}`,
   boundaryFallback: "—",
   columnTipId: "Kennung in data/facts.json.",
@@ -96,7 +98,7 @@ export const DE: Strings = {
   unitWords: "Wörter",
   unitOutputTokens: "Output-Token",
   derivedTokens: (tokens, wordsToTokens) =>
-    `≈ ${tokens} Output-Token, ×${wordsToTokens.replace(".", ",")} Annahme`,
+    `≈ ${tokens} Output-Token, ×${wordsToTokens} Annahme`,
   labelEnergy: "Energie",
   tipEnergy:
     "Strom für eine Anfrage, vom Chip bis zum Rechenzentrum. Wattstunden: " +

@@ -4,6 +4,7 @@
  * no localStorage.
  */
 import { calculateEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
+import { sourceLabel } from "./source-label.js";
 import type { Fact } from "../src/facts.js";
 import { pick } from "./strings.js";
 
@@ -26,7 +27,11 @@ const DIGIT_GROUP_SEPARATOR = "\u202F";
 function groupDigits(value: number): string {
   const [whole, fraction] = String(value).split(".");
   const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, DIGIT_GROUP_SEPARATOR);
-  return fraction === undefined ? grouped : `${grouped}.${fraction}`;
+  return fraction === undefined ? grouped : `${grouped}${S.decimalSeparator}${fraction}`;
+}
+
+function fmtDecimal(value: number): string {
+  return String(value).replace(".", S.decimalSeparator);
 }
 
 interface ResultRangeLike {
@@ -107,7 +112,7 @@ function prefersReducedMotion(): boolean {
 }
 
 function barNumbersText(row: ResultRangeLike): string {
-  return S.barNumbers(String(round3(row.min)), String(round3(row.mid)), String(round3(row.max)));
+  return S.barNumbers(fmtDecimal(round3(row.min)), fmtDecimal(round3(row.mid)), fmtDecimal(round3(row.max)));
 }
 
 /**
@@ -229,7 +234,8 @@ function buildFactRow(id: string): HTMLElement {
     link.href = source.url;
     link.target = "_blank";
     link.rel = "noopener";
-    link.textContent = source.title;
+    link.textContent = sourceLabel(source);
+    link.title = source.title;
     sourceCell.appendChild(link);
   } else {
     sourceCell.textContent = fact.source_id;
@@ -353,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (amountUnitWords.checked) {
       const tokens = Math.round(amount * WORDS_TO_TOKENS);
-      derivedTokens.textContent = S.derivedTokens(groupDigits(tokens), String(WORDS_TO_TOKENS));
+      derivedTokens.textContent = S.derivedTokens(groupDigits(tokens), fmtDecimal(WORDS_TO_TOKENS));
       derivedTokens.hidden = false;
       return;
     }

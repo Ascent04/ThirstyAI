@@ -14,6 +14,7 @@ export interface Source {
   url: string;
   type: string;
   verified: string;
+  authors?: string;
 }
 
 export interface Fact {
