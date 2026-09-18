@@ -144,6 +144,10 @@ export function calculate(input: CalculateInput, table: FactTable): Result {
   }
   factIds.add(inputShare.id);
 
+  // The fact that classified the model (parameter count or class assumption)
+  // decides which energy coefficients apply, so it is an input like any other.
+  if (coeffs.modelClass.sourceFactId) factIds.add(coeffs.modelClass.sourceFactId);
+
   const assumptions = [...factIds].filter((id) => table.byId.get(id)?.rating === "ANNAHME");
 
   // dataConfidence/methodConfidence are derived straight from factIds/rating,
