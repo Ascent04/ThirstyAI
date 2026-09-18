@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/style.css">
 </head>
 <body>
-<header class="site-header">
+<header class="site-header" id="top">
   <nav class="site-nav">
     {% if page.lang == "de" %}
     <a href="{{ site.baseurl }}/index-de.html">Start</a>
@@ -66,6 +66,11 @@
 <main id="page-content">
 {{ content }}
 </main>
+{% if page.lang == "de" %}
+<a class="to-top" href="#top" aria-label="Nach oben" title="Nach oben" hidden>&#8593;</a>
+{% else %}
+<a class="to-top" href="#top" aria-label="Back to top" title="Back to top" hidden>&#8593;</a>
+{% endif %}
 <script src="{{ site.baseurl }}/assets/search.js"></script>
 <script>
   (function () {
@@ -83,6 +88,15 @@
         // no persistence available - the toggle still works for this load
       }
     });
+  })();
+</script>
+<script>
+  (function () {
+    var link = document.querySelector(".to-top");
+    if (!link) return;
+    function update() { link.hidden = window.scrollY < 600; }
+    window.addEventListener("scroll", update, { passive: true });
+    update();
   })();
 </script>
 </body>

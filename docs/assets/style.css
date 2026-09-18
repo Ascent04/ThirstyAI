@@ -280,3 +280,32 @@ a { color: var(--accent); text-underline-offset: 2px; }
 ::highlight(search-hit) {
   background: color-mix(in srgb, var(--fg) 18%, transparent);
 }
+
+/* Back-to-top link: fixed bottom-right; the inline script in the layout
+   unhides it once the page is scrolled a good way down. display: none on
+   [hidden] is needed because display: flex would otherwise override the
+   hidden attribute. Smooth scrolling only for people who have not asked
+   for reduced motion. */
+.to-top {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.to-top[hidden] { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
