@@ -63,6 +63,11 @@ export const EN = {
     "No regional grid carbon factor available — the US average is " +
     "used as a fallback.",
   unknownModelHint: "Unknown model: conservative frontier-class estimate.",
+  modelClassLine: (modelClass: string, factId: string) =>
+    `Model class: ${modelClass} · classified via ${factId}`,
+  modelClassTip:
+    "The size class decides which energy measurements are used (small, mid, frontier or reasoning). " +
+    "It follows from the fact named here, which is also listed in the tables below.",
   factsUsedTitle: "Facts used",
   factsUsedTip:
     "Every source that went into this result. Ratings and boundaries " +
@@ -139,6 +144,11 @@ export const DE: Strings = {
     "Kein regionaler CO2-Faktor für das Stromnetz verfügbar — ersatzweise " +
     "gilt der US-Durchschnitt.",
   unknownModelHint: "Unbekanntes Modell: konservative Schätzung der Frontier-Klasse.",
+  modelClassLine: (modelClass, factId) =>
+    `Modellklasse: ${modelClass} · eingeordnet über ${factId}`,
+  modelClassTip:
+    "Die Größenklasse bestimmt, welche Energie-Messwerte verwendet werden (small, mid, frontier oder reasoning). " +
+    "Sie ergibt sich aus dem hier genannten Fakt, der auch unten in den Tabellen steht.",
   factsUsedTitle: "Verwendete Fakten",
   factsUsedTip:
     "Jede Quelle, die in dieses Ergebnis eingeht. Bewertungen und Messgrenzen " +

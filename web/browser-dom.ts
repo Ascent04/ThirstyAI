@@ -3,7 +3,7 @@
  * not part of the public library API (src/index.ts). No network access,
  * no localStorage.
  */
-import { calculateEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
+import { calculateEmbedded, classifyEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
 import { sourceLabel } from "./source-label.js";
 import type { Fact } from "../src/facts.js";
 import { pick } from "./strings.js";
@@ -445,6 +445,17 @@ document.addEventListener("DOMContentLoaded", () => {
     note.className = "note";
     note.textContent = S.rangeNote;
     resultsEl.appendChild(note);
+
+    const classification = classifyEmbedded(model);
+    if (classification.sourceFactId) {
+      const classLine = document.createElement("p");
+      classLine.className = "confidence";
+      classLine.append(
+        S.modelClassLine(classification.modelClass, classification.sourceFactId),
+        infoTip(S.modelClassTip),
+      );
+      resultsEl.appendChild(classLine);
+    }
 
     const confidence = document.createElement("p");
     confidence.className = "confidence";

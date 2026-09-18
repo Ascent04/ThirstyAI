@@ -8,6 +8,7 @@ import models from "../data/models.json" with { type: "json" };
 
 import { buildFactTable, type RawFactFile, type Fact, type Source } from "../src/facts.js";
 import { calculate, type CalculateInput, type Result } from "../src/calculate.js";
+import { classifyModel, type ModelClassification } from "../src/models.js";
 import { supportedRegions } from "../src/resolve.js";
 
 const TABLE = buildFactTable([facts, assumptions, models] as RawFactFile[]);
@@ -17,6 +18,10 @@ export const SOURCE_COUNT = Object.keys(TABLE.sources).length;
 
 export function calculateEmbedded(input: CalculateInput): Result {
   return calculate(input, TABLE);
+}
+
+export function classifyEmbedded(model: string): ModelClassification {
+  return classifyModel(model, undefined, TABLE);
 }
 
 export function factById(id: string): Fact | undefined {
