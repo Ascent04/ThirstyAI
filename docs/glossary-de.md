@@ -7,7 +7,7 @@ lang: de
 
 Nachschlagewerk für die Begriffe, die in ThirstyAI, in der Faktentabelle und auf der Rechner-Seite vorkommen. Zum Springen gedacht, nicht zum Lesen von vorn.
 
-Stand 2026-09-13.
+Stand 2026-09-18.
 
 ---
 
@@ -22,7 +22,7 @@ Ein einzelner Wert aus einer geprüften Quelle, mit ID, Einheit, Messgrenze, Bew
 Ein Wert, den das Projekt selbst setzen musste, weil keine Quelle existiert. Annahmen liegen getrennt in `data/assumptions.json` und tragen die Bewertung ANNAHME. Die Trennung ist eine Regel: Datei folgt Bewertung.
 
 ### Bewertung (rating)
-Die Belegstärke eines Fakts. Vier Stufen:
+Die Belegstärke eines Fakts. Drei Stufen für belegte Werte, dazu ANNAHME für Werte ohne Quelle:
 
 - **BESTÄTIGT** — Primärquelle plus unabhängige Zweitquelle.
 - **EINZELQUELLE** — eine seriöse Quelle, keine Bestätigung.
@@ -39,7 +39,7 @@ Die schwächste Konfidenz unter den **belegten** Fakten, die in eine konkrete Re
 Die schwächste Konfidenz unter den **Annahmen**, die eingegangen sind. Sagt: So gut ist der Rechenweg dort, wo es keine Quelle gibt. Steht praktisch immer auf 1, weil der Overhead-Faktor in fast jeder Rechnung steckt.
 
 ### Messgrenze (measurement_boundary)
-Was ein Wert einschließt und was nicht. Der wichtigste Kontext überhaupt: Ein Energiewert für „nur den Grafikchip" und einer für „das ganze Rechenzentrum" unterscheiden sich um Faktor 1,7 bis 2,4, obwohl beide „Wattstunden pro Anfrage" heißen.
+Was ein Wert einschließt und was nicht. Der wichtigste Kontext überhaupt: Ein Energiewert für „nur den Grafikchip“ und einer für „das ganze Rechenzentrum“ unterscheiden sich um Faktor 1,7 bis 2,4, obwohl beide „Wattstunden pro Anfrage“ heißen.
 
 ### Systemgrenze
 Dasselbe Prinzip eine Ebene höher: Welche Lebensphasen eines Modells sind mitgezählt? ThirstyAI rechnet nur den laufenden Betrieb. Training, Hardware-Herstellung und Rechenzentrumsbau sind nicht enthalten.
@@ -110,7 +110,7 @@ Zwei Wege, den CO₂-Gehalt von Strom zu bestimmen. **Standortbasiert** nimmt de
 Die Zahl, mit der von GPU-only auf Vollstack umgerechnet wird. Liegt zwischen 1,7 und 2,4. Eine Annahme, keine Messung — und der Grund, warum die Methodenkonfidenz fast immer 1 ist.
 
 ### Ökobilanz (LCA)
-Eine Bewertung nach ISO 14040/44, die alle Lebensphasen erfasst: Rohstoffgewinnung, Herstellung, Nutzung, Entsorgung. Deutlich weiter als ThirstyAIs Betriebsrechnung.
+Eine Bilanzierung nach ISO 14040/44, die alle Lebensphasen erfasst: Rohstoffgewinnung, Herstellung, Nutzung, Entsorgung. Deutlich weiter als ThirstyAIs Betriebsrechnung.
 
 ### ADP — Abiotic Resource Depletion
 Ein Maß für den Verbrauch nicht erneuerbarer Rohstoffe, standardisiert auf Antimon-Äquivalent.
@@ -126,7 +126,7 @@ Das Jahr, für das der Strommix gilt. Er ändert sich jährlich; eine Rechnung o
 ## Teil 3 — Abkürzungen
 
 - **ADEME** — französische Umwelt- und Energieagentur
-- **ADP** — Abiotic Resource Depletion, Rohstoffverschleiß
+- **ADP** — Abiotic Resource Depletion, Verbrauch nicht erneuerbarer Rohstoffe
 - **CSRD** — EU-Richtlinie zur Nachhaltigkeitsberichterstattung
 - **EEA** — Europäische Umweltagentur
 - **eGRID** — Emissionsdatenbank der US-Umweltbehörde
