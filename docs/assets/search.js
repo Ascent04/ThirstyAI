@@ -44,6 +44,46 @@
     return entry.els.map((el) => el.textContent).join(" ").toLowerCase();
   }
 
+  const HIGHLIGHT_NAME = "search-hit";
+  const canHighlight =
+    typeof CSS !== "undefined" && "highlights" in CSS && typeof Highlight !== "undefined";
+
+  /**
+   * Marks every occurrence of the query inside the entries still on screen,
+   * via the CSS Custom Highlight API - no DOM edits, links stay intact. The
+   * look lives in style.css (::highlight). Browsers without the API keep the
+   * filter and simply show no marking.
+   */
+  function highlightMatches(query) {
+    if (!canHighlight) return;
+    if (query === "") {
+      CSS.highlights.delete(HIGHLIGHT_NAME);
+      return;
+    }
+    const ranges = [];
+    for (const section of sections) {
+      for (const entry of section.entries) {
+        for (const el of entry.els) {
+          if (el.hidden) continue;
+          const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+          let node;
+          while ((node = walker.nextNode())) {
+            const text = node.textContent.toLowerCase();
+            let from = text.indexOf(query);
+            while (from !== -1) {
+              const range = new Range();
+              range.setStart(node, from);
+              range.setEnd(node, from + query.length);
+              ranges.push(range);
+              from = text.indexOf(query, from + query.length);
+            }
+          }
+        }
+      }
+    }
+    CSS.highlights.set(HIGHLIGHT_NAME, new Highlight(...ranges));
+  }
+
   function applyFilter() {
     const query = input.value.trim().toLowerCase();
     for (const section of sections) {
@@ -56,6 +96,7 @@
       }
       if (section.heading) section.heading.hidden = !anyVisible;
     }
+    highlightMatches(query);
   }
 
   input.addEventListener("input", applyFilter);

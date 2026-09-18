@@ -273,3 +273,10 @@ a { color: var(--accent); text-underline-offset: 2px; }
   .site-header { flex-direction: column; align-items: stretch; }
   .site-controls { margin-left: 0; }
 }
+
+/* Search hits: a translucent tint in the text colour, readable in both
+   themes without turning the word yellow. Needs the CSS Custom Highlight API;
+   browsers without it still filter, just without the marking. */
+::highlight(search-hit) {
+  background: color-mix(in srgb, var(--fg) 18%, transparent);
+}
