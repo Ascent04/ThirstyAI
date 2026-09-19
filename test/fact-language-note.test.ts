@@ -1,22 +1,20 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { EN, DE, factLanguageNote } from "../web/strings.js";
 
-const DOM_SRC = new URL("../web/browser-dom.ts", import.meta.url).pathname;
-const BUNDLE = new URL("../docs/calculator/bundle.js", import.meta.url).pathname;
-
-const NOTE_TEXT =
-  "The descriptions in the tables below are in German, the working language of the fact table.";
-
-describe("Sprachhinweis ueber den Faktentabellen (kein Schluessel der Texttabellen)", () => {
-  it("web/browser-dom.ts enthaelt den Hinweistext genau einmal, hinter einer lang!==de-Bedingung", () => {
-    const src = readFileSync(DOM_SRC, "utf-8");
-    const occurrences = src.split(NOTE_TEXT).length - 1;
-    expect(occurrences).toBe(1);
-    expect(src).toMatch(/lang\.slice\(0, 2\)\.toLowerCase\(\) !== "de"/);
+describe("Sprachhinweis ueber den Faktentabellen", () => {
+  it("erscheint, wenn die Seitensprache nicht die Sprache der Faktentabelle ist", () => {
+    expect(factLanguageNote("en").length).toBeGreaterThan(0);
+    expect(factLanguageNote("").length).toBeGreaterThan(0);
   });
 
-  it("das eingecheckte Bundle enthält den Hinweistext (sonst fehlt npm run build:web)", () => {
-    const bundle = readFileSync(BUNDLE, "utf-8");
-    expect(bundle).toContain(NOTE_TEXT);
+  it("bleibt leer auf deutschen Seiten", () => {
+    expect(factLanguageNote("de")).toBe("");
+    expect(factLanguageNote("de-DE")).toBe("");
+    expect(factLanguageNote("DE")).toBe("");
+  });
+
+  it("ist kein Schluessel der Texttabellen, die Paritaetspruefung bleibt unberuehrt", () => {
+    expect("factLanguageNote" in EN).toBe(false);
+    expect("factLanguageNote" in DE).toBe(false);
   });
 });

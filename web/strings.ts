@@ -163,3 +163,15 @@ const TABLES: Record<string, Strings> = { en: EN, de: DE };
 export function pick(lang: string): Strings {
   return TABLES[lang.slice(0, 2).toLowerCase()] ?? EN;
 }
+
+/** Language of the free-text fields in the fact table (data/*.json). */
+export const FACT_TABLE_LANGUAGE = "de";
+
+const FACT_LANGUAGE_NOTE =
+  "The descriptions in the tables below are in German, the working language of the fact table. " +
+  "Numbers, units and sources read the same in any language.";
+
+/** Note shown above the fact tables when the page language differs from the fact table's language. */
+export function factLanguageNote(pageLang: string): string {
+  return pageLang.toLowerCase().startsWith(FACT_TABLE_LANGUAGE) ? "" : FACT_LANGUAGE_NOTE;
+}

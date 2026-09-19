@@ -6,7 +6,7 @@
 import { calculateEmbedded, classifyEmbedded, factById, SOURCES, MODELS, REGIONS, FACTS_GENERATED } from "./browser-calc.js";
 import { sourceLabel } from "./source-label.js";
 import type { Fact } from "../src/facts.js";
-import { pick } from "./strings.js";
+import { pick, factLanguageNote } from "./strings.js";
 
 const S = pick(document.documentElement.lang);
 
@@ -517,12 +517,11 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsEl.appendChild(hint);
     }
 
-    if (document.documentElement.lang.slice(0, 2).toLowerCase() !== "de") {
+    const languageNoteText = factLanguageNote(document.documentElement.lang);
+    if (languageNoteText) {
       const languageNote = document.createElement("p");
       languageNote.className = "confidence-note";
-      languageNote.textContent =
-        "The descriptions in the tables below are in German, the working language of the fact table. " +
-        "Numbers, units and sources read the same in any language.";
+      languageNote.textContent = languageNoteText;
       resultsEl.appendChild(languageNote);
     }
 
