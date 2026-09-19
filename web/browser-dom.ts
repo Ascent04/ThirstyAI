@@ -517,6 +517,15 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsEl.appendChild(hint);
     }
 
+    if (document.documentElement.lang.slice(0, 2).toLowerCase() !== "de") {
+      const languageNote = document.createElement("p");
+      languageNote.className = "confidence-note";
+      languageNote.textContent =
+        "The descriptions in the tables below are in German, the working language of the fact table. " +
+        "Numbers, units and sources read the same in any language.";
+      resultsEl.appendChild(languageNote);
+    }
+
     const assumptionIds = new Set(result.assumptions);
     const factsUsedIds = result.factIds.filter((id) => !assumptionIds.has(id));
 
